@@ -37,6 +37,12 @@
 #define MRAA_SUB_PLATFORM_OFFSET 1
 
 
+#define MRAA_RETURN_FOR_ERROR(x) do { \
+                                      mraa_result_t t; \
+                                      t = x; \
+                                      if (t != MRAA_SUCCESS) \
+                                      return t;} while(0)
+
 /** @file
  *
  * This file defines the basic shared values for libmraa
