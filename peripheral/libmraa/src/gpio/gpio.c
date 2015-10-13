@@ -231,7 +231,6 @@ mraa_gpio_interrupt_handler(void* arg)
     for (;;) {
         ret = mraa_gpio_wait_interrupt(dev->isr_value_fp);
         if (ret == MRAA_SUCCESS && !dev->isr_thread_terminating) {
-            pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
 #ifdef SWIGPYTHON
             // In order to call a python object (all python functions are objects) we
             // need to aquire the GIL (Global Interpreter Lock). This may not always be
@@ -267,10 +266,8 @@ mraa_gpio_interrupt_handler(void* arg)
 #else
             dev->isr(dev->isr_args);
 #endif
-            pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
         } else {
             // we must have got an error code or exit request so die nicely
-            pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
             close(dev->isr_value_fp);
             dev->isr_value_fp = -1;
             return NULL;
@@ -362,7 +359,7 @@ mraa_gpio_isr_exit(mraa_gpio_context dev)
     ret = mraa_gpio_edge_mode(dev, MRAA_GPIO_EDGE_NONE);
 
     if ((dev->thread_id != 0)) {
-        if ((pthread_cancel(dev->thread_id) != 0) || (pthread_join(dev->thread_id, NULL) != 0)) {
+        if ((pthread_join(dev->thread_id, NULL) != 0)) {
             ret = MRAA_ERROR_INVALID_HANDLE;
         }
     }
