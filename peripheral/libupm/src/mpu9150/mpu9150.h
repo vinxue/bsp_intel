@@ -68,7 +68,7 @@ namespace upm {
      * @param magAddress The address of the connected magnetometer
      */
     MPU9150 (int bus=MPU9150_I2C_BUS, int address=MPU9150_DEFAULT_I2C_ADDR,
-             int magAddress=AK8975_DEFAULT_I2C_ADDR);
+             int magAddress=AK8975_DEFAULT_I2C_ADDR, bool enableAk8975=false);
 
     /**
      * MPU9150 destructor
@@ -126,6 +126,7 @@ namespace upm {
   private:
     int m_i2cBus;
     uint8_t m_magAddress;
+    bool m_enableAk8975;
   };
 
 }
