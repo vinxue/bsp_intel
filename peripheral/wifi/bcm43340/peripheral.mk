@@ -15,7 +15,7 @@
 #
 
 # BCM43340 WIFI Firmware
-BCM43340_WIFI_FW_SRC := hardware/bsp/intel/peripheral/wifi/bcm43340_firmware
+BCM43340_WIFI_FW_SRC := vendor/bsp/intel/peripheral/wifi/bcm43340_firmware
 BCM43340_WIFI_FW_DST := system/vendor/firmware/bcm43340
 
 # The "aob" file is special purpose - we include it here for completeness but don't utilize it.

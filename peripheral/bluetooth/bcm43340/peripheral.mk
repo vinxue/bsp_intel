@@ -16,7 +16,7 @@
 
 # BCM43340 WIFI Firmware
 BCM43340_BT_SRC := hardware/bsp/intel/peripheral/bluetooth/bcm43340
-BCM43340_BT_FIRMWARE := hardware/bsp/intel/peripheral/bluetooth/bcm43340_firmware
+BCM43340_BT_FIRMWARE := vendor/bsp/intel/peripheral/bluetooth/bcm43340_firmware
 BCM43340_BT_FW_DST := system/vendor/firmware/bcm43340
 
 PRODUCT_COPY_FILES += \
