@@ -59,10 +59,6 @@ DEVICE_PACKAGES += \
 DEVICE_PACKAGES += \
     audio.usb.edison
 
-# Audio HAL support
-DEVICE_PACKAGES += \
-    libstagefright_soft_mp3dec
-
 # Boot control HAL package
 DEVICE_PACKAGES += \
     bootctrl.edison
