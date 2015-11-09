@@ -34,7 +34,7 @@
 
 #define PLATFORM_NAME "Intel Edison"
 #define SYSFS_CLASS_GPIO "/sys/class/gpio"
-#define SYSFS_PINMODE_PATH "/sys/kernel/debug/gpio_debug/gpio"
+#define DEBUGFS_PINMODE_PATH "/sys/kernel/debug/gpio_debug/gpio"
 #define MAX_SIZE 64
 #define MAX_MODE_SIZE 8
 
@@ -105,8 +105,17 @@ mraa_intel_edison_pinmode_change(int sysfs, int mode)
     }
 
     char buffer[MAX_SIZE];
-    snprintf(buffer, MAX_SIZE, SYSFS_PINMODE_PATH "%i/current_pinmux", sysfs);
+    int useDebugFS = 0;
+
+    // first try SYSFS_CLASS_GPIO path
+    snprintf(buffer, MAX_SIZE, SYSFS_CLASS_GPIO "/gpio%i/pinmux", sysfs);
     int modef = open(buffer, O_WRONLY);
+    if (modef == -1) {
+        snprintf(buffer, MAX_SIZE, DEBUGFS_PINMODE_PATH "%i/current_pinmux", sysfs);
+        modef = open(buffer, O_WRONLY);
+        useDebugFS = 1;
+    }
+
     if (modef == -1) {
         syslog(LOG_ERR, "edison: Failed to open SoC pinmode for opening");
         return MRAA_ERROR_INVALID_RESOURCE;
@@ -114,7 +123,7 @@ mraa_intel_edison_pinmode_change(int sysfs, int mode)
 
     mraa_result_t ret = MRAA_SUCCESS;
     char mode_buf[MAX_MODE_SIZE];
-    int length = sprintf(mode_buf, "mode%u", mode);
+    int length = snprintf(mode_buf, MAX_MODE_SIZE, "%s%u", useDebugFS ? "mode" : "", mode);
     if (write(modef, mode_buf, length * sizeof(char)) == -1) {
         ret = MRAA_ERROR_INVALID_RESOURCE;
     }
@@ -229,8 +238,12 @@ mraa_intel_edison_i2c_init_pre(unsigned int bus)
         mraa_gpio_close(io18_pullup);
         mraa_gpio_close(io19_pullup);
 
+        mraa_gpio_context io18_mode = mraa_gpio_init_raw(28);
+        mraa_gpio_context io19_mode = mraa_gpio_init_raw(27);
         mraa_intel_edison_pinmode_change(28, 1);
         mraa_intel_edison_pinmode_change(27, 1);
+        mraa_gpio_close(io18_mode);
+        mraa_gpio_close(io19_mode);
 
         mraa_gpio_write(tristate, 1);
     } else {
@@ -517,9 +530,16 @@ mraa_intel_edsion_mb_gpio_mode(mraa_gpio_context dev, mraa_gpio_mode_t mode)
     }
 
     char filepath[MAX_SIZE];
-    snprintf(filepath, MAX_SIZE, SYSFS_PINMODE_PATH "%d/current_pullmode", dev->pin);
 
+    // first try SYSFS_CLASS_GPIO path
+    snprintf(filepath, MAX_SIZE, SYSFS_CLASS_GPIO "/gpio%d/pullmode", dev->pin);
     int drive = open(filepath, O_WRONLY);
+
+    if (drive == -1) {
+        snprintf(filepath, MAX_SIZE, DEBUGFS_PINMODE_PATH "%d/current_pullmode", dev->pin);
+        drive = open(filepath, O_WRONLY);
+    }
+
     if (drive == -1) {
         syslog(LOG_ERR, "edison: Failed to open drive for writing");
         return MRAA_ERROR_INVALID_RESOURCE;
