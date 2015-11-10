@@ -1,3 +1,0 @@
-#libmraa needs to set pin mode via nodes in debugfs
-on post-fs
-    mount debugfs debugfs /sys/kernel/debug

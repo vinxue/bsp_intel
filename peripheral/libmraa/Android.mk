@@ -50,8 +50,6 @@ LOCAL_EXPORT_C_INCLUDE_DIRS := \
     $(LOCAL_PATH)/api \
     $(LOCAL_PATH)/api/mraa
 
-LOCAL_INIT_RC := libmraa.rc
-
 LOCAL_MODULE_TAGS := optional
 
 include $(BUILD_SHARED_LIBRARY)
