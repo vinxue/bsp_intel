@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 The Android Open Source Project
+ * Copyright (C) 2015 Intel Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "sensors_hal_edison"
-
-#include <cutils/log.h>
-
-#include "sensors_hal.h"
-
-#include <errno.h>
 #include <string.h>
+#include <cutils/log.h>
+#include <stdexcept>
+#include <errno.h>
+#include <sys/epoll.h>
+#include "SensorsHAL.hpp"
+#include "SensorFactory.hpp"
+
+#define MAX_DEVICES  20
+
+int gPollFd;
+
+SensorDescriptionFactory SensorContext::sensorDescriptionFactory;
 
 SensorContext::SensorContext(const hw_module_t* module) {
   memset(&device, 0, sizeof(device));
@@ -36,49 +41,51 @@ SensorContext::SensorContext(const hw_module_t* module) {
   device.batch = BatchWrapper;
   device.flush = FlushWrapper;
 
-  for (int i = 0; i < AvailableSensors::kNumSensors; i++) {
-    activatedMap[i] = false;
-  }
-
-  // NOTE: INSTANCES MUST FOLLOW THE ORDER IN AvailableSensors
-  try {
-    sensors[AvailableSensors::kMPU9150Accelerometer] = new MPU9150Accelerometer(
-        6, MPU9150_DEFAULT_I2C_ADDR, AK8975_DEFAULT_I2C_ADDR, false);
-  } catch (const std::runtime_error& e) {
-    ALOGE("%s: Failed to instantiate MPU9150/9250 sensor. keep running",
-        __func__);
-  }
-
-  try {
-    sensors[AvailableSensors::kMMA7660Accelerometer] = new MMA7660Accelerometer(
-        6, MMA7660_DEFAULT_I2C_ADDR);
-  } catch (const std::runtime_error& e) {
-    ALOGE("%s: Failed to instantiate MPU9150/9250 sensor. keep running",
-        __func__);
-  }
-  // NEW sensors: instantiate object here
+  memset(sensors, 0, sizeof(Sensor *) * Sensor::Type::kNumTypes);
 }
 
 SensorContext::~SensorContext() {
-  for (int i = 0; i < AvailableSensors::kNumSensors; i++) {
-    if (sensors[i]) delete sensors[i];
+  for (int i = 0; i < Sensor::Type::kNumTypes; i++) {
+    if (sensors[i]) {
+      delete sensors[i];
+      sensors[i] = nullptr;
+    }
   }
 }
 
 int SensorContext::activate(int handle, int enabled) {
-  int ret = 0;
+  int rc = 0;
 
   if (enabled != 0 && enabled != 1) {
     ALOGE("%s: Invaled parameter", __func__);
     return -EINVAL;
   }
 
+  if (handle < 0 || handle >= Sensor::Type::kNumTypes) {
+    return -EINVAL;
+  }
+
   try {
-    ret = sensors[handle]->activate(handle, enabled);
-    if (ret == 0) {
-      activatedMap[handle] = enabled == 0 ? false : true;
+    if (enabled) {
+      if (sensors[handle] == nullptr) {
+        sensors[handle] = SensorFactory::createSensor(static_cast<Sensor::Type>(handle));
+        if (sensors[handle] == nullptr) {
+          return -1;
+        }
+        rc = sensors[handle]->activate(handle, enabled);
+      } else {
+        return 0;
+      }
+    } else {
+      if (sensors[handle] != nullptr) {
+        rc = sensors[handle]->activate(handle, enabled);
+        delete sensors[handle];
+        sensors[handle] = nullptr;
+      } else {
+        return 0;
+      }
     }
-    return ret;
+    return rc;
   } catch (const std::runtime_error& e) {
     ALOGE("%s: Failed to activate sensor(s). keep running", __func__);
     return -1;
@@ -86,59 +93,85 @@ int SensorContext::activate(int handle, int enabled) {
 }
 
 int SensorContext::setDelay(int handle, int64_t ns) {
+  if (handle < 0 || handle >= Sensor::Type::kNumTypes) {
+    return -EINVAL;
+  }
+
+  if (sensors[handle] == nullptr) {
+    ALOGE("%s: cannot set delay. sensor %d is not activated", __func__, handle);
+    return -EINVAL;
+  }
+
   return sensors[handle]->setDelay(handle, ns);
 }
 
 int SensorContext::pollEvents(sensors_event_t* data, int count) {
-  int evt = 0;
-  int j = 0;
-  // Assumption: each sensor supports polling and always returns some data;
-  // Read one event out of each sensor if buffer is big enough.
-  // If there is an error happens, stop reading (refer to assumption)
-  for (int i = 0; i < AvailableSensors::kNumSensors; i++) {
+  int nfds, i;
+  struct epoll_event ev[MAX_DEVICES];
+  int returned_events = 0;
 
-    if (activatedMap[i] == false) {
-      continue;
-    }
-    try {
-      evt = sensors[i]->pollEvents(&data[j], 1);
-    } catch (const std::runtime_error& e) {
-      ALOGE("%s: Failed to pull sensor, stop polling", __func__);
-      break;
-    }
-    if (evt == 1) {
-      // set handle
-      data[j].sensor = i;
-      j++;
-    } else
-      // We asked only one event, anything else is wrong.
-      break;
+  /* return only when at least one event is available */
+  while(true) {
+    nfds = epoll_wait(gPollFd, ev, MAX_DEVICES, -1);
+    for(i = 0; i < nfds && returned_events < count; i++) {
+      if (ev[i].events == EPOLLIN) {
 
-    if (j >= count)
-      break;
+        if(sensors[ev[i].data.u32]->readOneEvent(data + returned_events)) {
+          returned_events++;
+        }
+      }
+    }
+    if (returned_events > 0) {
+      return returned_events;
+    }
   }
-
-  /*
-   * According to the documentation, the poll function should never return a zero.
-   * If we, however, return -EIO or -1 at this point, badness ensues.
-   */
-  return j;
 }
 
 int SensorContext::batch(int handle, int flags,
                          int64_t period_ns, int64_t timeout) {
+  if (handle < 0 || handle >= Sensor::Type::kNumTypes) {
+    return -EINVAL;
+  }
+
+  if (sensors[handle] == nullptr) {
+    ALOGE("%s: cannot set delay. sensor %d is not activated", __func__, handle);
+    return -EINVAL;
+  }
+
   return sensors[handle]->batch(handle, flags, period_ns, timeout);
 }
 
 int SensorContext::flush(int handle) {
+  if (handle < 0 || handle >= Sensor::Type::kNumTypes) {
+    return -EINVAL;
+  }
+
+  if (sensors[handle] == nullptr) {
+    ALOGE("%s: cannot set delay. sensor %d is not activated", __func__, handle);
+    return -EINVAL;
+  }
+
+  /* flush doesn't apply to one-shot sensors */
+  if (SensorContext::sensorDescriptionFactory.areFlagsSet(
+      handle, SENSOR_FLAG_ONE_SHOT_MODE))
+    return -EINVAL;
+
   return sensors[handle]->flush(handle);
 }
 
 int SensorContext::CloseWrapper(hw_device_t* dev) {
-  SensorContext* sensor_context = reinterpret_cast<SensorContext*>(dev);
-  if (sensor_context) {
-    delete sensor_context;
+  SensorContext* sensorContext = reinterpret_cast<SensorContext*>(dev);
+  int rc;
+
+  rc = close(gPollFd);
+  if (rc != 0) {
+    ALOGE("Cannot close poll file descriptor");
   }
+
+  if (sensorContext != nullptr) {
+    delete sensorContext;
+  }
+
   return 0;
 }
 
@@ -170,8 +203,17 @@ int SensorContext::FlushWrapper(sensors_poll_device_1_t* dev,
 
 static int open_sensors(const struct hw_module_t* module,
                         const char* id, struct hw_device_t** device) {
-  SensorContext* ctx = new SensorContext(module);
+  SensorContext* ctx;
+
+  ctx = new SensorContext(module);
   *device = &ctx->device.common;
+
+  /* create the epoll fd used to register the incoming fds */
+  gPollFd = epoll_create(MAX_DEVICES);
+  if (gPollFd == -1) {
+    ALOGE("%s: Failed to create epoll", __func__);
+    return -1;
+  }
 
   return 0;
 }
@@ -180,50 +222,11 @@ static struct hw_module_methods_t sensors_module_methods = {
   open: open_sensors,
 };
 
-static struct sensor_t kSensorList[] = {
-  { name: "MPU9150/9250 Accelerometer",
-    vendor: "Unknown",
-    version: 1,
-    handle: SensorContext::AvailableSensors::kMPU9150Accelerometer,
-    type: SENSOR_TYPE_ACCELEROMETER,
-    maxRange: static_cast<float>(MPU9150Accelerometer::kMaxRange),
-    resolution: 100.0f,
-    power: 0.0f,
-    minDelay: 10000,
-    fifoReservedEventCount: 0,
-    fifoMaxEventCount: 0,
-    SENSOR_STRING_TYPE_ACCELEROMETER,
-    requiredPermission: "",
-    maxDelay: 0,
-    flags: SENSOR_FLAG_CONTINUOUS_MODE,
-    reserved: {},
-  },
-
-  { name: "MMA7660 Accelerometer",
-    vendor: "Unknown",
-    version: 1,
-    handle: SensorContext::AvailableSensors::kMMA7660Accelerometer,
-    type: SENSOR_TYPE_ACCELEROMETER,
-    maxRange: static_cast<float>(MMA7660Accelerometer::kMaxRange),
-    resolution: 100.0f,
-    power: 0.0f,
-    minDelay: 10000,
-    fifoReservedEventCount: 0,
-    fifoMaxEventCount: 0,
-    SENSOR_STRING_TYPE_ACCELEROMETER,
-    requiredPermission: "",
-    maxDelay: 0,
-    flags: SENSOR_FLAG_CONTINUOUS_MODE,
-    reserved: {},
-  },
-  // NEW sensors: put info here
-};
-
 static int get_sensors_list(struct sensors_module_t* module,
                             struct sensor_t const** list) {
   if (!list) return 0;
-  *list = kSensorList;
-  return sizeof(kSensorList) / sizeof(kSensorList[0]);
+  *list = SensorContext::getSensorDescriptions();
+  return Sensor::Type::kNumTypes;
 }
 
 struct sensors_module_t HAL_MODULE_INFO_SYM = {
@@ -235,9 +238,9 @@ struct sensors_module_t HAL_MODULE_INFO_SYM = {
         name: "Edison Sensor HAL",
         author: "Intel",
         methods: &sensors_module_methods,
-        dso: NULL,
+        dso: nullptr,
         reserved: {0},
     },
     get_sensors_list: get_sensors_list,
-    set_operation_mode: NULL
+    set_operation_mode: nullptr
 };
