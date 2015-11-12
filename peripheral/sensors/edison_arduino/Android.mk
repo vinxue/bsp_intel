@@ -1,4 +1,4 @@
-# Copyright (C) 2015 The Android Open Source Project
+# Copyright (C) 2015 Intel Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,10 +17,15 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_CPPFLAGS:= -Wno-unused-parameter -Wno-error=non-virtual-dtor -fexceptions
-LOCAL_CFLAGS += -Wno-unused-parameter
+LOCAL_CFLAGS += -DLOG_TAG=\"Sensors\" -Wno-unused-parameter
 LOCAL_SHARED_LIBRARIES := libcutils libupm libmraa
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libupm/src/mpu9150/
-LOCAL_SRC_FILES := sensors_hal.cpp sensors_list.cpp
+LOCAL_SRC_FILES := SensorsHAL.cpp Sensor.cpp AcquisitionThread.cpp Utils.cpp \
+    SensorFactory.cpp \
+    SensorDescriptionFactory.cpp \
+    sensors/MPU9150Accelerometer.cpp \
+    sensors/MMA7660Accelerometer.cpp \
+    sensors/GroveLight.cpp
 LOCAL_MODULE := sensors.edison
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_MODULE_TAGS := optional
