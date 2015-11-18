@@ -29,7 +29,7 @@ TARGET_NO_BOOTLOADER := false
 TARGET_NO_KERNEL := false
 
 # FIXME: Need to dynamically grab the serial number of the device from the hardware.
-BOARD_KERNEL_CMDLINE := console=ttyMFD2 earlyprintk=ttyMFD2,keep androidboot.hardware=edison
+BOARD_KERNEL_CMDLINE := console=ttyMFD2 earlyprintk=ttyMFD2,keep androidboot.hardware=edison androidboot.selinux=enforcing
 
 TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
@@ -48,33 +48,33 @@ TARGET_KERNEL_SRC := hardware/bsp/kernel/intel/edison-3.10
 TARGET_KERNEL_DEFCONFIG := i386_brillo_edison_defconfig
 TARGET_KERNEL_CONFIGS := $(realpath $(LOCAL_PATH)/soc.kconf)
 
-# Bt product packages
+# Bluetooth product packages.
 DEVICE_PACKAGES += \
     bt_bcm
 
 DEVICE_PACKAGES += \
     keystore.default
 
-# Audio HAL
+# Audio HAL package.
 DEVICE_PACKAGES += \
     audio.usb.edison
 
-# Boot control HAL package
+# Boot control HAL package.
 DEVICE_PACKAGES += \
     bootctrl.edison
 
-# lights HAL package
+# Lights HAL package.
 DEVICE_PACKAGES += \
     lights.edison
 
-# Audio utilities. You may not need these for a product
+# Audio utilities. You may not need these for a product.
 DEVICE_PACKAGES += \
     tinyplay tinypcminfo tinymix tinycap
 
-# Device partition table
+# Device partition table.
 DEVICE_PACKAGES += \
     gpt.bin
 
-# Sensor HAL package
+# Sensor HAL package.
 DEVICE_PACKAGES += \
     sensors.edison
