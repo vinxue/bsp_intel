@@ -107,6 +107,11 @@ mraa_intel_edison_pinmode_change(int sysfs, int mode)
     char buffer[MAX_SIZE];
     int useDebugFS = 0;
 
+    mraa_gpio_context mode_gpio = mraa_gpio_init_raw(sysfs);
+    if (mode_gpio == NULL) {
+        return MRAA_ERROR_NO_RESOURCES;
+    }
+
     // first try SYSFS_CLASS_GPIO path
     snprintf(buffer, MAX_SIZE, SYSFS_CLASS_GPIO "/gpio%i/pinmux", sysfs);
     int modef = open(buffer, O_WRONLY);
@@ -118,6 +123,7 @@ mraa_intel_edison_pinmode_change(int sysfs, int mode)
 
     if (modef == -1) {
         syslog(LOG_ERR, "edison: Failed to open SoC pinmode for opening");
+        mraa_gpio_close(mode_gpio);
         return MRAA_ERROR_INVALID_RESOURCE;
     }
 
@@ -128,6 +134,7 @@ mraa_intel_edison_pinmode_change(int sysfs, int mode)
         ret = MRAA_ERROR_INVALID_RESOURCE;
     }
     close(modef);
+    mraa_gpio_close(mode_gpio);
 
     return ret;
 }
@@ -238,12 +245,8 @@ mraa_intel_edison_i2c_init_pre(unsigned int bus)
         mraa_gpio_close(io18_pullup);
         mraa_gpio_close(io19_pullup);
 
-        mraa_gpio_context io18_mode = mraa_gpio_init_raw(28);
-        mraa_gpio_context io19_mode = mraa_gpio_init_raw(27);
         mraa_intel_edison_pinmode_change(28, 1);
         mraa_intel_edison_pinmode_change(27, 1);
-        mraa_gpio_close(io18_mode);
-        mraa_gpio_close(io19_mode);
 
         mraa_gpio_write(tristate, 1);
     } else {
