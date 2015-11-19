@@ -15,10 +15,16 @@
  */
 
 #include <cutils/log.h>
+#include <mraa.hpp>
 #include "SensorDescriptionFactory.hpp"
 #include "sensors/Sensors.hpp"
 
+const int kTriStateAllGpioPin = 214;
+const int kArduinoI2cBusNumber = 6;
+const int kNonArduinoI2cBusNumber = 1;
+
 bool SensorDescriptionFactory::initialized = false;
+int SensorDescriptionFactory::i2cBusNumber = -1;
 struct sensor_t SensorDescriptionFactory::descriptions[Sensor::Type::kNumTypes];
 
 struct sensor_t const *
@@ -59,12 +65,32 @@ bool SensorDescriptionFactory::areFlagsSet(int handle, uint32_t flags) {
   return (descriptions[handle].flags & flags) == flags;
 }
 
+int SensorDescriptionFactory::getI2cBusNumber() {
+  init();
+
+  return i2cBusNumber;
+}
+
 void SensorDescriptionFactory::init() {
   if (!SensorDescriptionFactory::initialized) {
+    mraa::Gpio *gpio = NULL;
+
     for (int i = 0; i < Sensor::Type::kNumTypes; i++) {
       descriptions[i] = *SensorDescriptionFactory::getDescription(
           static_cast<Sensor::Type>(i));
     }
+
+    try {
+      gpio = new mraa::Gpio(kTriStateAllGpioPin);
+    } catch(...) {}
+
+    if (gpio == NULL) {
+      i2cBusNumber = kNonArduinoI2cBusNumber;
+    } else {
+      delete gpio;
+      i2cBusNumber = kArduinoI2cBusNumber;
+    }
+
     SensorDescriptionFactory::initialized = true;
   }
 }

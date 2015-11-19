@@ -49,6 +49,12 @@ class SensorDescriptionFactory {
      */
     static bool areFlagsSet(int handle, uint32_t flags);
 
+    /**
+     * Get sensors i2c bus number
+     * @return i2c bus number
+     */
+    static int getI2cBusNumber();
+
   private:
 
     /*
@@ -58,6 +64,7 @@ class SensorDescriptionFactory {
 
     static struct sensor_t descriptions[Sensor::Type::kNumTypes];
     static bool initialized;
+    static int i2cBusNumber;
 };
 
 #endif  // SENSOR_DESCRIPTION_FACTORY_HPP

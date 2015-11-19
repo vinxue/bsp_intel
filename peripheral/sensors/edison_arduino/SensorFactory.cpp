@@ -16,6 +16,7 @@
 
 #include <cutils/log.h>
 #include "SensorFactory.hpp"
+#include "SensorDescriptionFactory.hpp"
 #include "sensors/Sensors.hpp"
 
 Sensor * SensorFactory::createSensor(Sensor::Type type) {
@@ -23,10 +24,13 @@ Sensor * SensorFactory::createSensor(Sensor::Type type) {
     switch(type) {
       case Sensor::Type::kMPU9150Accelerometer:
         return new MPU9150Accelerometer(
-            6, MPU9150_DEFAULT_I2C_ADDR, AK8975_DEFAULT_I2C_ADDR, false);
+            SensorDescriptionFactory::getI2cBusNumber(),
+            MPU9150_DEFAULT_I2C_ADDR, AK8975_DEFAULT_I2C_ADDR, false);
         break;
       case Sensor::Type::kMMA7660Accelerometer:
-        return new MMA7660Accelerometer(6, MMA7660_DEFAULT_I2C_ADDR);
+        return new MMA7660Accelerometer(
+            SensorDescriptionFactory::getI2cBusNumber(),
+            MMA7660_DEFAULT_I2C_ADDR);
         break;
       case Sensor::Type::kGroveLight:
         return new GroveLight(0);
