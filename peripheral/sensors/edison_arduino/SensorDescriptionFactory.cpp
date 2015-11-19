@@ -18,24 +18,8 @@
 #include "SensorDescriptionFactory.hpp"
 #include "sensors/Sensors.hpp"
 
-SensorDescriptionFactory::SensorDescriptionFactory() {
-  for (int i = 0; i < Sensor::Type::kNumTypes; i++) {
-    descriptions[i] = *SensorDescriptionFactory::getDescription(
-        static_cast<Sensor::Type>(i));
-  }
-}
-
-struct sensor_t const * SensorDescriptionFactory::getDescriptions() {
-  return descriptions;
-}
-
-bool SensorDescriptionFactory::areFlagsSet(int handle, uint32_t flags) {
-  if ((handle < 0) || (handle >= Sensor::Type::kNumTypes)) {
-    return false;
-  }
-
-  return (descriptions[handle].flags & flags) == flags;
-}
+bool SensorDescriptionFactory::initialized = false;
+struct sensor_t SensorDescriptionFactory::descriptions[Sensor::Type::kNumTypes];
 
 struct sensor_t const *
 SensorDescriptionFactory::getDescription(Sensor::Type type) {
@@ -57,4 +41,30 @@ SensorDescriptionFactory::getDescription(Sensor::Type type) {
     ALOGE("%s: Failed to get sensor %d description.",__func__, type);
   }
   return nullptr;
+}
+
+struct sensor_t const * SensorDescriptionFactory::getDescriptions() {
+  init();
+
+  return descriptions;
+}
+
+bool SensorDescriptionFactory::areFlagsSet(int handle, uint32_t flags) {
+  if ((handle < 0) || (handle >= Sensor::Type::kNumTypes)) {
+    return false;
+  }
+
+  init();
+
+  return (descriptions[handle].flags & flags) == flags;
+}
+
+void SensorDescriptionFactory::init() {
+  if (!SensorDescriptionFactory::initialized) {
+    for (int i = 0; i < Sensor::Type::kNumTypes; i++) {
+      descriptions[i] = *SensorDescriptionFactory::getDescription(
+          static_cast<Sensor::Type>(i));
+    }
+    SensorDescriptionFactory::initialized = true;
+  }
 }

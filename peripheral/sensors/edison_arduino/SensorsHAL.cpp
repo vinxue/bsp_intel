@@ -26,8 +26,6 @@
 
 int gPollFd;
 
-SensorDescriptionFactory SensorContext::sensorDescriptionFactory;
-
 SensorContext::SensorContext(const hw_module_t* module) {
   memset(&device, 0, sizeof(device));
 
@@ -152,7 +150,7 @@ int SensorContext::flush(int handle) {
   }
 
   /* flush doesn't apply to one-shot sensors */
-  if (SensorContext::sensorDescriptionFactory.areFlagsSet(
+  if (SensorDescriptionFactory::areFlagsSet(
       handle, SENSOR_FLAG_ONE_SHOT_MODE))
     return -EINVAL;
 
@@ -225,7 +223,7 @@ static struct hw_module_methods_t sensors_module_methods = {
 static int get_sensors_list(struct sensors_module_t* module,
                             struct sensor_t const** list) {
   if (!list) return 0;
-  *list = SensorContext::getSensorDescriptions();
+  *list = SensorDescriptionFactory::getDescriptions();
   return Sensor::Type::kNumTypes;
 }
 

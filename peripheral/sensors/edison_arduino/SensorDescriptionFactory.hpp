@@ -29,34 +29,35 @@ class SensorDescriptionFactory {
   public:
 
     /**
-     * SensorDescriptionFactory constructor
-    */
-    SensorDescriptionFactory();
-
-    /**
-     * get all available sensor descriptions
-     * @return array of sensor description data structures
-     */
-    struct sensor_t const * getDescriptions();
-
-    /**
-     * check if a sensor description has certain flags set
-     * @param handle sensor type identifier
-     * @param flags flags to check
-     * @return true if flags are set, false otherwise
-     */
-    bool areFlagsSet(int handle, uint32_t flags);
-
-  private:
-
-    /*
      * Retrieve a sensor description of a certain type
      * @param type sensor type
      * @return pointer to a description data structure
      */
     static struct sensor_t const * getDescription(Sensor::Type type);
 
-    struct sensor_t descriptions[Sensor::Type::kNumTypes];
+    /**
+     * Get all available sensor descriptions
+     * @return array of sensor description data structures
+     */
+    static struct sensor_t const * getDescriptions();
+
+    /**
+     * Check if a sensor description has certain flags set
+     * @param handle sensor type identifier
+     * @param flags flags to check
+     * @return true if flags are set, false otherwise
+     */
+    static bool areFlagsSet(int handle, uint32_t flags);
+
+  private:
+
+    /*
+     * Initialize static members
+     */
+    static void init();
+
+    static struct sensor_t descriptions[Sensor::Type::kNumTypes];
+    static bool initialized;
 };
 
 #endif  // SENSOR_DESCRIPTION_FACTORY_HPP

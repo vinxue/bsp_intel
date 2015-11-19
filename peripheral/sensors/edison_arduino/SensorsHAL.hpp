@@ -42,14 +42,6 @@ class SensorContext {
      */
     ~SensorContext();
 
-    /**
-     * Get all supported sensor descriptions
-     * @return array of sensor descriptions
-     */
-    static struct sensor_t const * getSensorDescriptions() {
-      return SensorContext::sensorDescriptionFactory.getDescriptions();
-    }
-
   private:
     int activate(int handle, int enabled);
     int setDelay(int handle, int64_t ns);
@@ -71,7 +63,6 @@ class SensorContext {
     static int FlushWrapper(sensors_poll_device_1_t* dev, int handle);
 
     Sensor * sensors[Sensor::Type::kNumTypes];
-    static SensorDescriptionFactory sensorDescriptionFactory;
 };
 
 #endif  // SENSORS_HAL_HPP
