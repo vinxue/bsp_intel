@@ -81,7 +81,7 @@ void SensorDescriptionFactory::init() {
     }
 
     try {
-      gpio = new mraa::Gpio(kTriStateAllGpioPin);
+      gpio = new mraa::Gpio(kTriStateAllGpioPin, true, true);
     } catch(...) {}
 
     if (gpio == NULL) {
