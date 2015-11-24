@@ -48,6 +48,8 @@ TARGET_KERNEL_SRC := hardware/bsp/kernel/intel/edison-3.10
 TARGET_KERNEL_DEFCONFIG := i386_brillo_edison_defconfig
 TARGET_KERNEL_CONFIGS := $(realpath $(LOCAL_PATH)/soc.kconf)
 
+TARGET_BOOTCTRL_HAL := intel
+
 # Bluetooth product packages.
 DEVICE_PACKAGES += \
     bt_bcm
@@ -61,7 +63,7 @@ DEVICE_PACKAGES += \
 
 # Boot control HAL package.
 DEVICE_PACKAGES += \
-    bootctrl.edison
+    bootctrl.$(TARGET_DEVICE)
 
 # Lights HAL package.
 DEVICE_PACKAGES += \
