@@ -118,6 +118,11 @@ class Sensor {
      */
     int64_t getDelay() { return delay; }
 
+    /**
+     * Gravitational acceleration constant in m/s^2
+     */
+    static const float kGravitationalAcceleration;
+
   protected:
 
     /**

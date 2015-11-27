@@ -45,6 +45,9 @@ MMA7660Accelerometer::~MMA7660Accelerometer() {}
 
 int MMA7660Accelerometer::pollEvents(sensors_event_t* data, int count) {
   getAcceleration(&data->acceleration.x, &data->acceleration.y, &data->acceleration.z);
+  data->acceleration.x *= Sensor::kGravitationalAcceleration;
+  data->acceleration.y *= Sensor::kGravitationalAcceleration;
+  data->acceleration.z *= Sensor::kGravitationalAcceleration;
   return 1;
 }
 

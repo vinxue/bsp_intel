@@ -21,6 +21,8 @@
 
 /* maximum delay: 1000ms */
 const int64_t kMaxDelay = 1000000000;
+/* Gravitational acceleration constant in m/s^2 */
+const float Sensor::kGravitationalAcceleration = 9.81f;
 
 Sensor::Sensor() : acquisitionThread(nullptr), handle(-1), type(-1), delay(kMaxDelay) {}
 

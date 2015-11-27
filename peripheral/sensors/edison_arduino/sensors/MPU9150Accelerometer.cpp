@@ -47,6 +47,9 @@ MPU9150Accelerometer::~MPU9150Accelerometer() {}
 int MPU9150Accelerometer::pollEvents(sensors_event_t* data, int count) {
   update();
   getAccelerometer(&data->acceleration.x, &data->acceleration.y, &data->acceleration.z);
+  data->acceleration.x *= Sensor::kGravitationalAcceleration;
+  data->acceleration.y *= Sensor::kGravitationalAcceleration;
+  data->acceleration.z *= Sensor::kGravitationalAcceleration;
   return 1;
 }
 
