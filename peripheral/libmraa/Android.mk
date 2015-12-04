@@ -35,9 +35,9 @@ LOCAL_SRC_FILES := \
     src/x86/intel_nuc5.c \
     src/x86/intel_minnow_byt_compatible.c
 
-# glob.c pulled in from avahi-daemon (BSD License)
+# glob.c pulled in from NetBSD project (BSD 3-clause License)
 LOCAL_SRC_FILES += \
-    glob.c
+    src/glob.c
 
 LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/include \
