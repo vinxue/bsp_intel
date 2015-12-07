@@ -70,8 +70,6 @@ bool MMA7660::writeByte(uint8_t reg, uint8_t byte)
 
   if (rv != MRAA_SUCCESS)
     {
-      cerr << __FUNCTION__ << ": mraa_i2c_write_byte() failed." << endl;
-      mraa_result_print(rv);
       return false;
     }
 
