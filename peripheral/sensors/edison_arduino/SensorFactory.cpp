@@ -20,26 +20,20 @@
 #include "sensors/Sensors.hpp"
 
 Sensor * SensorFactory::createSensor(Sensor::Type type) {
-  try {
-    switch(type) {
-      case Sensor::Type::kMPU9150Accelerometer:
-        return new MPU9150Accelerometer(
-            SensorDescriptionFactory::getI2cBusNumber(),
-            MPU9150_DEFAULT_I2C_ADDR, AK8975_DEFAULT_I2C_ADDR, false);
-        break;
-      case Sensor::Type::kMMA7660Accelerometer:
-        return new MMA7660Accelerometer(
-            SensorDescriptionFactory::getI2cBusNumber(),
-            MMA7660_DEFAULT_I2C_ADDR);
-        break;
-      case Sensor::Type::kGroveLight:
-        return new GroveLight(0);
-        break;
-      default:
-        ALOGE("%s: No %d sensor available.",__func__, type);
-    }
-  } catch (const std::runtime_error& e) {
-    ALOGE("%s: Failed to instantiate sensor %d.",__func__, type);
+  switch(type) {
+    case Sensor::Type::kMPU9150Accelerometer:
+      return new MPU9150Accelerometer(
+          SensorDescriptionFactory::getI2cBusNumber(),
+          MPU9150_DEFAULT_I2C_ADDR, AK8975_DEFAULT_I2C_ADDR, false);
+    case Sensor::Type::kMMA7660Accelerometer:
+      return new MMA7660Accelerometer(
+          SensorDescriptionFactory::getI2cBusNumber(),
+          MMA7660_DEFAULT_I2C_ADDR);
+    case Sensor::Type::kGroveLight:
+      return new GroveLight(0);
+    default:
+      ALOGE("%s: No %d sensor available.", __func__, type);
   }
+
   return nullptr;
 }

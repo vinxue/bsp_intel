@@ -29,23 +29,17 @@ struct sensor_t SensorDescriptionFactory::descriptions[Sensor::Type::kNumTypes];
 
 struct sensor_t const *
 SensorDescriptionFactory::getDescription(Sensor::Type type) {
-  try {
-    switch(type) {
-      case Sensor::Type::kMPU9150Accelerometer:
-        return &MPU9150Accelerometer::kSensorDescription;
-        break;
-      case Sensor::Type::kMMA7660Accelerometer:
-        return &MMA7660Accelerometer::kSensorDescription;
-        break;
-      case Sensor::Type::kGroveLight:
-        return &GroveLight::kSensorDescription;
-        break;
-      default:
-        ALOGE("%s: No %d sensor description available.",__func__, type);
-    }
-  } catch (const std::runtime_error& e) {
-    ALOGE("%s: Failed to get sensor %d description.",__func__, type);
+  switch(type) {
+    case Sensor::Type::kMPU9150Accelerometer:
+      return &MPU9150Accelerometer::kSensorDescription;
+    case Sensor::Type::kMMA7660Accelerometer:
+      return &MMA7660Accelerometer::kSensorDescription;
+    case Sensor::Type::kGroveLight:
+      return &GroveLight::kSensorDescription;
+    default:
+      ALOGE("%s: No %d sensor description available.", __func__, type);
   }
+
   return nullptr;
 }
 

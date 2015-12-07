@@ -55,7 +55,7 @@ int SensorContext::activate(int handle, int enabled) {
   int rc = 0;
 
   if (enabled != 0 && enabled != 1) {
-    ALOGE("%s: Invaled parameter", __func__);
+    ALOGE("%s: Invalid parameter", __func__);
     return -EINVAL;
   }
 
@@ -71,6 +71,9 @@ int SensorContext::activate(int handle, int enabled) {
           return -1;
         }
         rc = sensors[handle]->activate(handle, enabled);
+        if (rc != 0) {
+          goto delete_sensor;
+        }
       } else {
         return 0;
       }
@@ -83,11 +86,21 @@ int SensorContext::activate(int handle, int enabled) {
         return 0;
       }
     }
+
     return rc;
-  } catch (const std::runtime_error& e) {
-    ALOGE("%s: Failed to activate sensor(s). keep running", __func__);
-    return -1;
+  } catch (const std::exception& e) {
+    /* The upper layer doesn't expect exceptions. Catch them all. */
+    ALOGE("%s: Failed to %s sensor %d. Error message: %s.",
+        __func__, enabled ? "activate" : "deactivate", handle, e.what());
   }
+
+delete_sensor:
+  if (sensors[handle] != nullptr) {
+    delete sensors[handle];
+    sensors[handle] = nullptr;
+  }
+
+  return -1;
 }
 
 int SensorContext::setDelay(int handle, int64_t ns) {
