@@ -36,12 +36,13 @@
 #define MRAA_MAIN_PLATFORM_OFFSET 0
 #define MRAA_SUB_PLATFORM_OFFSET 1
 
-
-#define MRAA_RETURN_FOR_ERROR(x) do { \
-                                      mraa_result_t t; \
-                                      t = x; \
-                                      if (t != MRAA_SUCCESS) \
-                                      return t;} while(0)
+/** Executes function func and returns its result in case of error
+ */
+#define MRAA_RETURN_FOR_ERROR(func) do { \
+                                      mraa_result_t res; \
+                                      res = func; \
+                                      if (res != MRAA_SUCCESS) \
+                                      return res;} while(0)
 
 /** @file
  *

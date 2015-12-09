@@ -131,7 +131,7 @@ mraa_uart_init(int index)
     }
 
     if (mraa_is_sub_platform_id(index)) {
-        syslog(LOG_NOTICE, "pwm: Using sub platform is not supported");
+        syslog(LOG_NOTICE, "uart: Using sub platform is not supported");
         return NULL;
     }
 
@@ -352,8 +352,8 @@ mraa_uart_set_mode(mraa_uart_context dev, int bytesize, mraa_uart_parity_t parit
             termio.c_cflag &= ~(PARENB | PARODD);
             break;
         case MRAA_UART_PARITY_EVEN:
+            termio.c_cflag |= PARENB;
             termio.c_cflag &= ~PARODD;
-            termio.c_cflag |= PARODD;
             break;
         case MRAA_UART_PARITY_ODD:
             termio.c_cflag |= PARENB | PARODD;

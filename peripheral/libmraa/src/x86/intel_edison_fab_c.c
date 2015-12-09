@@ -534,6 +534,11 @@ mraa_intel_edsion_mb_gpio_mode(mraa_gpio_context dev, mraa_gpio_mode_t mode)
 
     char filepath[MAX_SIZE];
 
+    mraa_gpio_context mode_gpio = mraa_gpio_init_raw(dev->pin);
+    if (mode_gpio == NULL) {
+        return MRAA_ERROR_NO_RESOURCES;
+    }
+
     // first try SYSFS_CLASS_GPIO path
     snprintf(filepath, MAX_SIZE, SYSFS_CLASS_GPIO "/gpio%d/pullmode", dev->pin);
     int drive = open(filepath, O_WRONLY);
@@ -545,6 +550,7 @@ mraa_intel_edsion_mb_gpio_mode(mraa_gpio_context dev, mraa_gpio_mode_t mode)
 
     if (drive == -1) {
         syslog(LOG_ERR, "edison: Failed to open drive for writing");
+        mraa_gpio_close(mode_gpio);
         return MRAA_ERROR_INVALID_RESOURCE;
     }
 
@@ -552,6 +558,7 @@ mraa_intel_edsion_mb_gpio_mode(mraa_gpio_context dev, mraa_gpio_mode_t mode)
     int length;
     switch (mode) {
         case MRAA_GPIO_STRONG:
+            mraa_gpio_close(mode_gpio);
             close(drive);
             return MRAA_SUCCESS;
         case MRAA_GPIO_PULLUP:
@@ -564,15 +571,18 @@ mraa_intel_edsion_mb_gpio_mode(mraa_gpio_context dev, mraa_gpio_mode_t mode)
             length = snprintf(bu, sizeof(bu), "nopull");
             break;
         default:
+            mraa_gpio_close(mode_gpio);
             close(drive);
             return MRAA_ERROR_FEATURE_NOT_IMPLEMENTED;
     }
     if (write(drive, bu, length * sizeof(char)) == -1) {
         syslog(LOG_ERR, "edison: Failed to write to drive mode");
+        mraa_gpio_close(mode_gpio);
         close(drive);
         return MRAA_ERROR_INVALID_RESOURCE;
     }
 
+    mraa_gpio_close(mode_gpio);
     if (close(drive) != 0) {
         return MRAA_ERROR_INVALID_RESOURCE;
     }

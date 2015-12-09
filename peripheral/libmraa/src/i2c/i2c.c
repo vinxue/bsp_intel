@@ -120,7 +120,7 @@ mraa_i2c_init_internal(mraa_adv_func_t* advance_func, unsigned int bus)
 init_internal_cleanup:
     if (status == MRAA_SUCCESS) {
         return dev;
-	} else {
+    } else {
         if (dev != NULL)
             free(dev);
         return NULL;
@@ -202,21 +202,25 @@ int
 mraa_i2c_read(mraa_i2c_context dev, uint8_t* data, int length)
 {
     int bytes_read = 0;
-    if (IS_FUNC_DEFINED(dev, i2c_read_replace))
+    if (IS_FUNC_DEFINED(dev, i2c_read_replace)) {
         bytes_read = dev->advance_func->i2c_read_replace(dev, data, length);
-    else
+    }
+    else {
         bytes_read = read(dev->fh, data, length);
-   if (bytes_read == length)
-      return length;
-   else
-      return 0;
+    }
+    if (bytes_read == length) {
+        return length;
+    }
+
+    return 0;
 }
 
 uint8_t
 mraa_i2c_read_byte(mraa_i2c_context dev)
 {
+    if (IS_FUNC_DEFINED(dev, i2c_read_byte_replace))
+        return dev->advance_func->i2c_read_byte_replace(dev);
     i2c_smbus_data_t d;
-
     if (mraa_i2c_smbus_access(dev->fh, I2C_SMBUS_READ, I2C_NOCMD, I2C_SMBUS_BYTE, &d) < 0) {
         syslog(LOG_ERR, "i2c: Failed to write");
         return 0;
@@ -240,8 +244,9 @@ mraa_i2c_read_byte_data(mraa_i2c_context dev, uint8_t command)
 uint16_t
 mraa_i2c_read_word_data(mraa_i2c_context dev, uint8_t command)
 {
+    if (IS_FUNC_DEFINED(dev, i2c_read_word_data_replace))
+        return dev->advance_func->i2c_read_word_data_replace(dev, command);
     i2c_smbus_data_t d;
-
     if (mraa_i2c_smbus_access(dev->fh, I2C_SMBUS_READ, command, I2C_SMBUS_WORD_DATA, &d) < 0) {
         syslog(LOG_ERR, "i2c: Failed to write");
         return 0;
@@ -252,6 +257,8 @@ mraa_i2c_read_word_data(mraa_i2c_context dev, uint8_t command)
 int
 mraa_i2c_read_bytes_data(mraa_i2c_context dev, uint8_t command, uint8_t* data, int length)
 {
+    if (IS_FUNC_DEFINED(dev, i2c_read_bytes_data_replace))
+        return dev->advance_func->i2c_read_bytes_data_replace(dev, command, data, length);
     struct i2c_rdwr_ioctl_data d;
     struct i2c_msg m[2];
 
@@ -273,6 +280,8 @@ mraa_i2c_read_bytes_data(mraa_i2c_context dev, uint8_t command, uint8_t* data, i
 mraa_result_t
 mraa_i2c_write(mraa_i2c_context dev, const uint8_t* data, int length)
 {
+    if (IS_FUNC_DEFINED(dev, i2c_write_replace))
+        return dev->advance_func->i2c_write_replace(dev, data, length);
     i2c_smbus_data_t d;
     int i;
     uint8_t command = data[0];
