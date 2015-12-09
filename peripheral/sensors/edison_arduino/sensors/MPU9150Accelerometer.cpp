@@ -16,12 +16,14 @@
 
 #include <cutils/log.h>
 #include "MPU9150Accelerometer.hpp"
+#include "SensorsHAL.hpp"
+#include "SensorUtils.hpp"
 
-struct sensor_t const MPU9150Accelerometer::kSensorDescription = {
+struct sensor_t MPU9150Accelerometer::sensorDescription = {
   name: "MPU9150/9250 Accelerometer",
   vendor: "Unknown",
   version: 1,
-  handle: Sensor::Type::kMPU9150Accelerometer,
+  handle: -1,
   type: SENSOR_TYPE_ACCELEROMETER,
   maxRange: 1000.0f,
   resolution: 100.0f,
@@ -36,9 +38,20 @@ struct sensor_t const MPU9150Accelerometer::kSensorDescription = {
   reserved: {},
 };
 
-MPU9150Accelerometer::MPU9150Accelerometer(int bus, int address, int magAddress, bool enableAk8975)
-  : MPU9150 (bus, address, magAddress, enableAk8975) {
-  handle = Sensor::Type::kMPU9150Accelerometer;
+Sensor * MPU9150Accelerometer::createSensor(int pollFd) {
+  return new MPU9150Accelerometer(pollFd,
+      SensorUtils::getI2cBusNumber(),
+      MPU9150_DEFAULT_I2C_ADDR, AK8975_DEFAULT_I2C_ADDR, false);
+}
+
+void MPU9150Accelerometer::initModule() {
+  SensorContext::addSensorModule(&sensorDescription, createSensor);
+}
+
+MPU9150Accelerometer::MPU9150Accelerometer(int pollFd, int bus, int address,
+    int magAddress, bool enableAk8975)
+    : MPU9150(bus, address, magAddress, enableAk8975), pollFd(pollFd) {
+  handle = sensorDescription.handle;
   type = SENSOR_TYPE_ACCELEROMETER;
 }
 
@@ -54,18 +67,13 @@ int MPU9150Accelerometer::pollEvents(sensors_event_t* data, int count) {
 }
 
 int MPU9150Accelerometer::activate(int handle, int enabled) {
-  if (enabled == 1) {
+  if (enabled) {
     if (init() != true) {
       ALOGE("%s: Failed to initialize sensor error", __func__);
       return -1;
     }
-
-    /* start the acquisition thread */
-    return activateAcquisitionThread(handle, enabled);
-  } else if (enabled == 0) {
-    /* stop the acquisition thread */
-    return activateAcquisitionThread(handle, enabled);
   }
 
-  return -1;
+  /* start or stop the acquisition thread */
+  return activateAcquisitionThread(pollFd, handle, enabled);
 }

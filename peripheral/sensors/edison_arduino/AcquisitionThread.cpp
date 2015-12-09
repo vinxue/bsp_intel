@@ -22,8 +22,6 @@
 #include "AcquisitionThread.hpp"
 #include "Utils.hpp"
 
-extern int gPollFd;
-
 void* AcquisitionThread::acquisitionRoutine(void *param) {
   AcquisitionThread *acquisitionThread = reinterpret_cast<AcquisitionThread *>(param);
   Sensor *sensor = nullptr;
@@ -80,8 +78,8 @@ exit:
   return nullptr;
 }
 
-AcquisitionThread::AcquisitionThread(Sensor *sensor) :
-    sensor(sensor), initialized(false) {
+AcquisitionThread::AcquisitionThread(int pollFd, Sensor *sensor)
+    : pollFd(pollFd), sensor(sensor), initialized(false) {
   pipeFds[0] = pipeFds[1] = -1;
 }
 
@@ -128,8 +126,8 @@ bool AcquisitionThread::init() {
   ev.events = EPOLLIN;
   ev.data.u32 = sensor->getHandle();
 
-  /* add read pipe fd to gPollFd */
-  rc = epoll_ctl(gPollFd, EPOLL_CTL_ADD, pipeFds[0] , &ev);
+  /* add read pipe fd to pollFd */
+  rc = epoll_ctl(pollFd, EPOLL_CTL_ADD, pipeFds[0] , &ev);
   if (rc != 0) {
     ALOGE("%s: Cannot add the read file descriptor to poll set", __func__);
     goto epoll_err;
@@ -146,7 +144,7 @@ bool AcquisitionThread::init() {
   return true;
 
 thread_create_err:
-  epoll_ctl(gPollFd, EPOLL_CTL_DEL, pipeFds[0], nullptr);
+  epoll_ctl(pollFd, EPOLL_CTL_DEL, pipeFds[0], nullptr);
 epoll_err:
   close(pipeFds[0]);
   close(pipeFds[1]);
@@ -197,14 +195,17 @@ AcquisitionThread::~AcquisitionThread() {
   if (initialized) {
     readPipeEnd = pipeFds[0];
     writePipeEnd = pipeFds[1];
-    epoll_ctl(gPollFd, EPOLL_CTL_DEL, readPipeEnd, nullptr);
+    epoll_ctl(pollFd, EPOLL_CTL_DEL, readPipeEnd, nullptr);
 
+    /* take the mutex to correctly signal the thread */
+    pthread_mutex_lock(&pthreadMutex);
     pipeFds[0] = pipeFds[1] = -1;
     close(readPipeEnd);
     close(writePipeEnd);
 
     /* wakeup and wait for the thread */
     pthread_cond_signal(&pthreadCond);
+    pthread_mutex_unlock(&pthreadMutex);
     pthread_join(pthread, nullptr);
 
     pthread_cond_destroy(&pthreadCond);

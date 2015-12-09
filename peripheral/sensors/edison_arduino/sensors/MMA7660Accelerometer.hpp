@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef MMA7660_ACCELEROMETER_H
-#define MMA7660_ACCELEROMETER_H
+#ifndef MMA7660_ACCELEROMETER_HPP
+#define MMA7660_ACCELEROMETER_HPP
 
 #include <hardware/sensors.h>
 #include "Sensor.hpp"
@@ -34,10 +34,11 @@ class MMA7660Accelerometer : public Sensor, public upm::MMA7660 {
 
     /**
      * MMA7660Accelerometer constructor
+     * @param pollFd poll file descriptor
      * @param bus number of the bus
      * @param address device address
      */
-    MMA7660Accelerometer(int bus, uint8_t address);
+    MMA7660Accelerometer(int pollFd, int bus, uint8_t address);
 
     /**
      * MMA7660Accelerometer destructor
@@ -60,11 +61,13 @@ class MMA7660Accelerometer : public Sensor, public upm::MMA7660 {
      */
     int activate(int handle, int enabled);
 
-    /**
-     * Data structure which describes the sensor type
-     */
-    static struct sensor_t const kSensorDescription;
+private:
+    static Sensor * createSensor(int pollFd);
+    static void initModule() __attribute__((constructor
+        (DEFAULT_SENSOR_CONSTRUCTOR_PRIORITY)));
+
+    int pollFd;
+    static struct sensor_t sensorDescription;
 };
 
-
-#endif  // MMA7660_ACCELEROMETER_H
+#endif  // MMA7660_ACCELEROMETER_HPP

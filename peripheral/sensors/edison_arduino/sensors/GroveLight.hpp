@@ -30,12 +30,12 @@ struct sensors_event_t;
  */
 class GroveLight : public Sensor, public upm::GroveLight {
   public:
-
     /**
      * GroveLight constructor
+     * @param pollFd poll file descriptor
      * @param pin number of the analog input
      */
-    GroveLight(int pin);
+    GroveLight(int pollFd, int pin);
 
     /**
      * GroveLight destructor
@@ -58,11 +58,13 @@ class GroveLight : public Sensor, public upm::GroveLight {
      */
     int activate(int handle, int enabled);
 
-    /**
-     * Data structure which describes the sensor type
-     */
-    static struct sensor_t const kSensorDescription;
-};
+  private:
+    static Sensor * createSensor(int pollFd);
+    static void initModule() __attribute__((constructor
+        (DEFAULT_SENSOR_CONSTRUCTOR_PRIORITY)));
 
+    int pollFd;
+    static struct sensor_t sensorDescription;
+};
 
 #endif  // GROVE_LIGHT_HPP

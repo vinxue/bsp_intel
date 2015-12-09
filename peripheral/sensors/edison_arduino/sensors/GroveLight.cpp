@@ -16,12 +16,13 @@
 
 #include <cutils/log.h>
 #include "GroveLight.hpp"
+#include "SensorsHAL.hpp"
 
-struct sensor_t const GroveLight::kSensorDescription = {
+struct sensor_t GroveLight::sensorDescription = {
   name: "Grove Light Sensor",
   vendor: "Unknown",
   version: 1,
-  handle: Sensor::Type::kGroveLight,
+  handle: -1,
   type: SENSOR_TYPE_LIGHT,
   maxRange: 1000.0f,
   resolution: 1.0f,
@@ -36,8 +37,16 @@ struct sensor_t const GroveLight::kSensorDescription = {
   reserved: {},
 };
 
-GroveLight::GroveLight(int pin) : upm::GroveLight(pin) {
-  handle = Sensor::Type::kGroveLight;
+Sensor * GroveLight::createSensor(int pollFd) {
+  return new GroveLight(pollFd, 0);
+}
+
+void GroveLight::initModule() {
+  SensorContext::addSensorModule(&sensorDescription, createSensor);
+}
+
+GroveLight::GroveLight(int pollFd, int pin) : upm::GroveLight(pin), pollFd(pollFd) {
+  handle = sensorDescription.handle;
   type = SENSOR_TYPE_LIGHT;
 }
 
@@ -50,5 +59,5 @@ int GroveLight::pollEvents(sensors_event_t* data, int count) {
 
 int GroveLight::activate(int handle, int enabled) {
   /* start or stop the acquisition thread */
-  return activateAcquisitionThread(handle, enabled);
+  return activateAcquisitionThread(pollFd, handle, enabled);
 }

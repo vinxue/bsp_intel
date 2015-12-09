@@ -16,12 +16,14 @@
 
 #include <cutils/log.h>
 #include "MMA7660Accelerometer.hpp"
+#include "SensorsHAL.hpp"
+#include "SensorUtils.hpp"
 
-struct sensor_t const MMA7660Accelerometer::kSensorDescription = {
+struct sensor_t MMA7660Accelerometer::sensorDescription = {
   name: "MMA7660 Accelerometer",
   vendor: "Unknown",
   version: 1,
-  handle: Sensor::Type::kMMA7660Accelerometer,
+  handle: -1,
   type: SENSOR_TYPE_ACCELEROMETER,
   maxRange: 1000.0f,
   resolution: 100.0f,
@@ -36,8 +38,19 @@ struct sensor_t const MMA7660Accelerometer::kSensorDescription = {
   reserved: {},
 };
 
-MMA7660Accelerometer::MMA7660Accelerometer(int bus, uint8_t address) : MMA7660 (bus, address) {
-  handle = Sensor::Type::kMMA7660Accelerometer;
+Sensor * MMA7660Accelerometer::createSensor(int pollFd) {
+  return new MMA7660Accelerometer(pollFd,
+      SensorUtils::getI2cBusNumber(),
+      MMA7660_DEFAULT_I2C_ADDR);
+}
+
+void MMA7660Accelerometer::initModule() {
+  SensorContext::addSensorModule(&sensorDescription, createSensor);
+}
+
+MMA7660Accelerometer::MMA7660Accelerometer(int pollFd, int bus, uint8_t address)
+    : MMA7660 (bus, address), pollFd(pollFd) {
+  handle = sensorDescription.handle;
   type = SENSOR_TYPE_ACCELEROMETER;
 }
 
@@ -54,20 +67,15 @@ int MMA7660Accelerometer::pollEvents(sensors_event_t* data, int count) {
 // MMA7660 accelerometer sensor implementation
 int MMA7660Accelerometer::activate(int handle, int enabled) {
   setModeStandby();
-  if (enabled == 1) {
+  if (enabled) {
     if (!setSampleRate(upm::MMA7660::AUTOSLEEP_64)) {
       ALOGE("%s: Failed to set sensor SampleRate", __func__);
       return -1;
     }
 
     setModeActive();
-
-    /* start the acquisition thread */
-    return activateAcquisitionThread(handle, enabled);
-  }  else if (enabled == 0) {
-    /* stop the acquisition thread */
-    return activateAcquisitionThread(handle, enabled);
   }
 
-  return -1;
+  /* start or stop the acquisition thread */
+  return activateAcquisitionThread(pollFd, handle, enabled);
 }

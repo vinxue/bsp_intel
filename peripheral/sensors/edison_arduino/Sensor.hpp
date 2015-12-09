@@ -17,6 +17,13 @@
 #ifndef SENSOR_HPP
 #define SENSOR_HPP
 
+/**
+ * The default sensor __attribute__((constructor)) priority is represented by
+ * the first available priority value. The [0, 100] ones are used by the system
+ * implementation.
+ */
+#define DEFAULT_SENSOR_CONSTRUCTOR_PRIORITY 101
+
 #include "AcquisitionThread.hpp"
 
 struct sensors_event_t;
@@ -30,17 +37,6 @@ class AcquisitionThread;
  */
 class Sensor {
   public:
-    /**
-     * Enum for type specification
-     */
-    enum Type {
-      kMMA7660Accelerometer,
-      kMPU9150Accelerometer,
-      kGroveLight,
-      /* NEW sensors: index here above kNumTypes */
-      kNumTypes
-    };
-
     /**
      * Sensor constructor
      */
@@ -124,14 +120,14 @@ class Sensor {
     static const float kGravitationalAcceleration;
 
   protected:
-
     /**
      * Enable or disable the associated acquisition thread
+     * @param pollFd poll file descriptor
      * @param handle sensor identifier
      * @param enabled 1 for enabling and 0 for disabling
      * @return 0 on success and a negative error number otherwise
      */
-    virtual int activateAcquisitionThread(int handle, int enabled);
+    virtual int activateAcquisitionThread(int pollFd, int handle, int enabled);
 
     AcquisitionThread *acquisitionThread;
     int handle, type;

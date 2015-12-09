@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef MPU9150_ACCELEROMETER_H
-#define MPU9150_ACCELEROMETER_H
+#ifndef MPU9150_ACCELEROMETER_HPP
+#define MPU9150_ACCELEROMETER_HPP
 
 #include <hardware/sensors.h>
 #include "Sensor.hpp"
@@ -30,16 +30,17 @@ struct sensors_event_t;
  */
 class MPU9150Accelerometer : public Sensor, public upm::MPU9150 {
   public:
-
     /**
      * MPU9150Accelerometer constructor
+     * @param pollFd poll file descriptor
      * @param bus number of the bus
      * @param address device address
      * @param magAddress magnetometer address
      * @param enableAk8975 whether to enable AK8975 or not
      */
-    MPU9150Accelerometer(int bus=MPU9150_I2C_BUS, int address=MPU9150_DEFAULT_I2C_ADDR,
-    int magAddress=AK8975_DEFAULT_I2C_ADDR, bool enableAk8975=false);
+    MPU9150Accelerometer(int pollFd, int bus=MPU9150_I2C_BUS,
+        int address=MPU9150_DEFAULT_I2C_ADDR,
+        int magAddress=AK8975_DEFAULT_I2C_ADDR, bool enableAk8975=false);
 
     /**
      * MPU9150Accelerometer destructor
@@ -62,11 +63,12 @@ class MPU9150Accelerometer : public Sensor, public upm::MPU9150 {
      */
     int activate(int handle, int enabled);
 
-    /**
-     * Data structure which describes the sensor type
-     */
-    static struct sensor_t const kSensorDescription;
+  private:
+    static Sensor * createSensor(int pollFd);
+    static void initModule() __attribute__((constructor));
+
+    int pollFd;
+    static struct sensor_t sensorDescription;
 };
 
-
-#endif  // MPU9150_ACCELEROMETER_H
+#endif  // MPU9150_ACCELEROMETER_HPP

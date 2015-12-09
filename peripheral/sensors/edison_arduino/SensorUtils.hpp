@@ -14,26 +14,30 @@
  * limitations under the License.
  */
 
-#ifndef SENSOR_FACTORY_HPP
-#define SENSOR_FACTORY_HPP
-
-#include "Sensor.hpp"
+#ifndef SENSOR_UTILS_HPP
+#define SENSOR_UTILS_HPP
 
 /**
- * SensorFactory implements the Factory design pattern to create sensors
+ * Instantiable factory design pattern class for sensor utils
  *
- * A sensor can be created by calling the createSensor method with
- * the sensor type as argument.
+ * It supports retrieving the i2c sensors bus number
  */
-class SensorFactory {
+class SensorUtils {
   public:
-
     /**
-     * Create a sensor of a certain type
-     * @param type sensor type
-     * @return constructed sensor
+     * Get sensors i2c bus number
+     * @return i2c bus number
      */
-    static Sensor * createSensor(Sensor::Type type);
+    static int getI2cBusNumber();
+
+  private:
+    /*
+     * Initialize static members
+     */
+    static void init();
+
+    static bool initialized;
+    static int i2cBusNumber;
 };
 
-#endif  // SENSOR_FACTORY_HPP
+#endif  // SENSOR_UTILS_HPP

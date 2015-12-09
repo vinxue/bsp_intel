@@ -52,11 +52,11 @@ bool Sensor::readOneEvent(sensors_event_t *event) {
   return true;
 }
 
-int Sensor::activateAcquisitionThread(int handle, int enabled) {
+int Sensor::activateAcquisitionThread(int pollFd, int handle, int enabled) {
   if (enabled) {
     /* create/init acquisition thread if necessary */
     if (acquisitionThread == nullptr) {
-      acquisitionThread = new AcquisitionThread(this);
+      acquisitionThread = new AcquisitionThread(pollFd, this);
       if (!acquisitionThread->init()) {
         ALOGE("%s: Cannot initialize acquisition thread for sensor %d",
             __func__, handle);

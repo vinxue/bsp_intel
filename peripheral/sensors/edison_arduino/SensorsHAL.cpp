@@ -20,13 +20,18 @@
 #include <errno.h>
 #include <sys/epoll.h>
 #include "SensorsHAL.hpp"
-#include "SensorFactory.hpp"
 
-#define MAX_DEVICES  20
+Sensor * (*SensorContext::sensorFactoryFuncs[MAX_DEVICES])(int);
+struct sensor_t SensorContext::sensorDescs[MAX_DEVICES];
+int SensorContext::sensorsNum = 0;
 
-int gPollFd;
+SensorContext::SensorContext(const hw_module_t *module) {
+  /* create the epoll fd used to register the incoming fds */
+  pollFd = epoll_create(MAX_DEVICES);
+  if (pollFd == -1) {
+    throw std::runtime_error("Failed to create poll file descriptor");
+  }
 
-SensorContext::SensorContext(const hw_module_t* module) {
   memset(&device, 0, sizeof(device));
 
   device.common.tag = HARDWARE_DEVICE_TAG;
@@ -39,16 +44,70 @@ SensorContext::SensorContext(const hw_module_t* module) {
   device.batch = BatchWrapper;
   device.flush = FlushWrapper;
 
-  memset(sensors, 0, sizeof(Sensor *) * Sensor::Type::kNumTypes);
+  memset(sensors, 0, sizeof(Sensor *) * MAX_DEVICES);
 }
 
 SensorContext::~SensorContext() {
-  for (int i = 0; i < Sensor::Type::kNumTypes; i++) {
+  int rc;
+
+  for (int i = 0; i < sensorsNum; i++) {
     if (sensors[i]) {
       delete sensors[i];
       sensors[i] = nullptr;
     }
   }
+
+  rc = close(pollFd);
+  if (rc != 0) {
+    ALOGE("Cannot close poll file descriptor");
+  }
+}
+
+int SensorContext::addSensorModule(struct sensor_t *sensorDesc,
+    Sensor * (*sensorFactoryFunc)(int)) {
+  if ((sensorDesc == nullptr) || (sensorFactoryFunc == nullptr)) {
+    ALOGE("%s: cannot add a null sensor", __func__);
+    return -EINVAL;
+  }
+
+  if (sensorsNum >= MAX_DEVICES) {
+    ALOGE("%s: Cannot add more than %d sensors.", __func__, MAX_DEVICES);
+    return -E2BIG;
+  }
+
+  sensorDesc->handle = sensorsNum;
+  sensorDescs[sensorsNum] = *sensorDesc;
+  sensorFactoryFuncs[sensorsNum] = sensorFactoryFunc;
+  sensorsNum++;
+
+  return 0;
+}
+
+int SensorContext::OpenWrapper(const struct hw_module_t *module,
+                        const char* id, struct hw_device_t **device) {
+  SensorContext *ctx;
+
+  try {
+    ctx = new SensorContext(module);
+  } catch (const std::runtime_error& e) {
+    ALOGE("%s: Failed to open sensors hal. Error message: %s",
+        __func__, e.what());
+    return -1;
+  }
+
+  *device = &ctx->device.common;
+
+  return 0;
+}
+
+int SensorContext::GetSensorsListWrapper(struct sensors_module_t *module,
+                            struct sensor_t const **list) {
+  if (!list || (sensorsNum == 0)) {
+    return 0;
+  }
+
+  *list = sensorDescs;
+  return sensorsNum;
 }
 
 int SensorContext::activate(int handle, int enabled) {
@@ -59,14 +118,14 @@ int SensorContext::activate(int handle, int enabled) {
     return -EINVAL;
   }
 
-  if (handle < 0 || handle >= Sensor::Type::kNumTypes) {
+  if (handle < 0 || handle >= sensorsNum) {
     return -EINVAL;
   }
 
   try {
     if (enabled) {
       if (sensors[handle] == nullptr) {
-        sensors[handle] = SensorFactory::createSensor(static_cast<Sensor::Type>(handle));
+        sensors[handle] = sensorFactoryFuncs[handle](pollFd);
         if (sensors[handle] == nullptr) {
           return -1;
         }
@@ -104,7 +163,7 @@ delete_sensor:
 }
 
 int SensorContext::setDelay(int handle, int64_t ns) {
-  if (handle < 0 || handle >= Sensor::Type::kNumTypes) {
+  if (handle < 0 || handle >= sensorsNum) {
     return -EINVAL;
   }
 
@@ -116,14 +175,14 @@ int SensorContext::setDelay(int handle, int64_t ns) {
   return sensors[handle]->setDelay(handle, ns);
 }
 
-int SensorContext::pollEvents(sensors_event_t* data, int count) {
+int SensorContext::pollEvents(sensors_event_t *data, int count) {
   int nfds, i;
   struct epoll_event ev[MAX_DEVICES];
   int returned_events = 0;
 
   /* return only when at least one event is available */
   while(true) {
-    nfds = epoll_wait(gPollFd, ev, MAX_DEVICES, -1);
+    nfds = epoll_wait(pollFd, ev, MAX_DEVICES, -1);
     for(i = 0; i < nfds && returned_events < count; i++) {
       if (ev[i].events == EPOLLIN) {
 
@@ -140,7 +199,7 @@ int SensorContext::pollEvents(sensors_event_t* data, int count) {
 
 int SensorContext::batch(int handle, int flags,
                          int64_t period_ns, int64_t timeout) {
-  if (handle < 0 || handle >= Sensor::Type::kNumTypes) {
+  if (handle < 0 || handle >= sensorsNum) {
     return -EINVAL;
   }
 
@@ -153,7 +212,7 @@ int SensorContext::batch(int handle, int flags,
 }
 
 int SensorContext::flush(int handle) {
-  if (handle < 0 || handle >= Sensor::Type::kNumTypes) {
+  if (handle < 0 || handle >= sensorsNum) {
     return -EINVAL;
   }
 
@@ -163,21 +222,14 @@ int SensorContext::flush(int handle) {
   }
 
   /* flush doesn't apply to one-shot sensors */
-  if (SensorDescriptionFactory::areFlagsSet(
-      handle, SENSOR_FLAG_ONE_SHOT_MODE))
+  if (sensorDescs[handle].flags & SENSOR_FLAG_ONE_SHOT_MODE)
     return -EINVAL;
 
   return sensors[handle]->flush(handle);
 }
 
-int SensorContext::CloseWrapper(hw_device_t* dev) {
-  SensorContext* sensorContext = reinterpret_cast<SensorContext*>(dev);
-  int rc;
-
-  rc = close(gPollFd);
-  if (rc != 0) {
-    ALOGE("Cannot close poll file descriptor");
-  }
+int SensorContext::CloseWrapper(hw_device_t *dev) {
+  SensorContext *sensorContext = reinterpret_cast<SensorContext *>(dev);
 
   if (sensorContext != nullptr) {
     delete sensorContext;
@@ -186,59 +238,35 @@ int SensorContext::CloseWrapper(hw_device_t* dev) {
   return 0;
 }
 
-int SensorContext::ActivateWrapper(sensors_poll_device_t* dev,
+int SensorContext::ActivateWrapper(sensors_poll_device_t *dev,
                                    int handle, int enabled) {
-  return reinterpret_cast<SensorContext*>(dev)->activate(handle, enabled);
+  return reinterpret_cast<SensorContext *>(dev)->activate(handle, enabled);
 }
 
-int SensorContext::SetDelayWrapper(sensors_poll_device_t* dev,
+int SensorContext::SetDelayWrapper(sensors_poll_device_t *dev,
                                    int handle, int64_t ns) {
-  return reinterpret_cast<SensorContext*>(dev)->setDelay(handle, ns);
+  return reinterpret_cast<SensorContext *>(dev)->setDelay(handle, ns);
 }
 
-int SensorContext::PollEventsWrapper(sensors_poll_device_t* dev,
-                                     sensors_event_t* data, int count) {
-  return reinterpret_cast<SensorContext*>(dev)->pollEvents(data, count);
+int SensorContext::PollEventsWrapper(sensors_poll_device_t *dev,
+                                     sensors_event_t *data, int count) {
+  return reinterpret_cast<SensorContext *>(dev)->pollEvents(data, count);
 }
 
-int SensorContext::BatchWrapper(sensors_poll_device_1_t* dev, int handle,
+int SensorContext::BatchWrapper(sensors_poll_device_1_t *dev, int handle,
                                 int flags, int64_t period_ns, int64_t timeout) {
-  return reinterpret_cast<SensorContext*>(dev)->batch(handle, flags, period_ns,
+  return reinterpret_cast<SensorContext *>(dev)->batch(handle, flags, period_ns,
                                                       timeout);
 }
 
-int SensorContext::FlushWrapper(sensors_poll_device_1_t* dev,
+int SensorContext::FlushWrapper(sensors_poll_device_1_t *dev,
                                 int handle) {
-  return reinterpret_cast<SensorContext*>(dev)->flush(handle);
-}
-
-static int open_sensors(const struct hw_module_t* module,
-                        const char* id, struct hw_device_t** device) {
-  SensorContext* ctx;
-
-  ctx = new SensorContext(module);
-  *device = &ctx->device.common;
-
-  /* create the epoll fd used to register the incoming fds */
-  gPollFd = epoll_create(MAX_DEVICES);
-  if (gPollFd == -1) {
-    ALOGE("%s: Failed to create epoll", __func__);
-    return -1;
-  }
-
-  return 0;
+  return reinterpret_cast<SensorContext *>(dev)->flush(handle);
 }
 
 static struct hw_module_methods_t sensors_module_methods = {
-  open: open_sensors,
+  open: SensorContext::OpenWrapper,
 };
-
-static int get_sensors_list(struct sensors_module_t* module,
-                            struct sensor_t const** list) {
-  if (!list) return 0;
-  *list = SensorDescriptionFactory::getDescriptions();
-  return Sensor::Type::kNumTypes;
-}
 
 struct sensors_module_t HAL_MODULE_INFO_SYM = {
     common: {
@@ -252,6 +280,6 @@ struct sensors_module_t HAL_MODULE_INFO_SYM = {
         dso: nullptr,
         reserved: {0},
     },
-    get_sensors_list: get_sensors_list,
+    get_sensors_list: SensorContext::GetSensorsListWrapper,
     set_operation_mode: nullptr
 };

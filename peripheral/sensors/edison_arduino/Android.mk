@@ -21,8 +21,7 @@ LOCAL_CFLAGS += -DLOG_TAG=\"Sensors\" -Wno-unused-parameter
 LOCAL_SHARED_LIBRARIES := libcutils libupm libmraa
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libupm/src/mpu9150/
 LOCAL_SRC_FILES := SensorsHAL.cpp Sensor.cpp AcquisitionThread.cpp Utils.cpp \
-    SensorFactory.cpp \
-    SensorDescriptionFactory.cpp \
+    SensorUtils.cpp \
     sensors/MPU9150Accelerometer.cpp \
     sensors/MMA7660Accelerometer.cpp \
     sensors/GroveLight.cpp

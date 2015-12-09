@@ -36,12 +36,12 @@ class Sensor;
  */
 class AcquisitionThread {
   public:
-
     /**
      * AcquisitionThread constructor
+     * @param pollFd poll file descriptor
      * @param sensor the sensor to associate with the thread
      */
-    AcquisitionThread(Sensor *sensor);
+    AcquisitionThread(int pollFd, Sensor *sensor);
 
     /**
      * AcquistionThread destructor
@@ -87,6 +87,7 @@ class AcquisitionThread {
   private:
     static void * acquisitionRoutine(void *param);
 
+    int pollFd;
     int pipeFds[2];
     pthread_t pthread;
     pthread_condattr_t pthreadCondAttr;
