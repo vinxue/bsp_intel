@@ -640,6 +640,7 @@ static int adev_open_output_stream(struct audio_hw_device *dev,
     } else if (profile_is_sample_rate_valid(out->profile, config->sample_rate)) {
         proxy_config.rate = config->sample_rate;
     } else {
+        ALOGE("%s: The requested sample rate (%d) is not valid", __func__, config->sample_rate);
         proxy_config.rate = config->sample_rate = profile_get_default_sample_rate(out->profile);
         ret = -EINVAL;
     }
@@ -653,6 +654,7 @@ static int adev_open_output_stream(struct audio_hw_device *dev,
         if (profile_is_format_valid(out->profile, fmt)) {
             proxy_config.format = fmt;
         } else {
+            ALOGE("%s: The requested format (0x%x) is not valid", __func__, config->format);
             proxy_config.format = profile_get_default_format(out->profile);
             config->format = audio_format_from_pcm_format(proxy_config.format);
             ret = -EINVAL;
@@ -1016,6 +1018,7 @@ static int adev_open_input_stream(struct audio_hw_device *dev,
     } else if (profile_is_sample_rate_valid(in->profile, config->sample_rate)) {
         proxy_config.rate = config->sample_rate;
     } else {
+        ALOGE("%s: The requested sample rate (%d) is not valid", __func__, config->sample_rate);
         proxy_config.rate = config->sample_rate = profile_get_default_sample_rate(in->profile);
         ret = -EINVAL;
     }
@@ -1029,6 +1032,7 @@ static int adev_open_input_stream(struct audio_hw_device *dev,
         if (profile_is_format_valid(in->profile, fmt)) {
             proxy_config.format = fmt;
         } else {
+            ALOGE("%s: The requested format (0x%x) is not valid", __func__, config->format);
             proxy_config.format = profile_get_default_format(in->profile);
             config->format = audio_format_from_pcm_format(proxy_config.format);
             ret = -EINVAL;
