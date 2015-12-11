@@ -260,6 +260,12 @@ static int set_light_generic(struct light_device_t *base_dev,
 
 	pthread_mutex_lock(&dev->write_mutex);
 
+	if (dev->refs == 0) {
+		ALOGE("%s: The light device is not opened", __func__);
+		pthread_mutex_unlock(&dev->write_mutex);
+		return EINVAL;
+	}
+
 	ALOGV("%s: flashMode:%x, color:%x", __func__, state->flashMode, state->color);
 
 	if (current_state->flashMode) {
