@@ -31,6 +31,11 @@ struct sensors_event_t;
 class MMA7660Accelerometer : public Sensor, public upm::MMA7660 {
   public:
     static const int kMaxRange = 1000;
+    /**
+     * Time period in microseconds (1/64 * 10^6 = 15625) to wait before
+     * requesting events for the default activation sampling rate (64 Hz)
+     */
+    static const int kActivationPeriod = 15625;
 
     /**
      * MMA7660Accelerometer constructor

@@ -74,6 +74,7 @@ int MMA7660Accelerometer::activate(int handle, int enabled) {
     }
 
     setModeActive();
+    usleep(kActivationPeriod);
   }
 
   /* start or stop the acquisition thread */
