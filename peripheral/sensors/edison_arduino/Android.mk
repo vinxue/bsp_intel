@@ -24,7 +24,8 @@ LOCAL_SRC_FILES := SensorsHAL.cpp Sensor.cpp AcquisitionThread.cpp Utils.cpp \
     SensorUtils.cpp \
     sensors/MPU9150Accelerometer.cpp \
     sensors/MMA7660Accelerometer.cpp \
-    sensors/GroveLight.cpp
+    sensors/GroveLight.cpp \
+    sensors/GroveTemperature.cpp
 LOCAL_MODULE := sensors.edison
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_MODULE_TAGS := optional
