@@ -20,14 +20,25 @@ LOCAL_CPPFLAGS:= -Wno-unused-parameter -Wno-error=non-virtual-dtor -fexceptions
 LOCAL_CFLAGS += -DLOG_TAG=\"Sensors\" -Wno-unused-parameter
 LOCAL_SHARED_LIBRARIES := libcutils libupm libmraa
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libupm/src/mpu9150/
-LOCAL_SRC_FILES := SensorsHAL.cpp Sensor.cpp AcquisitionThread.cpp Utils.cpp \
-    SensorUtils.cpp \
-    sensors/MPU9150Accelerometer.cpp \
-    sensors/MMA7660Accelerometer.cpp \
-    sensors/GroveLight.cpp \
-    sensors/GroveTemperature.cpp
+LOCAL_SRC_FILES := SensorsHAL.cpp Sensor.cpp AcquisitionThread.cpp Utils.cpp SensorUtils.cpp
 LOCAL_MODULE := sensors.edison
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_MODULE_TAGS := optional
+
+ifneq (,$(filter MPU9150Accelerometer, $(PLATFORM_SENSOR_LIST)))
+LOCAL_SRC_FILES += sensors/MPU9150Accelerometer.cpp
+endif
+
+ifneq (,$(filter MMA7660Accelerometer, $(PLATFORM_SENSOR_LIST)))
+LOCAL_SRC_FILES += sensors/MMA7660Accelerometer.cpp
+endif
+
+ifneq (,$(filter GroveLight, $(PLATFORM_SENSOR_LIST)))
+LOCAL_SRC_FILES += sensors/GroveLight.cpp
+endif
+
+ifneq (,$(filter GroveTemperature, $(PLATFORM_SENSOR_LIST)))
+LOCAL_SRC_FILES += sensors/GroveTemperature.cpp
+endif
 
 include $(BUILD_SHARED_LIBRARY)
