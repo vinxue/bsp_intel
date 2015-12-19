@@ -19,22 +19,22 @@
 #include "SensorsHAL.hpp"
 
 struct sensor_t GroveTemperature::sensorDescription = {
-  name: "Grove Temperature Sensor",
-  vendor: "Murata",
-  version: 1,
-  handle: -1,
-  type: SENSOR_TYPE_TEMPERATURE,
-  maxRange: 125.0f,
-  resolution: 1.0f,
-  power: 0.001f,
-  minDelay: 10,
-  fifoReservedEventCount: 0,
-  fifoMaxEventCount: 0,
-  SENSOR_STRING_TYPE_TEMPERATURE,
-  requiredPermission: "",
-  maxDelay: 1000,
-  flags: SENSOR_FLAG_ON_CHANGE_MODE,
-  reserved: {},
+  .name = "Grove Temperature Sensor",
+  .vendor = "Murata",
+  .version = 1,
+  .handle = -1,
+  .type = SENSOR_TYPE_TEMPERATURE,
+  .maxRange = 125.0f,
+  .resolution = 1.0f,
+  .power = 0.001f,
+  .minDelay = 10,
+  .fifoReservedEventCount = 0,
+  .fifoMaxEventCount = 0,
+  .stringType = SENSOR_STRING_TYPE_TEMPERATURE,
+  .requiredPermission = "",
+  .maxDelay = 1000,
+  .flags = SENSOR_FLAG_ON_CHANGE_MODE,
+  .reserved = {},
 };
 
 Sensor * GroveTemperature::createSensor(int pollFd) {
