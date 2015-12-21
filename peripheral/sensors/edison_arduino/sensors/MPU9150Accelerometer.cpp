@@ -21,19 +21,20 @@
 
 struct sensor_t MPU9150Accelerometer::sensorDescription = {
   .name = "MPU9150/9250 Accelerometer",
-  .vendor = "Unknown",
+  .vendor = "InvenSense",
   .version = 1,
   .handle = -1,
   .type = SENSOR_TYPE_ACCELEROMETER,
-  .maxRange = 1000.0f,
-  .resolution = 100.0f,
-  .power = 0.0f,
-  .minDelay = 10000,
+  /* maxRange = 2g */
+  .maxRange = 19.62f,
+  .resolution = 0.000061035f,
+  .power = 0.0198f,
+  .minDelay = 10,
   .fifoReservedEventCount = 0,
   .fifoMaxEventCount = 0,
   .stringType = SENSOR_STRING_TYPE_ACCELEROMETER,
   .requiredPermission = "",
-  .maxDelay = 0,
+  .maxDelay = 1000,
   .flags = SENSOR_FLAG_CONTINUOUS_MODE,
   .reserved = {},
 };

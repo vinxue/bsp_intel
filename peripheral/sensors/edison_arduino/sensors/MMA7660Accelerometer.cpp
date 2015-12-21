@@ -21,19 +21,20 @@
 
 struct sensor_t MMA7660Accelerometer::sensorDescription = {
   .name = "MMA7660 Accelerometer",
-  .vendor = "Unknown",
+  .vendor = "Freescale Semiconductor",
   .version = 1,
   .handle = -1,
   .type = SENSOR_TYPE_ACCELEROMETER,
-  .maxRange = 1000.0f,
-  .resolution = 100.0f,
-  .power = 0.0f,
-  .minDelay = 10000,
+  /* maxRange = 1.5g */
+  .maxRange = 14.72f,
+  .resolution = 0.459915612f,
+  .power = 0.047f,
+  .minDelay = 10,
   .fifoReservedEventCount = 0,
   .fifoMaxEventCount = 0,
   .stringType = SENSOR_STRING_TYPE_ACCELEROMETER,
   .requiredPermission = "",
-  .maxDelay = 0,
+  .maxDelay = 1000,
   .flags = SENSOR_FLAG_CONTINUOUS_MODE,
   .reserved = {},
 };

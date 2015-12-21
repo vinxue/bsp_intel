@@ -20,19 +20,19 @@
 
 struct sensor_t GroveLight::sensorDescription = {
   .name = "Grove Light Sensor",
-  .vendor = "Unknown",
+  .vendor = "Senba Optical & Electronic",
   .version = 1,
   .handle = -1,
   .type = SENSOR_TYPE_LIGHT,
-  .maxRange = 1000.0f,
+  .maxRange = 60.0f,
   .resolution = 1.0f,
   .power = 0.001f,
-  .minDelay = 10000,
+  .minDelay = 10,
   .fifoReservedEventCount = 0,
   .fifoMaxEventCount = 0,
   .stringType = SENSOR_STRING_TYPE_LIGHT,
   .requiredPermission = "",
-  .maxDelay = 0,
+  .maxDelay = 1000,
   .flags = SENSOR_FLAG_ON_CHANGE_MODE,
   .reserved = {},
 };
