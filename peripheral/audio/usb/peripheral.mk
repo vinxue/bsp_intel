@@ -17,5 +17,5 @@
 # Audio configuration files
 PRODUCT_COPY_FILES += \
   frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
-  hardware/bsp/intel/peripheral/audio/edison/audio_policy.conf:system/etc/audio_policy.conf \
-  hardware/bsp/intel/peripheral/audio/edison/media_codecs.xml:system/etc/media_codecs.xml
+  hardware/bsp/intel/peripheral/audio/usb/audio_policy.conf:system/etc/audio_policy.conf \
+  hardware/bsp/intel/peripheral/audio/usb/media_codecs.xml:system/etc/media_codecs.xml
