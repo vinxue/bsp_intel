@@ -45,4 +45,8 @@ ifneq (,$(filter GroveTemperature, $(PLATFORM_SENSOR_LIST)))
 LOCAL_SRC_FILES += sensors/GroveTemperature.cpp
 endif
 
+ifneq (,$(filter ProximityGPIO, $(PLATFORM_SENSOR_LIST)))
+LOCAL_SRC_FILES += sensors/ProximityGPIO.cpp
+endif
+
 include $(BUILD_SHARED_LIBRARY)
