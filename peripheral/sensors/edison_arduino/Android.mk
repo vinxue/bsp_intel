@@ -33,6 +33,10 @@ ifneq (,$(filter MMA7660Accelerometer, $(PLATFORM_SENSOR_LIST)))
 LOCAL_SRC_FILES += sensors/MMA7660Accelerometer.cpp
 endif
 
+ifneq (,$(filter LSM9DS0Accelerometer, $(PLATFORM_SENSOR_LIST)))
+LOCAL_SRC_FILES += sensors/LSM9DS0Accelerometer.cpp
+endif
+
 ifneq (,$(filter GroveLight, $(PLATFORM_SENSOR_LIST)))
 LOCAL_SRC_FILES += sensors/GroveLight.cpp
 endif
