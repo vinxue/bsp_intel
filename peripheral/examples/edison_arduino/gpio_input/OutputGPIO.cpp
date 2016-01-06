@@ -23,6 +23,10 @@
  * The on-board LED on the Edison Arudino expansion board may be
  * accessed with Digital I/O 13 (mapped from Linux GPIO 243):
  *   example-gpio-output -p 13 -s
+ *
+ * See the following link for a table to map from the numbers on the
+ * board silk screen to the libmraa GPIO numbers:
+ *   https://learn.sparkfun.com/tutorials/installing-libmraa-on-ubilinux-for-edison
  */
 #include <getopt.h>
 #include <stdio.h>
@@ -100,6 +104,7 @@ int main(int argc, char* argv[]) {
   if (ReadOpts(argc, argv, &options) < 0)
     return 1;
 
+  mraa_init();
   mraa_gpio_context m_gpio = mraa_gpio_init(options.pin);
   if (!m_gpio) {
     fprintf(stderr, "Unable to initialize GPIO, invalid pin number?\n");
@@ -117,5 +122,6 @@ int main(int argc, char* argv[]) {
   if (options.clear)
     mraa_gpio_write(m_gpio, 0);
 
+  mraa_gpio_close(m_gpio);
   return 0;
 }
