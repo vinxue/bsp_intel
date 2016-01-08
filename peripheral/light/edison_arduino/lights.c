@@ -63,11 +63,12 @@ static int const TRI_STATE_ALL_GPIO_RAW_PIN = 214;
 
 /*
  * Pin constants
- * Please add a pin to ARDUINO_PINS & NON_ARDUINO_PINS
- * when you add a new light type
+ * Please add a pin to EDISON_ARDUINO_PINS, EDISON_MINIBOARD_PINS &
+ * MINNOWBOARD_MAX_PINS when you add a new light type
  */
-static int const ARDUINO_PINS[LIGHTS_TYPE_NUM] = {13};
-static int const NON_ARDUINO_PINS[LIGHTS_TYPE_NUM] = {31};
+static int const EDISON_ARDUINO_PINS[LIGHTS_TYPE_NUM] = {13};
+static int const EDISON_MINIBOARD_PINS[LIGHTS_TYPE_NUM] = {31};
+static int const MINNOWBOARD_MAX_PINS[LIGHTS_TYPE_NUM] = {21};
 
 /*
  * Array of light devices with write_mutex statically initialized
@@ -415,19 +416,29 @@ mutex_unlock:
  */
 static int init_module(int type)
 {
-    mraa_gpio_context gpio;
+    mraa_gpio_context gpio = NULL;
 
     if (type < 0 || type >= LIGHTS_TYPE_NUM) {
         return EINVAL;
     }
 
-    gpio = mraa_gpio_init_raw(TRI_STATE_ALL_GPIO_RAW_PIN);
-    if (gpio != NULL) {
-        /* Arduino board detected */
-        mraa_gpio_close(gpio);
-        light_devices[type].pin = ARDUINO_PINS[type];
-    } else {
-        light_devices[type].pin = NON_ARDUINO_PINS[type];
+    switch(mraa_get_platform_type()) {
+        case MRAA_INTEL_EDISON_FAB_C:
+            gpio = mraa_gpio_init_raw(TRI_STATE_ALL_GPIO_RAW_PIN);
+            if (gpio != NULL) {
+                /* Arduino board detected */
+                mraa_gpio_close(gpio);
+                light_devices[type].pin = EDISON_ARDUINO_PINS[type];
+            } else {
+                light_devices[type].pin = EDISON_MINIBOARD_PINS[type];
+            }
+            break;
+        case MRAA_INTEL_MINNOWBOARD_MAX:
+            light_devices[type].pin = MINNOWBOARD_MAX_PINS[type];
+            break;
+        default:
+            ALOGE("%s: Hardware platform not supported", __func__);
+            return EINVAL;
     }
 
     return 0;
