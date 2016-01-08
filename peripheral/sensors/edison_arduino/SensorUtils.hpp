@@ -18,7 +18,7 @@
 #define SENSOR_UTILS_HPP
 
 /**
- * Instantiable factory design pattern class for sensor utils
+ * Sensor utils class
  *
  * It supports retrieving the i2c sensors bus number
  */
@@ -29,15 +29,6 @@ class SensorUtils {
      * @return i2c bus number
      */
     static int getI2cBusNumber();
-
-  private:
-    /*
-     * Initialize static members
-     */
-    static void init();
-
-    static bool initialized;
-    static int i2cBusNumber;
 };
 
 #endif  // SENSOR_UTILS_HPP
