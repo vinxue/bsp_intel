@@ -32,7 +32,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <grove.h>
+#include <mraa.h>
 
 // Structure to hold the decoded command line options
 struct pgm_options {
