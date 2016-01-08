@@ -21,7 +21,7 @@ LOCAL_CFLAGS += -DLOG_TAG=\"Sensors\" -Wno-unused-parameter
 LOCAL_SHARED_LIBRARIES := libcutils libupm libmraa
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../libupm/src/mpu9150/
 LOCAL_SRC_FILES := SensorsHAL.cpp Sensor.cpp AcquisitionThread.cpp Utils.cpp SensorUtils.cpp
-LOCAL_MODULE := sensors.edison
+LOCAL_MODULE := sensors.$(TARGET_DEVICE)
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_MODULE_TAGS := optional
 
