@@ -29,12 +29,14 @@ extern "C" {
 #endif
 
 #include <syslog.h>
+#include <fnmatch.h>
 
 #include "common.h"
 #include "mraa_internal_types.h"
 #include "mraa_adv_func.h"
 
 extern mraa_board_t* plat;
+extern mraa_iio_info_t* plat_iio;
 
 /**
  * Takes in pin information and sets up the multiplexors.
@@ -64,6 +66,13 @@ mraa_platform_t mraa_arm_platform();
  * @return mraa_platform_t of the detected platform extender
  */
 mraa_platform_t mraa_usb_platform_extender(mraa_board_t* board);
+
+/**
+ * runtime detect iio subsystem
+ *
+ * @return mraa_result_t indicating success of iio detection
+ */
+mraa_result_t mraa_iio_detect();
 
 /**
  * helper function to check if file exists

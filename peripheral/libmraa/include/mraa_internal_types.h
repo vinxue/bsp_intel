@@ -27,8 +27,8 @@
 
 #include "common.h"
 #include "mraa.h"
-#include "mraa_func.h"
 #include "mraa_adv_func.h"
+#include "iio.h"
 
 // Bionic does not implement pthread cancellation API
 #ifndef __BIONIC__
@@ -127,6 +127,25 @@ struct _uart {
     int fd; /**< file descriptor for device. */
     mraa_adv_func_t* advance_func; /**< override function table */
     /*@}*/
+};
+
+/**
+ * A structure representing an IIO device
+ */
+struct _iio {
+    int num; /**< IIO device number */
+    char* name; /**< IIO device name */
+    int fp; /**< IIO device in /dev */
+    int fp_event;  /**<  event file descriptor for IIO device */
+    void (* isr)(char* data); /**< the interupt service request */
+    void *isr_args; /**< args return when interupt service request triggered */
+    void (* isr_event)(struct iio_event_data* data, void* args); /**< the event interupt service request */
+    int chan_num;
+    pthread_t thread_id; /**< the isr handler thread id */
+    mraa_iio_channel* channels;
+    int event_num;
+    mraa_iio_event* events;
+    int datasize;
 };
 
 /**
@@ -260,15 +279,20 @@ typedef struct _board_t {
     unsigned int def_uart_dev; /**< Position in array of defult uart */
     unsigned int uart_dev_count; /**< Usable spi Count */
     mraa_uart_dev_t uart_dev[6]; /**< Array of UARTs */
+    mraa_boolean_t no_bus_mux; /**< i2c/spi/adc/pwm/uart bus muxing setup not required */
     int pwm_default_period; /**< The default PWM period is US */
     int pwm_max_period; /**< Maximum period in us */
     int pwm_min_period; /**< Minimum period in us */
     mraa_platform_t platform_type; /**< Platform type */
     const char* platform_name; /**< Platform Name pointer */
+    const char* platform_version; /**< Platform versioning info */
     mraa_pininfo_t* pins;     /**< Pointer to pin array */
     mraa_adv_func_t* adv_func;    /**< Pointer to advanced function disptach table */
     struct _board_t* sub_platform;     /**< Pointer to sub platform */
     /*@}*/
 } mraa_board_t;
 
-
+typedef struct {
+    struct _iio* iio_devices; /**< Pointer to IIO devices */
+    uint8_t iio_device_count; /**< IIO device count */
+} mraa_iio_info_t;

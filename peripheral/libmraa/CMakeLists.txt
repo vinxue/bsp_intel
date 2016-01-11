@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8)
-project (mraa)
+project (mraa C)
 
 FIND_PACKAGE (Threads REQUIRED)
 
@@ -10,6 +10,13 @@ set (LIB_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}" CACHE PATH "Installation path for
 # Set CMAKE_LIB_INSTALL_DIR if not defined
 include(GNUInstallDirs)
 
+# By default, build shared object libraries on linux
+if (UNIX AND NOT APPLE)
+  if (NOT DEFINED BUILD_SHARED_LIBS)
+    set(BUILD_SHARED_LIBS ON)
+  endif()
+endif()
+
 # Appends the cmake/modules path to MAKE_MODULE_PATH variable.
 set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
@@ -18,7 +25,7 @@ include (GetGitRevisionDescription)
 git_describe (VERSION "--tags")
 if ("x_${VERSION}" STREQUAL "x_GIT-NOTFOUND" OR "x_${VERSION}" STREQUAL "x_HEAD-HASH-NOTFOUND" OR "x_${VERSION}" STREQUAL "x_-128-NOTFOUND")
   message (WARNING " - Install git to compile a production libmraa!")
-  set (VERSION "v0.8.1-dirty")
+  set (VERSION "v0.9.0-dirty")
 endif ()
 
 message (INFO " - libmraa Version ${VERSION}")
@@ -58,11 +65,11 @@ option (USBPLAT "Detection USB platform." OFF)
 option (FTDI4222 "Build with FTDI FT4222 subplatform support." OFF)
 option (IPK "Generate IPK using CPack" OFF)
 option (RPM "Generate RPM using CPack" OFF)
-option (BUILDPYTHON3 "Use python3 for building/installing" OFF)
+option (BUILDPYTHON3 "Use python3 for building/installing/testing" OFF)
 option (ENABLEEXAMPLES "Disable building of examples" ON)
 option (INSTALLGPIOTOOL "Install gpio tool" OFF)
 option (BUILDARCH "Override architecture to build for - override" OFF)
-option (TESTS "Override the addition of tests" ON)
+option (BUILDTESTS "Override the addition of tests" ON)
 
 set (MRAAPLATFORMFORCE "" CACHE STRING "ALL")
 
@@ -90,19 +97,13 @@ else ()
   message(FATAL_ERROR "Only x86 and arm platforms currently supported")
 endif()
 
-if (BUILDSWIGPYTHON)
+if (BUILDSWIGPYTHON OR BUILDTESTS)
   if (BUILDPYTHON3)
     set (PYTHONBUILD_VERSION 3)
   else ()
     set (PYTHONBUILD_VERSION 2.7)
   endif ()
   find_package (PythonInterp ${PYTHONBUILD_VERSION} REQUIRED)
-  if (TESTS)
-    if (${PYTHONINTERP_FOUND})
-      enable_testing ()
-      add_subdirectory (tests)
-    endif ()
-  endif ()
 endif ()
 
 if (BUILDDOC)
@@ -184,4 +185,11 @@ endif()
 add_subdirectory (src)
 if (ENABLEEXAMPLES)
   add_subdirectory (examples)
+endif ()
+
+if (BUILDTESTS)
+  if (${PYTHONINTERP_FOUND})
+    enable_testing ()
+    add_subdirectory (tests)
+  endif ()
 endif ()
