@@ -20,6 +20,7 @@
  */
 
 #include <jhd1313m1.h>
+#include <mraa.hpp>
 
 #include <getopt.h>
 #include <stdio.h>
@@ -112,8 +113,7 @@ int main(int argc, char* argv[]) {
   if (ReadOpts(argc, argv, &options) < 0)
     return 1;
 
-  // TODO(bjbeare): auto-detect the bus via mraa.
-  upm::Jhd1313m1 display(6);
+  upm::Jhd1313m1 display(mraa_get_default_i2c_bus(MRAA_MAIN_PLATFORM_OFFSET));
   display.write(options.display_text.c_str());
   display.setColor(options.red, options.green, options.blue);
   sleep(5);
