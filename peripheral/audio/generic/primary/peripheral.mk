@@ -16,6 +16,12 @@
 
 # Audio configuration files
 PRODUCT_COPY_FILES += \
-  frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
-  hardware/bsp/intel/peripheral/audio/usb/audio_policy.conf:system/etc/audio_policy.conf \
-  hardware/bsp/intel/peripheral/audio/usb/media_codecs.xml:system/etc/media_codecs.xml
+  frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml
+
+PRODUCT_COPY_FILES += \
+  hardware/bsp/intel/peripheral/audio/generic/media_codecs.xml:system/etc/media_codecs.xml \
+  hardware/bsp/intel/peripheral/audio/generic/primary/audio_policy.conf:system/etc/audio_policy.conf
+
+# Primary audio HAL
+DEVICE_PACKAGES += \
+    audio.primary.$(TARGET_DEVICE)

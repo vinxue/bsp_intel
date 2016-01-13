@@ -16,17 +16,20 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := audio.usb.$(TARGET_DEVICE)
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_SRC_FILES := \
-	audio_hal.c
+	../audio_hal.c
 LOCAL_C_INCLUDES += \
 	external/tinyalsa/include \
 	$(call include-path-for, audio-utils) \
 	$(call include-path-for, alsa-utils)
 LOCAL_SHARED_LIBRARIES := liblog libcutils libtinyalsa libaudioutils libalsautils
 LOCAL_MODULE_TAGS := optional
-LOCAL_CFLAGS := -Wno-unused-parameter
+
+# setting to build for primary audio or usb audio
+# set -DTARGET_AUDIO_PRIMARY to 1 for Primary (audio jack)
+# set -DTARGET_AUDIO_PRIMARY to 0 for USB audio
+LOCAL_CFLAGS := -Wno-unused-parameter -DTARGET_AUDIO_PRIMARY=0
+LOCAL_MODULE := audio.usb.$(TARGET_DEVICE)
 
 include $(BUILD_SHARED_LIBRARY)
-
