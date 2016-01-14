@@ -22,8 +22,7 @@ LOCAL_CPPFLAGS:= -Wno-unused-parameter -fexceptions
 LOCAL_CFLAGS += -DLOG_TAG=\"OutputGPIO\" -Wno-unused-parameter
 LOCAL_SHARED_LIBRARIES := libcutils libupm libmraa
 
-LOCAL_MODULE := example-gpio-output
+LOCAL_MODULE := example-gpio-output-mraa
 LOCAL_MODULE_TAGS := optional
 LOCAL_SRC_FILES := OutputGPIO.cpp
 include $(BUILD_EXECUTABLE)
-
