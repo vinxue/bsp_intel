@@ -17,34 +17,6 @@
 #include <mraa.hpp>
 #include "SensorUtils.hpp"
 
-const int kTriStateAllGpioPin = 214;
-const int kArduinoI2cBusNumber = 6;
-const int kNonArduinoI2cBusNumber = 1;
-
-bool SensorUtils::initialized = false;
-int SensorUtils::i2cBusNumber = -1;
-
 int SensorUtils::getI2cBusNumber() {
-  init();
-
-  return i2cBusNumber;
-}
-
-void SensorUtils::init() {
-  if (!SensorUtils::initialized) {
-    mraa::Gpio *gpio = nullptr;
-
-    try {
-      gpio = new mraa::Gpio(kTriStateAllGpioPin, true, true);
-    } catch(...) {}
-
-    if (gpio == nullptr) {
-      i2cBusNumber = kNonArduinoI2cBusNumber;
-    } else {
-      delete gpio;
-      i2cBusNumber = kArduinoI2cBusNumber;
-    }
-
-    SensorUtils::initialized = true;
-  }
+  return mraa_get_default_i2c_bus(MRAA_MAIN_PLATFORM_OFFSET);
 }
