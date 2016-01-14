@@ -121,7 +121,7 @@ close_gpio:
  */
 int64_t get_timestamp_monotonic()
 {
-    struct timespec ts = {0};
+    struct timespec ts = {0, 0};
 
     if (!clock_gettime(CLOCK_MONOTONIC, &ts)) {
         return ONE_S_IN_NS * ts.tv_sec + ts.tv_nsec;
