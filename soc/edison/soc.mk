@@ -59,10 +59,6 @@ DEVICE_PACKAGES += \
 DEVICE_PACKAGES += \
     keystore.default
 
-# Audio HAL package.
-DEVICE_PACKAGES += \
-    audio.usb.edison
-
 # Boot control HAL package.
 DEVICE_PACKAGES += \
     bootctrl.$(TARGET_DEVICE)
