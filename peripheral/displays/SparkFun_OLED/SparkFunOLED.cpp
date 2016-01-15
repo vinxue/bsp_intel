@@ -20,6 +20,7 @@
  */
 
 #include <eboled.h>
+#include <mraa.hpp>
 
 #include <getopt.h>
 #include <stdio.h>
@@ -92,7 +93,9 @@ int main(int argc, char* argv[]) {
   if (ReadOpts(argc, argv, &options) < 0)
     return 1;
 
-  upm::EBOLED *display = new upm::EBOLED(EBOLED_DEFAULT_SPI_BUS, EBOLED_DEFAULT_CD, EBOLED_DEFAULT_RESET);
+  upm::EBOLED *display = new upm::EBOLED(
+      mraa_get_default_i2c_bus(MRAA_MAIN_PLATFORM_OFFSET),
+      EBOLED_DEFAULT_CD, EBOLED_DEFAULT_RESET);
 
   if (options.invert_color) {
     display->setTextColor(upm::COLOR_BLACK);
