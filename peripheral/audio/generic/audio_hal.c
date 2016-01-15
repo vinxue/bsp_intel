@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "modules.usbaudio.audio_hal"
+#define LOG_TAG "modules.audio.audio_hal"
 /*#define LOG_NDEBUG 0*/
 
 #include <errno.h>
@@ -45,7 +45,11 @@
 
 
 #define PCM_DEV_STR "pcm"
-#define USB_AUDIO_STR "USB Audio"
+#if TARGET_AUDIO_PRIMARY
+#define AUDIO_STR "ALC662 rev1 Analog"
+#else
+#define AUDIO_STR "USB Audio"
+#endif
 #define MAX_PATH_LEN 30
 
 #define NBR_RETRIES 5
@@ -82,6 +86,9 @@ struct audio_device {
     bool mic_muted;
 
     bool standby;
+#if TARGET_AUDIO_PRIMARY
+    unsigned int master_volume;
+#endif
 };
 
 struct stream_out {
@@ -150,7 +157,7 @@ static int in_stream_card_number = -1, out_stream_card_number = -1;
  * Examines a pcm-device file to see if its a USB Audio device and
  * returns its card-number. If no match, returns -1.
  */
-static int first_valid_usb_card(char *pcm_name, bool is_out_stream)
+static int first_valid_sound_card(char *pcm_name, bool is_out_stream)
 {
     int fd;
     char pcm_dev_path[MAX_PATH_LEN];
@@ -176,7 +183,7 @@ static int first_valid_usb_card(char *pcm_name, bool is_out_stream)
 
     if (fd != -1) {
         if (!(ioctl(fd, SNDRV_PCM_IOCTL_INFO, &info))) {
-            if (strstr(info.id, USB_AUDIO_STR)) {
+            if (strstr(info.id, AUDIO_STR)) {
                 close(fd);
                 ALOGV("%s exit",__func__);
                 return info.card;
@@ -196,7 +203,7 @@ static int first_valid_usb_card(char *pcm_name, bool is_out_stream)
  * Returns the number of the first valid USB Audio card
  * If none is found, returns -1.
  */
-static int get_first_usb_card(bool is_out_stream)
+static int get_first_sound_card(bool is_out_stream)
 {
     DIR *dir;
     struct dirent *de = NULL;
@@ -213,7 +220,7 @@ static int get_first_usb_card(bool is_out_stream)
 
     while ((de = readdir(dir))) {
         if (strncmp(de->d_name, PCM_DEV_STR, sizeof(PCM_DEV_STR) - 1) == 0) {
-            if ((card_nr = first_valid_usb_card(de->d_name, is_out_stream)) != -1) {
+            if ((card_nr = first_valid_sound_card(de->d_name, is_out_stream)) != -1) {
                 closedir(dir);
                 ALOGV("%s exit",__func__);
                 return card_nr;
@@ -247,7 +254,7 @@ static bool parse_card_device_params(bool is_out_stream, int *card, int *device)
     }
 
     for (try_time = 0; try_time < NBR_RETRIES; try_time++) {
-        found_card = get_first_usb_card(is_out_stream);
+        found_card = get_first_sound_card(is_out_stream);
         if (found_card == -1)
             usleep(RETRY_WAIT_USEC);
         else
@@ -1103,7 +1110,30 @@ static int adev_set_voice_volume(struct audio_hw_device *dev, float volume)
 
 static int adev_set_master_volume(struct audio_hw_device *dev, float volume)
 {
+#if TARGET_AUDIO_PRIMARY
+    struct mixer *mixer;
+    struct mixer_ctl *ctl;
+    struct audio_device * adev = (struct audio_device *)dev;
+
+    if ((0 > volume) || (1 < volume) || (NULL == adev))
+      return -EINVAL;
+
+    pthread_mutex_lock(&adev->lock);
+    adev->master_volume = (int)(volume*100);
+
+    if (!(mixer = mixer_open(1))) {
+      pthread_mutex_unlock(&adev->lock);
+      return -ENOSYS;
+    }
+
+    ctl = mixer_get_ctl(mixer,29);
+    mixer_ctl_set_value(ctl,0,adev->master_volume);
+    mixer_close(mixer);
+    pthread_mutex_unlock(&adev->lock);
+    return 0;
+#else
     return -ENOSYS;
+#endif
 }
 
 static int adev_set_mode(struct audio_hw_device *dev, audio_mode_t mode)
@@ -1140,6 +1170,10 @@ static int adev_close(hw_device_t *device)
 
 static int adev_open(const hw_module_t* module, const char* name, hw_device_t** device)
 {
+#if TARGET_AUDIO_PRIMARY
+    struct mixer *mixer;
+    struct mixer_ctl *ctl;
+#endif
     if (strcmp(name, AUDIO_HARDWARE_INTERFACE) != 0)
         return -EINVAL;
 
@@ -1171,7 +1205,21 @@ static int adev_open(const hw_module_t* module, const char* name, hw_device_t** 
     adev->hw_device.dump = adev_dump;
 
     *device = &adev->hw_device.common;
+#if TARGET_AUDIO_PRIMARY
+    mixer = mixer_open(1);
 
+    if (mixer) {
+        /* turning on master volume */
+        ctl = mixer_get_ctl(mixer,30);
+        mixer_ctl_set_value(ctl,0,1);
+
+        /* setting master volume to value 50 */
+        ctl = mixer_get_ctl(mixer,29);
+        adev->master_volume = 50;
+        mixer_ctl_set_value(ctl,0,adev->master_volume);
+        mixer_close(mixer);
+    }
+#endif
     return 0;
 }
 
@@ -1185,7 +1233,7 @@ struct audio_module HAL_MODULE_INFO_SYM = {
         .module_api_version = AUDIO_MODULE_API_VERSION_0_1,
         .hal_api_version = HARDWARE_HAL_API_VERSION,
         .id = AUDIO_HARDWARE_MODULE_ID,
-        .name = "USB audio HW HAL",
+        .name = "audio HW HAL",
         .author = "The Android Open Source Project",
         .methods = &hal_module_methods,
     },
