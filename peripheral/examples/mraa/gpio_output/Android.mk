@@ -26,3 +26,17 @@ LOCAL_MODULE := example-gpio-output-mraa
 LOCAL_MODULE_TAGS := optional
 LOCAL_SRC_FILES := OutputGPIO.cpp
 include $(BUILD_EXECUTABLE)
+
+
+# MRAA based ledflasher example application
+include $(CLEAR_VARS)
+LOCAL_CPPFLAGS:= -Wno-unused-parameter -fexceptions
+LOCAL_CFLAGS += -DLOG_TAG=\"ledflasher-mraa\" -Wno-unused-parameter
+LOCAL_SHARED_LIBRARIES := libcutils libupm libmraa
+
+LOCAL_MODULE := ledflasher-mraa
+LOCAL_MODULE_TAGS := optional
+LOCAL_SRC_FILES := ledflasher_mraa.cpp
+include $(BUILD_EXECUTABLE)
+
+
