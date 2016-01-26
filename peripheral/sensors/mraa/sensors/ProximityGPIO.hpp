@@ -46,7 +46,7 @@ class ProximityGPIO : public Sensor, public upm::GroveButton {
      * Poll for events
      * @param data where to store the events
      * @param count the number of events returned must be <= to the count
-     * @return 0 on success and a negative error number otherwise
+     * @return number of events returned in data on success and a negative error number otherwise
      */
     int pollEvents(sensors_event_t* data, int count) override;
 

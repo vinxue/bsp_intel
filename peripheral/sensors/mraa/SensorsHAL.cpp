@@ -178,21 +178,39 @@ int SensorContext::setDelay(int handle, int64_t ns) {
 int SensorContext::pollEvents(sensors_event_t *data, int count) {
   int nfds, i;
   struct epoll_event ev[MAX_DEVICES];
-  int returned_events = 0;
+  int returnedEvents = 0, sensorIndex = -1;
 
   /* return only when at least one event is available */
   while(true) {
     nfds = epoll_wait(pollFd, ev, MAX_DEVICES, -1);
-    for(i = 0; i < nfds && returned_events < count; i++) {
-      if (ev[i].events == EPOLLIN) {
+    if (nfds < 0) {
+      ALOGE("%s: epoll_wait returned an error: %d", __func__, errno);
+      return nfds;
+    }
 
-        if(sensors[ev[i].data.u32]->readOneEvent(data + returned_events)) {
-          returned_events++;
+    for(i = 0; i < nfds && returnedEvents < count; i++) {
+      if (ev[i].events == EPOLLIN) {
+        sensorIndex = ev[i].data.u32;
+        if ((sensorIndex < 0) || (sensorIndex > sensorsNum)) {
+          ALOGE("%s: Invalid sensor index", __func__);
+          return -1;
+        }
+
+        if (sensors[sensorIndex] == nullptr) {
+          ALOGE("%s: Sensor %d is not activated", __func__, sensorIndex);
+          return -1;
+        }
+
+        if (sensors[sensorIndex]->readOneEvent(data + returnedEvents)) {
+          returnedEvents++;
+        } else {
+          ALOGE("%s: Cannot read event from sensor %d", __func__, sensorIndex);
+          return -1;
         }
       }
     }
-    if (returned_events > 0) {
-      return returned_events;
+    if (returnedEvents > 0) {
+      return returnedEvents;
     }
   }
 }
