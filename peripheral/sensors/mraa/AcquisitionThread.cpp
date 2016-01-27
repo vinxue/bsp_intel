@@ -121,7 +121,7 @@ bool AcquisitionThread::init() {
   }
 
   /* create pipe to signal events to the main thread */
-  rc = pipe(pipeFds);
+  rc = pipe2(pipeFds, O_NONBLOCK);
   if (rc != 0) {
     ALOGE("%s: Cannot initialize pipe", __func__);
     goto pipe_err;
@@ -175,7 +175,12 @@ bool AcquisitionThread::generateFlushCompleteEvent() {
   data.meta_data.sensor = sensor->getHandle();
   data.meta_data.what = META_DATA_FLUSH_COMPLETE;
 
-  /* send the event via the associated pipe */
+  /*
+   * Send the event via the associated pipe. It doesn't need to be in a loop
+   * as O_NONBLOCK is enabled and the number of bytes is <= PIPE_BUF.
+   * If there is room to write n bytes to the pipe, then write succeeds
+   * immediately, writing all n bytes; otherwise write fails.
+   */
   rc = write(getWritePipeFd(), &data, sizeof(sensors_event_t));
   if (rc != sizeof(sensors_event_t)) {
     ALOGE("%s: not all data has been sent over the pipe", __func__);

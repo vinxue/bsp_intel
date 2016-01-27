@@ -18,6 +18,7 @@
 #define SENSORS_HAL_HPP
 
 #include <hardware/sensors.h>
+#include <utils/Mutex.h>
 #include "Sensor.hpp"
 #include "SensorUtils.hpp"
 
@@ -109,6 +110,8 @@ class SensorContext {
     static struct sensor_t sensorDescs[MAX_DEVICES];
     /* Number of registered sensors */
     static int sensorsNum;
+    /* Mutex used to synchronize the Sensor Context */
+    static android::Mutex mutex;
 };
 
 #endif  // SENSORS_HAL_HPP
