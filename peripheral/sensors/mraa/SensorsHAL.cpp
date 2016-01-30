@@ -193,31 +193,31 @@ int SensorContext::pollEvents(sensors_event_t *data, int count) {
       return nfds;
     }
 
-    mutex.lock();
-    for(i = 0; i < nfds && returnedEvents < count; i++) {
-      if (ev[i].events == EPOLLIN) {
-        sensorIndex = ev[i].data.u32;
-        if ((sensorIndex < 0) || (sensorIndex > sensorsNum)) {
-          ALOGE("%s: Invalid sensor index", __func__);
-          mutex.unlock();
-          return -1;
-        }
+    { // Autolock scope
+      android::Mutex::Autolock autolock(mutex);
+      for(i = 0; i < nfds && returnedEvents < count; i++) {
+        if (ev[i].events == EPOLLIN) {
+          sensorIndex = ev[i].data.u32;
+          if ((sensorIndex < 0) || (sensorIndex > sensorsNum)) {
+            ALOGE("%s: Invalid sensor index", __func__);
+            return -1;
+          }
 
-        if (sensors[sensorIndex] == nullptr) {
-          /* The sensor might have been deactivated by another thread */
-          continue;
-        }
+          if (sensors[sensorIndex] == nullptr) {
+            /* The sensor might have been deactivated by another thread */
+            continue;
+          }
 
-        /*
-         * The read operation might fail if the data is read by another
-         * pollEvents call executed by another thread.
-         */
-        if (sensors[sensorIndex]->readOneEvent(data + returnedEvents)) {
-          returnedEvents++;
+          /*
+          * The read operation might fail if the data is read by another
+          * pollEvents call executed by another thread.
+          */
+          if (sensors[sensorIndex]->readOneEvent(data + returnedEvents)) {
+            returnedEvents++;
+          }
         }
       }
-    }
-    mutex.unlock();
+    } // Autolock scope
 
     if (returnedEvents > 0) {
       return returnedEvents;
