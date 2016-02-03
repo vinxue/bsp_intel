@@ -1,6 +1,6 @@
 /*
- * Author: Thomas Ingleby <thomas.c.ingleby@intel.com>
- * Copyright (c) 2014 Intel Corporation.
+ * Author: Lay, Kuan Loon <kuan.loon.lay@intel.com>
+ * Copyright (c) 2015 Intel Corporation.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -30,11 +30,9 @@ extern "C" {
 
 #include "mraa_internal.h"
 
-// +1 as pins are "1 indexed"
-#define MRAA_INTEL_MINNOW_MAX_PINCOUNT (26 + 1)
+#define MRAA_INTEL_SOFIA_3GR_PINCOUNT 8
 
-mraa_board_t*
-mraa_intel_minnowboard_byt_compatible(mraa_boolean_t);
+mraa_board_t* mraa_intel_sofia_3gr();
 
 #ifdef __cplusplus
 }

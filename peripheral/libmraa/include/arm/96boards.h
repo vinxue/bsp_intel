@@ -1,6 +1,9 @@
 /*
- * Author: Thomas Ingleby <thomas.c.ingleby@intel.com>
+ * Author: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+ * Copyright (c) 2015 Linaro Limited.
  * Copyright (c) 2014 Intel Corporation.
+ *
+ * Copied from include/arm/banana.h
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -30,11 +33,15 @@ extern "C" {
 
 #include "mraa_internal.h"
 
-// +1 as pins are "1 indexed"
-#define MRAA_INTEL_MINNOW_MAX_PINCOUNT (26 + 1)
+#define MRAA_96BOARDS_LS_GPIO_COUNT 12
+#define MRAA_96BOARDS_LS_I2C_COUNT  2
+#define MRAA_96BOARDS_LS_SPI_COUNT  1
+#define MRAA_96BOARDS_LS_UART_COUNT 2
 
-mraa_board_t*
-mraa_intel_minnowboard_byt_compatible(mraa_boolean_t);
+#define DB410C_PINCOUNT	122
+#define HIKEY_PINCOUNT	512
+
+mraa_board_t* mraa_96boards();
 
 #ifdef __cplusplus
 }
