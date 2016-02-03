@@ -50,16 +50,18 @@ struct light_device_ext_t {
     pthread_cond_t flash_cond;
     pthread_mutex_t flash_signal_mutex;
     pthread_mutex_t write_mutex;
+    /* Transform function to apply on value */
+    int (*transform)(int);
 };
 
 static int64_t const ONE_MS_IN_NS = 1000000LL;
 static int64_t const ONE_S_IN_NS = 1000000000LL;
 
 /*
- * Raw pin number for identifying the TRI_STATE_ALL GPIO
- * used to determine if we're on an Arduino board
+ * Platform version strings used to identify board versions
  */
-static int const TRI_STATE_ALL_GPIO_RAW_PIN = 214;
+static char * const EDISON_ARDUINO_PLATFORM_VERSION = "arduino";
+static char * const MINNOWBOARD_TURBOT_PLATFORM_VERSION = "Turbot";
 
 /*
  * Pin constants
@@ -69,6 +71,7 @@ static int const TRI_STATE_ALL_GPIO_RAW_PIN = 214;
 static int const EDISON_ARDUINO_PINS[LIGHTS_TYPE_NUM] = {13};
 static int const EDISON_MINIBOARD_PINS[LIGHTS_TYPE_NUM] = {31};
 static int const MINNOWBOARD_MAX_PINS[LIGHTS_TYPE_NUM] = {21};
+static int const MINNOWBOARD_TURBOT_PINS[LIGHTS_TYPE_NUM] = {27};
 
 /*
  * Array of light devices with write_mutex statically initialized
@@ -113,6 +116,15 @@ close_gpio:
     }
 
     return rc;
+}
+
+/*
+ * Invert value
+ * @param value what value to invert
+ * @return value inverted
+ */
+static int invert_value(int value) {
+    return value ? 0 : 1;
 }
 
 /*
@@ -279,8 +291,11 @@ static int set_light_generic(struct light_device_t *base_dev,
     }
 
     *current_state = *state;
+    if (dev->transform != NULL) {
+        current_state->color = dev->transform(current_state->color);
+    }
 
-    if (state->flashMode) {
+    if (current_state->flashMode) {
         /* start flashing thread */
         if (check_flash_state(current_state) == 0) {
             rc = pthread_create(&dev->flash_thread, NULL,
@@ -294,7 +309,7 @@ static int set_light_generic(struct light_device_t *base_dev,
             current_state->flashMode = LIGHT_FLASH_NONE;
         }
     } else {
-        rc = set_gpio_value(dev->pin, state->color);
+        rc = set_gpio_value(dev->pin, current_state->color);
         if (rc != 0) {
             ALOGE("%s: Cannot set light color.", __func__);
         }
@@ -416,25 +431,35 @@ mutex_unlock:
  */
 static int init_module(int type)
 {
-    mraa_gpio_context gpio = NULL;
+    const char *platform_version = NULL;
 
     if (type < 0 || type >= LIGHTS_TYPE_NUM) {
         return EINVAL;
     }
 
+    light_devices[type].transform = NULL;
+
     switch(mraa_get_platform_type()) {
         case MRAA_INTEL_EDISON_FAB_C:
-            gpio = mraa_gpio_init_raw(TRI_STATE_ALL_GPIO_RAW_PIN);
-            if (gpio != NULL) {
-                /* Arduino board detected */
-                mraa_gpio_close(gpio);
+            platform_version = mraa_get_platform_version(MRAA_MAIN_PLATFORM_OFFSET);
+            if ((platform_version != NULL) && (strncmp(platform_version,
+                    EDISON_ARDUINO_PLATFORM_VERSION,
+                    strlen(EDISON_ARDUINO_PLATFORM_VERSION)) == 0)) {
                 light_devices[type].pin = EDISON_ARDUINO_PINS[type];
             } else {
                 light_devices[type].pin = EDISON_MINIBOARD_PINS[type];
             }
             break;
         case MRAA_INTEL_MINNOWBOARD_MAX:
-            light_devices[type].pin = MINNOWBOARD_MAX_PINS[type];
+            platform_version = mraa_get_platform_version(MRAA_MAIN_PLATFORM_OFFSET);
+            if ((platform_version != NULL) && (strncmp(platform_version,
+                    MINNOWBOARD_TURBOT_PLATFORM_VERSION,
+                    strlen(MINNOWBOARD_TURBOT_PLATFORM_VERSION)) == 0)) {
+                light_devices[type].pin = MINNOWBOARD_TURBOT_PINS[type];
+                light_devices[type].transform = invert_value;
+            } else {
+                light_devices[type].pin = MINNOWBOARD_MAX_PINS[type];
+            }
             break;
         default:
             ALOGE("%s: Hardware platform not supported", __func__);
