@@ -36,7 +36,9 @@ Sensor::~Sensor() {
 int Sensor::activate(int handle, int enabled) { return 0; }
 
 bool Sensor::readOneEvent(sensors_event_t *event) {
-  int rc;
+  int bytes_read = 0, bytes_to_read = sizeof(sensors_event_t);
+  int fd = -1;
+  char *ptr = (char *)event;
 
   if (acquisitionThread == nullptr) {
     ALOGE("%s: sensor %d doesn't have an acquisition thread", __func__, handle);
@@ -44,8 +46,17 @@ bool Sensor::readOneEvent(sensors_event_t *event) {
   }
 
   /* read one event from the pipe read endpoint */
-  rc = read(acquisitionThread->getReadPipeFd(), event, sizeof(sensors_event_t));
-  if (rc != sizeof(sensors_event_t)) {
+  fd = acquisitionThread->getReadPipeFd();
+  do {
+    bytes_read = read(fd, ptr, bytes_to_read);
+    if (bytes_read <= 0) {
+      break;
+    }
+    bytes_to_read -= bytes_read;
+    ptr += bytes_read;
+  } while (bytes_to_read > 0);
+
+  if (bytes_to_read != 0) {
     return false;
   }
 

@@ -24,6 +24,7 @@
 Sensor * (*SensorContext::sensorFactoryFuncs[MAX_DEVICES])(int);
 struct sensor_t SensorContext::sensorDescs[MAX_DEVICES];
 int SensorContext::sensorsNum = 0;
+android::Mutex SensorContext::mutex;
 
 SensorContext::SensorContext(const hw_module_t *module) {
   /* create the epoll fd used to register the incoming fds */
@@ -65,6 +66,8 @@ SensorContext::~SensorContext() {
 
 int SensorContext::addSensorModule(struct sensor_t *sensorDesc,
     Sensor * (*sensorFactoryFunc)(int)) {
+  android::Mutex::Autolock autolock(mutex);
+
   if ((sensorDesc == nullptr) || (sensorFactoryFunc == nullptr)) {
     ALOGE("%s: cannot add a null sensor", __func__);
     return -EINVAL;
@@ -102,6 +105,8 @@ int SensorContext::OpenWrapper(const struct hw_module_t *module,
 
 int SensorContext::GetSensorsListWrapper(struct sensors_module_t *module,
                             struct sensor_t const **list) {
+  android::Mutex::Autolock autolock(mutex);
+
   if (!list || (sensorsNum == 0)) {
     return 0;
   }
@@ -188,27 +193,32 @@ int SensorContext::pollEvents(sensors_event_t *data, int count) {
       return nfds;
     }
 
+    mutex.lock();
     for(i = 0; i < nfds && returnedEvents < count; i++) {
       if (ev[i].events == EPOLLIN) {
         sensorIndex = ev[i].data.u32;
         if ((sensorIndex < 0) || (sensorIndex > sensorsNum)) {
           ALOGE("%s: Invalid sensor index", __func__);
+          mutex.unlock();
           return -1;
         }
 
         if (sensors[sensorIndex] == nullptr) {
-          ALOGE("%s: Sensor %d is not activated", __func__, sensorIndex);
-          return -1;
+          /* The sensor might have been deactivated by another thread */
+          continue;
         }
 
+        /*
+         * The read operation might fail if the data is read by another
+         * pollEvents call executed by another thread.
+         */
         if (sensors[sensorIndex]->readOneEvent(data + returnedEvents)) {
           returnedEvents++;
-        } else {
-          ALOGE("%s: Cannot read event from sensor %d", __func__, sensorIndex);
-          return -1;
         }
       }
     }
+    mutex.unlock();
+
     if (returnedEvents > 0) {
       return returnedEvents;
     }
@@ -248,6 +258,7 @@ int SensorContext::flush(int handle) {
 
 int SensorContext::CloseWrapper(hw_device_t *dev) {
   SensorContext *sensorContext = reinterpret_cast<SensorContext *>(dev);
+  android::Mutex::Autolock autolock(mutex);
 
   if (sensorContext != nullptr) {
     delete sensorContext;
@@ -258,11 +269,15 @@ int SensorContext::CloseWrapper(hw_device_t *dev) {
 
 int SensorContext::ActivateWrapper(sensors_poll_device_t *dev,
                                    int handle, int enabled) {
+  android::Mutex::Autolock autolock(mutex);
+
   return reinterpret_cast<SensorContext *>(dev)->activate(handle, enabled);
 }
 
 int SensorContext::SetDelayWrapper(sensors_poll_device_t *dev,
                                    int handle, int64_t ns) {
+  android::Mutex::Autolock autolock(mutex);
+
   return reinterpret_cast<SensorContext *>(dev)->setDelay(handle, ns);
 }
 
@@ -273,12 +288,16 @@ int SensorContext::PollEventsWrapper(sensors_poll_device_t *dev,
 
 int SensorContext::BatchWrapper(sensors_poll_device_1_t *dev, int handle,
                                 int flags, int64_t period_ns, int64_t timeout) {
+  android::Mutex::Autolock autolock(mutex);
+
   return reinterpret_cast<SensorContext *>(dev)->batch(handle, flags, period_ns,
                                                       timeout);
 }
 
 int SensorContext::FlushWrapper(sensors_poll_device_1_t *dev,
                                 int handle) {
+  android::Mutex::Autolock autolock(mutex);
+
   return reinterpret_cast<SensorContext *>(dev)->flush(handle);
 }
 
