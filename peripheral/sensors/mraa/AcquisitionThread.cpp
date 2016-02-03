@@ -54,23 +54,27 @@ void* AcquisitionThread::acquisitionRoutine(void *param) {
 
   /* loop until the thread is canceled */
   while(acquisitionThread->getWritePipeFd() != -1) {
-    /* get data from the sensor */
-    sensor->pollEvents(&data, 1);
+    /* get one event from the sensor */
+    if (sensor->pollEvents(&data, 1) != 1) {
+      ALOGE("%s: Sensor %d: Cannot read data", __func__, data.sensor);
+      goto exit;
+    }
 
     /* send the data over the pipe to the main thread */
     rc = write(acquisitionThread->getWritePipeFd(), &data, sizeof(sensors_event_t));
     if (rc != sizeof(sensors_event_t)) {
-      ALOGE("%s: not all data has been sent over the pipe", __func__);
+      ALOGE("%s: Sensor %d: Cannot write data to pipe", __func__, data.sensor);
+      goto exit;
     }
 
     if (acquisitionThread->getWritePipeFd() == -1) {
+      ALOGE("%s: Sensor %d: The write pipe file descriptor is invalid", __func__, data.sensor);
       goto exit;
     }
 
     timestamp += sensor->getDelay();
     set_timestamp(&target_time, timestamp);
     pthread_cond_timedwait(&acquisitionThread->pthreadCond, &acquisitionThread->pthreadMutex, &target_time);
-
   }
 
 exit:
