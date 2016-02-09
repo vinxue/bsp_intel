@@ -1,0 +1,2 @@
+# Used by HW-backed keystore
+/dev/mei                      0660   system     drmrpc
