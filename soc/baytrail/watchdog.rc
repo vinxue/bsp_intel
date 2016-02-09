@@ -1,0 +1,6 @@
+service watchdogd /sbin/watchdogd
+    user system
+    groupd root
+    class core
+    critical
+    seclabel u:r:watchdogd:s0
