@@ -240,8 +240,6 @@ hasSubPlatform()
     return static_cast<bool>(mraa_has_sub_platform());
 }
 
-
-
 /**
  * Check if pin or bus id includes sub platform mask.
  *
@@ -279,5 +277,17 @@ inline int
 getSubPlatformIndex(int pin_or_bus_id)
 {
     return mraa_get_sub_platform_index(pin_or_bus_id);
+}
+
+/**
+ * Get default i2c bus, board must be initialised.
+ *
+ * @param optional subplatform identifier
+ * @return default i2c bus for paltform
+ */
+inline int
+getDefaultI2cBus(int platform_offset=MRAA_MAIN_PLATFORM_OFFSET)
+{
+    return mraa_get_default_i2c_bus(platform_offset);
 }
 }
