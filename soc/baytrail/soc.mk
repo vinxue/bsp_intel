@@ -27,8 +27,6 @@ TARGET_CPU_SMP := true
 TARGET_KERNEL_ARCH := x86_64
 TARGET_USES_64_BIT_BINDER := true
 
-USE_CLANG_PLATFORM_BUILD := true
-
 # Disable building kernel and bootloader until we really support them.
 TARGET_NO_BOOTLOADER := false
 TARGET_NO_KERNEL := false

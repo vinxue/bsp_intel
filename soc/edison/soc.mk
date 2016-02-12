@@ -24,8 +24,6 @@ TARGET_CPU_ABI :=  x86
 TARGET_CPU_ABI2 :=
 TARGET_KERNEL_ARCH := i386
 
-USE_CLANG_PLATFORM_BUILD := true
-
 # Disable building kernel and bootloader until we really support them.
 TARGET_NO_BOOTLOADER := false
 TARGET_NO_KERNEL := false
