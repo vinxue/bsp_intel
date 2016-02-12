@@ -59,11 +59,3 @@ DEVICE_PACKAGES += \
 # Boot control HAL package
 DEVICE_PACKAGES += \
     bootctrl.$(TARGET_DEVICE)
-
-# lights HAL package
-DEVICE_PACKAGES += \
-    lights.$(TARGET_DEVICE)
-
-# Sensor HAL package
-DEVICE_PACKAGES += \
-    sensors.$(TARGET_DEVICE)
