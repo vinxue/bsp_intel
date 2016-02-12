@@ -50,20 +50,12 @@ TARGET_KERNEL_CONFIGS := $(realpath $(LOCAL_PATH)/soc.kconf)
 
 TARGET_BOOTCTRL_HAL := intel
 
-# Bluetooth product packages.
-DEVICE_PACKAGES += \
-    bt_bcm
-
 DEVICE_PACKAGES += \
     keystore.default
 
 # Boot control HAL package.
 DEVICE_PACKAGES += \
     bootctrl.$(TARGET_DEVICE)
-
-# Lights HAL package.
-DEVICE_PACKAGES += \
-    lights.edison
 
 # Audio utilities. You may not need these for a product.
 DEVICE_PACKAGES += \
@@ -72,7 +64,3 @@ DEVICE_PACKAGES += \
 # Device partition table.
 DEVICE_PACKAGES += \
     gpt.bin
-
-# Sensor HAL package.
-DEVICE_PACKAGES += \
-    sensors.edison
