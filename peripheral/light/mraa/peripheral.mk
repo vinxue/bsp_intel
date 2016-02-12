@@ -14,3 +14,5 @@
 # limitations under the License.
 #
 
+DEVICE_PACKAGES += \
+    lights.$(TARGET_DEVICE)
