@@ -31,7 +31,7 @@ TARGET_USES_64_BIT_BINDER := true
 TARGET_NO_BOOTLOADER := false
 TARGET_NO_KERNEL := false
 
-BOARD_KERNEL_CMDLINE := console=ttyS0,115200n8 androidboot.hardware=$(TARGET_DEVICE)
+BOARD_KERNEL_CMDLINE := androidboot.hardware=$(TARGET_DEVICE)
 BOARD_KERNEL_CMDLINE += firmware_class.path=/system/vendor/firmware
 
 TARGET_USERIMAGES_USE_EXT4 := true
@@ -59,12 +59,3 @@ DEVICE_PACKAGES += \
 # Boot control HAL package
 DEVICE_PACKAGES += \
     bootctrl.$(TARGET_DEVICE)
-
-# lights HAL package
-DEVICE_PACKAGES += \
-    lights.$(TARGET_DEVICE)
-
-# Sensor HAL package
-DEVICE_PACKAGES += \
-    sensors.$(TARGET_DEVICE)
-
