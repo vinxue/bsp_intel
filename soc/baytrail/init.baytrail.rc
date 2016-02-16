@@ -21,12 +21,3 @@ on init
 
 on fs
     mount_all /fstab.${ro.hardware}
-
-service adbd /sbin/adbd --root_seclabel=u:r:su:s0
-    class core
-    socket adbd stream 660 system system
-    disabled
-    seclabel u:r:adbd:s0
-
-on boot
-    start adbd
