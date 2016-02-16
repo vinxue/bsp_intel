@@ -26,3 +26,6 @@ PRODUCT_COPY_FILES += \
 #BCM bluetooth
 BOARD_HAVE_BLUETOOTH_BCM := true
 BOARD_CUSTOM_BT_CONFIG := $(BCM43340_BT_SRC)/vnd_edison.txt
+
+DEVICE_PACKAGES += \
+    bt_bcm

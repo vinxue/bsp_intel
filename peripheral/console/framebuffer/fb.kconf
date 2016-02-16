@@ -1,5 +1,5 @@
 #
-# Copyright 2015 The Android Open Source Project
+# Copyright 2016 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,5 +14,18 @@
 # limitations under the License.
 #
 
-DEVICE_PACKAGES += \
-    lights.$(TARGET_DEVICE)
+CONFIG_DUMMY_CONSOLE=y
+CONFIG_FONT_8x8=y
+# CONFIG_FONT_AUTOSELECT is not set
+CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
+CONFIG_FRAMEBUFFER_CONSOLE=y
+CONFIG_HW_CONSOLE=y
+CONFIG_LOGO_LINUX_CLUT224=y
+CONFIG_LOGO=y
+CONFIG_VGACON_SOFT_SCROLLBACK_SIZE=64
+CONFIG_VGACON_SOFT_SCROLLBACK=y
+CONFIG_VGA_CONSOLE=y
+CONFIG_VT_CONSOLE_SLEEP=y
+CONFIG_VT_CONSOLE=y
+CONFIG_VT_HW_CONSOLE_BINDING=y
+CONFIG_VT=y
