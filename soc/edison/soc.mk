@@ -60,7 +60,3 @@ DEVICE_PACKAGES += \
 # Audio utilities. You may not need these for a product.
 DEVICE_PACKAGES += \
     tinyplay tinypcminfo tinymix tinycap
-
-# Device partition table.
-DEVICE_PACKAGES += \
-    gpt.bin
