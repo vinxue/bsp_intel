@@ -44,9 +44,9 @@ namespace mraa
  */
 typedef enum {
     MODE_STRONG = 0,   /**< Default. Strong High and Low */
-    MODE_PULLUP = 1,   /**< Interupt on rising & falling */
-    MODE_PULLDOWN = 2, /**< Interupt on rising only */
-    MODE_HIZ = 3       /**< Interupt on falling only */
+    MODE_PULLUP = 1,   /**< Resistive High */
+    MODE_PULLDOWN = 2, /**< Resistive Low */
+    MODE_HIZ = 3       /**< High Z State */
 } Mode;
 
 /**
@@ -136,6 +136,9 @@ class Gpio
     static void
     v8isr(uv_work_t* req, int status)
     {
+#if NODE_MODULE_VERSION >= 0x000D
+        v8::HandleScope scope(v8::Isolate::GetCurrent());
+#endif
         mraa::Gpio* This = (mraa::Gpio*) req->data;
         int argc = 1;
         v8::Local<v8::Value> argv[] = { SWIGV8_INTEGER_NEW(-1) };

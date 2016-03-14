@@ -29,6 +29,7 @@ set (mraa_LIB_X86_SRCS_NOAUTO
   ${PROJECT_SOURCE_DIR}/src/x86/intel_minnow_byt_compatible.c
   ${PROJECT_SOURCE_DIR}/src/x86/intel_sofia_3gr.c
   ${PROJECT_SOURCE_DIR}/src/x86/intel_cherryhills.c
+  ${PROJECT_SOURCE_DIR}/src/x86/up.c
 )
 
 message (INFO " - Adding support for platform ${MRAAPLATFORMFORCE}")
@@ -52,6 +53,8 @@ if (NOT ${MRAAPLATFORMFORCE} STREQUAL "ALL")
     set (mraa_LIB_X86_SRCS_NOAUTO ${PROJECT_SOURCE_DIR}/src/x86/x86.c ${PROJECT_SOURCE_DIR}/src/x86/intel_sofia_3gr.c)
   elseif (${MRAAPLATFORMFORCE} STREQUAL "MRAA_INTEL_CHERRYHILLS")
     set (mraa_LIB_X86_SRCS_NOAUTO ${PROJECT_SOURCE_DIR}/src/x86/x86.c ${PROJECT_SOURCE_DIR}/src/x86/intel_cherryhills.c)
+  elseif (${MRAAPLATFORMFORCE} STREQUAL "MRAA_UP")
+    set (mraa_LIB_X86_SRCS_NOAUTO ${PROJECT_SOURCE_DIR}/src/x86/x86.c ${PROJECT_SOURCE_DIR}/src/x86/up.c)
   else ()
     message (ERROR " - Unknown x86 platform enabled!")
   endif ()
@@ -95,7 +98,7 @@ if (USBPLAT)
     find_package (Ftd4222)
     if (${LIBFT4222_FOUND})
       set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DFTDI4222=1")
-      set (mraa_LIBS ${mraa_LIBS} ${LIBFT4222_LIBRARIES})
+      set (mraa_LIBS ${mraa_LIBS} dl)
     else ()
       message (WARNING " - Enabled FTDI4222 support but library not found")
     endif ()
