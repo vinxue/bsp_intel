@@ -45,7 +45,7 @@ PRODUCT_COPY_FILES += \
 
 TARGET_KERNEL_SRC := hardware/bsp/kernel/intel/minnowboard-3.14
 TARGET_KERNEL_DEFCONFIG := x86_64_brillo_$(TARGET_DEVICE)_defconfig
-TARGET_KERNEL_CONFIGS := $(realpath $(LOCAL_PATH)/soc.kconf)
+TARGET_KERNEL_CONFIGS := $(TARGET_KERNEL_CONFIGS) $(realpath $(LOCAL_PATH)/soc.kconf)
 
 TARGET_BOOTCTRL_HAL := intel
 
