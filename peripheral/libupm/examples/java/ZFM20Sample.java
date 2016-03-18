@@ -25,15 +25,6 @@
 //NOT TESTED!!!
 public class ZFM20Sample {
 
-	static {
-		try {
-			System.loadLibrary("javaupm_zfm20");
-		} catch (UnsatisfiedLinkError e) {
-			System.err.println("error in loading native library");
-			System.exit(-1);
-		}
-	}
-
 	public static void main(String[] args) throws InterruptedException {
 		// ! [Interesting]
 		// Instantiate a ZFM20 Fingerprint reader on UART 0
@@ -90,7 +81,7 @@ public class ZFM20Sample {
 		}
 
 		System.out.println("Fingerprint found!");
-		System.out.println("ID: " + id + ", Score: " + score);
+		System.out.println("ID: " + id[0] + ", Score: " + score[0]);
 
 		// ! [Interesting]
 	}

@@ -1,5 +1,3 @@
-import upm_grove.IsrCallback;
-
 /*
  * Author: Stefan Andritoiu <stefan.andritoiu@intel.com>
  * Copyright (c) 2015 Intel Corporation.
@@ -24,26 +22,16 @@ import upm_grove.IsrCallback;
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-//NOT TESTED!!!
 public class GroveButton_intrSample {
 
 	public static int counter = 0;
-
-	static {
-		try {
-			System.loadLibrary("javaupm_grove");
-		} catch (UnsatisfiedLinkError e) {
-			System.err.println("error in loading native library");
-			System.exit(-1);
-		}
-	}
 
 	public static void main(String[] args) throws InterruptedException {
 		// ! [Interesting]
 		upm_grove.GroveButton b = new upm_grove.GroveButton(2);
 
-		IsrCallback callback = new ButtonISR();
-		b.installISR(0, callback);
+		ButtonISR callback = new ButtonISR();
+		b.installISR(2, callback);
 
 		while (true) {
 			System.out.println("Counter: " + counter);
@@ -53,13 +41,13 @@ public class GroveButton_intrSample {
 	}
 }
 
-class ButtonISR extends IsrCallback {
+class ButtonISR implements Runnable {
 	public ButtonISR() {
 		super();
 	}
 
 	public void run() {
 		GroveButton_intrSample.counter++;
-		System.out.println("+++++++++");
+		System.out.println("Button pressed!");
 	}
 }

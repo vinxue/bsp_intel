@@ -25,15 +25,6 @@
 //NOT TESTED!!!
 public class LSM303Sample {
 
-	static {
-		try {
-			System.loadLibrary("javaupm_lsm303");
-		} catch (UnsatisfiedLinkError e) {
-			System.err.println("error in loading native library");
-			System.exit(-1);
-		}
-	}
-
 	public static void main(String[] args) throws InterruptedException {
 		// ! [Interesting]
 		// Instantiate LSM303 compass on I2C
@@ -41,7 +32,7 @@ public class LSM303Sample {
 
 		// Get the coordinate data
 		sensor.getCoordinates();
-		int[] coor = sensor.getRawCoorData(); // in XYZ order.·
+		short[] coor = sensor.getRawCoorData(); // in XYZ order.·
 		// The sensor returns XZY, but the driver compensates and makes it XYZ
 
 		// Print out the X, Y, and Z coordinate data using two different methods
@@ -54,7 +45,7 @@ public class LSM303Sample {
 
 		// Get the acceleration
 		sensor.getAcceleration();
-		int[] accel = sensor.getRawAccelData();
+		short[] accel = sensor.getRawAccelData();
 
 		// Print out the X, Y, and Z acceleration data using two different
 		// methods

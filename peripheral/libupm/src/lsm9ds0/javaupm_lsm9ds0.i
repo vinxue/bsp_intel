@@ -1,14 +1,9 @@
-%module(directors="1") javaupm_lsm9ds0
+%module javaupm_lsm9ds0
 %include "../upm.i"
 %include "cpointer.i"
 %include "typemaps.i"
 %include "arrays_java.i";
 %include "../java_buffer.i"
-
-%feature("director") IsrCallback;
-
-%ignore generic_callback_isr;
-%include "../IsrCallback.h"
 
 %apply int {mraa::Edge};
 %apply float *INOUT { float *x, float *y, float *z };
@@ -48,3 +43,14 @@
 %}
 
 %include "lsm9ds0.h"
+
+%pragma(java) jniclasscode=%{
+    static {
+        try {
+            System.loadLibrary("javaupm_lsm9ds0");
+        } catch (UnsatisfiedLinkError e) {
+            System.err.println("Native code library failed to load. \n" + e);
+            System.exit(1);
+        }
+    }
+%}

@@ -1,12 +1,7 @@
-%module(directors="1") javaupm_mma7660
+%module javaupm_mma7660
 %include "../upm.i"
 %include "cpointer.i"
 %include "typemaps.i"
-
-%feature("director") IsrCallback;
-
-%ignore generic_callback_isr;
-%include "../IsrCallback.h"
 
 %apply int *OUTPUT { int *x, int *y, int *z };
 %apply float *OUTPUT { float *ax, float *ay, float *az  };
@@ -48,3 +43,14 @@
 %ignore getAcceleration(float *, float *, float *);
 
 %include "mma7660.h"
+
+%pragma(java) jniclasscode=%{
+    static {
+        try {
+            System.loadLibrary("javaupm_mma7660");
+        } catch (UnsatisfiedLinkError e) {
+            System.err.println("Native code library failed to load. \n" + e);
+            System.exit(1);
+        }
+    }
+%}
