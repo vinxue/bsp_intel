@@ -43,8 +43,8 @@ PRODUCT_COPY_FILES += \
   $(LOCAL_PATH)/ueventd.baytrail.rc:root/ueventd.$(TARGET_DEVICE).rc \
   $(LOCAL_PATH)/watchdog.rc:$(TARGET_COPY_OUT_INITRCD)/watchdog.rc
 
-TARGET_KERNEL_SRC := hardware/bsp/kernel/intel/minnowboard-3.14
-TARGET_KERNEL_DEFCONFIG := x86_64_brillo_$(TARGET_DEVICE)_defconfig
+TARGET_KERNEL_SRC ?= hardware/bsp/kernel/common/v4.4
+TARGET_KERNEL_DEFCONFIG ?= x86_64_defconfig
 TARGET_KERNEL_CONFIGS := $(TARGET_KERNEL_CONFIGS) $(realpath $(LOCAL_PATH)/soc.kconf)
 
 TARGET_BOOTCTRL_HAL := intel
