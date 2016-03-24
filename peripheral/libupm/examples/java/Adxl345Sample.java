@@ -25,15 +25,6 @@
 //NOT TESTED!!!
 public class Adxl345Sample {
 
-	static {
-		try {
-			System.loadLibrary("javaupm_adxl345");
-		} catch (UnsatisfiedLinkError e) {
-			System.err.println("error in loading native library");
-			System.exit(-1);
-		}
-	}
-
 	public static void main(String[] args) throws InterruptedException {
 		// ! [Interesting]
 		short[] val;
@@ -49,10 +40,9 @@ public class Adxl345Sample {
 			accel = sensor.getAcceleration();
 
 			System.out.println("Current scale: " + sensor.getScale());
-			System.out.println("Raw Values: X: " + val[0] + " Y: " + val[1]
-					+ " Z: " + val[2]);
-			System.out.println("Acceleration: X: " + accel[0] + "g Y: "
-					+ accel[1] + "g Z: " + accel[2] + "g");
+			System.out.println("Raw Values: X: " + val[0] + " Y: " + val[1] + " Z: " + val[2]);
+			System.out.println("Acceleration: X: " + accel[0] + "g Y: " + accel[1] + "g Z: "
+					+ accel[2] + "g");
 
 			Thread.sleep(1000);
 		}

@@ -30,7 +30,17 @@ LIBUPM_CXX_FILE_LIST := $(call all-named-files-under,*.cxx,src)
 
 # groveloudness module requires a header file missed in imported tip of libupm
 # filter it out...
-LOCAL_SRC_FILES := $(filter-out %groveloudness.cxx, $(LIBUPM_CXX_FILE_LIST))
+LIBUPM_CXX_FILE_LIST := $(filter-out %groveloudness.cxx, $(LIBUPM_CXX_FILE_LIST))
+LIBUPM_CXX_FILE_LIST := $(filter-out %hwxpxx.cxx, $(LIBUPM_CXX_FILE_LIST))
+LIBUPM_CXX_FILE_LIST := $(filter-out %zwNode.cxx, $(LIBUPM_CXX_FILE_LIST))
+LIBUPM_CXX_FILE_LIST := $(filter-out %ozw.cxx, $(LIBUPM_CXX_FILE_LIST))
+LIBUPM_CXX_FILE_LIST := $(filter-out %t3311.cxx, $(LIBUPM_CXX_FILE_LIST))
+LIBUPM_CXX_FILE_LIST := $(filter-out %sx1276.cxx, $(LIBUPM_CXX_FILE_LIST))
+LIBUPM_CXX_FILE_LIST := $(filter-out %ssd1351.cxx, $(LIBUPM_CXX_FILE_LIST))
+LIBUPM_CXX_FILE_LIST := $(filter-out %st7735.cxx, $(LIBUPM_CXX_FILE_LIST))
+LIBUPM_CXX_FILE_LIST := $(filter-out %ili9341.cxx, $(LIBUPM_CXX_FILE_LIST))
+LIBUPM_CXX_FILE_LIST := $(filter-out %gfx.cxx, $(LIBUPM_CXX_FILE_LIST))
+LOCAL_SRC_FILES := $(LIBUPM_CXX_FILE_LIST)
 
 LOCAL_C_INCLUDES := $(sort $(dir $(wildcard $(LOCAL_PATH)/src/*/)))
 

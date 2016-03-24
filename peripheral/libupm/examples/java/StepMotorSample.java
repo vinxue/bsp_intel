@@ -25,38 +25,32 @@
 //NOT TESTED!!!
 public class StepMotorSample {
 
-	static {
-		try {
-			System.loadLibrary("javaupm_stepmotor");
-		} catch (UnsatisfiedLinkError e) {
-			System.err.println("error in loading native library");
-			System.exit(-1);
-		}
-	}
+    public static void main(String[] args) throws InterruptedException {
+        // ! [Interesting]
+        upm_stepmotor.StepMotor sensor = new upm_stepmotor.StepMotor(2, 3);
 
-	public static void main(String[] args) throws InterruptedException {
-		// ! [Interesting]
-		upm_stepmotor.StepMotor sensor = new upm_stepmotor.StepMotor(4, 6);
+        while (true) {
+            System.out.println("One complete rotation forward and back at 60 rpm.");
+            sensor.setSpeed(60);
+            sensor.stepForward(200);
+            Thread.sleep(1000);
+            sensor.stepBackward(200);
+            Thread.sleep(1000);
 
-		while (true) {
-			sensor.setSpeed(500);
-			sensor.stepForward(500);
-			Thread.sleep(10);
-			sensor.stepBackwards(500);
-			Thread.sleep(10);
+            System.out.println("One complete rotation forward and back at 150 rpm.");
+            sensor.setSpeed(150);
+            sensor.stepForward(200);
+            Thread.sleep(1000);
+            sensor.stepBackward(200);
+            Thread.sleep(1000);
 
-			sensor.setSpeed(750);
-			sensor.stepForward(500);
-			Thread.sleep(10);
-			sensor.stepBackwards(500);
-			Thread.sleep(10);
-
-			sensor.setSpeed(1000);
-			sensor.stepForward(500);
-			Thread.sleep(10);
-			sensor.stepBackwards(500);
-			Thread.sleep(10);
-		}
-		// ! [Interesting]
-	}
+            System.out.println("One complete rotation forward and back at 300 rpm.");
+            sensor.setSpeed(300);
+            sensor.stepForward(200);
+            Thread.sleep(1000);
+            sensor.stepBackward(200);
+            Thread.sleep(1000);
+        }
+        // ! [Interesting]
+    }
 }

@@ -285,6 +285,12 @@
  */
 
 /**
+ * @brief Comet System
+ * @defgroup comet Comet
+ * @ingroup byman
+ */
+
+/**
  * @brief EpicTinker
  * @defgroup epict EpicTinker
  * @ingroup byman
@@ -315,6 +321,18 @@
  */
 
 /**
+ * @brief Numato Labs
+ * @defgroup numatolabs Numato Labs
+ * @ingroup byman
+ */
+
+/**
+ * @brief Omega
+ * @defgroup omega Omega
+ * @ingroup byman
+ */
+
+/**
  * @brief SeeedStudio - Grove Sensors
  * @defgroup seeed SeeedStudio
  * @ingroup byman
@@ -329,6 +347,12 @@
 /**
  * @brief Texas Instruments
  * @defgroup ti Texas Instruments
+ * @ingroup byman
+ */
+
+/**
+ * @brief Veris Industries
+ * @defgroup veris Veris Industries
  * @ingroup byman
  */
 

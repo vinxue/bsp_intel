@@ -29,10 +29,6 @@
 
 #include <mraa/gpio.hpp>
 
-#if defined(SWIGJAVA) || defined(JAVACALLBACK)
-#include "../IsrCallback.h"
-#endif
-
 #define LSM9DS0_I2C_BUS 1
 #define LSM9DS0_DEFAULT_XM_ADDR 0x1d
 #define LSM9DS0_DEFAULT_GYRO_ADDR 0x6b
@@ -71,6 +67,11 @@ namespace upm {
    * required.
    *
    * This driver was developed on a Sparkfun 9DOF edison block.
+   *
+   * @image html lsm9ds0.jpg
+   * <br><em>LSM9DS0 Sensor image provided by SparkFun* under
+   * <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/>
+   * CC BY-NC-SA-3.0</a>.</em>
    *
    * @snippet lsm9ds0.cxx Interesting
    */
@@ -1413,7 +1414,7 @@ namespace upm {
 
 #if defined(SWIGJAVA) || defined(JAVACALLBACK)
     void installISR(INTERRUPT_PINS_T intr, int gpio, mraa::Edge level,
-		    IsrCallback *cb);
+		    jobject runnable);
 #else
     /**
      * install an interrupt handler.
@@ -1464,11 +1465,6 @@ namespace upm {
   private:
     // OR'd with a register, this enables register autoincrement mode,
     // which we need.
-#if defined(SWIGJAVA) || defined(JAVACALLBACK)
-    void installISR(INTERRUPT_PINS_T intr, int gpio, mraa::Edge level,
-                    void (*isr)(void *), void *arg);
-#endif
-
     static const uint8_t m_autoIncrementMode = 0x80;
 
     mraa::I2c m_i2cG;
