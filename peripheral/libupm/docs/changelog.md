@@ -4,6 +4,45 @@ Changelog                         {#changelog}
 Here's a list summarizing some of the key undergoing changes to our library
 from earlier versions:
 
+### v0.5.1
+
+ * Updated the API and added new functionality for the MY9221 class and derived
+ sensors: grovecircularled and groveledbar, along with new code samples that
+ show these changes
+ * Provided a fix for one JAVA example that uses interrupts and updated library
+ install paths
+ * Several documentation improvements and pictures were added for new sensors
+ * A few other sensors received minor patches
+
+### v0.5.0
+
+ * First implementations for industrial grade Modbus sensors, along with first
+ sensor examples that use the new iio system driver in MRAA
+ * Significant improvements to the stepmotor driver that will now allow precise
+ control using any GPIO pin and extended the API with new functionality
+ * Further improved JAVA bindings and sensor ISRs have been modified to
+ implement Runnable objects
+ * Improved Python typemaps and error checking, documentation now includes
+ detailed function descriptions
+ * Simplified the build process by eliminating the need to define redundant
+ MRAA related environment variables
+ * New sensors: nlgpio16, ads1x15, t3311, hdxxvxta, hwxpxx, rhusb, ili9341,
+ apds9930, kxcjk1013
+
+### v0.4.1
+
+ * Over 150 supported sensor drivers including some industrial grade devices
+ * Improved the JAVA bindings, added a large number of examples for sensors,
+ enabled JAVA builds in Travis CI, and introduced automatic loading for the
+ JAVA shared libraries
+ * Continued to improve existing sensor drivers and to enhance them with the
+ new C++ coding style and exception types
+ * Several cmake improvements to allow building on various Linux distributions
+ and with a newer version of Node.JS
+ * Simplified adding and building of C++ sensor examples via cmake
+ * New sensors: micsv89, xbee, urm37, adxrs610, bma220, dfrph, mcp9808, sx1276,
+ groveultrasonic, ozw
+
 ### v0.4.0
 
  * Fully functional and documented JAVA language bindings for sensors with
@@ -26,7 +65,7 @@ from earlier versions:
  includes last remaining images and grouping sensors by kits
  * Added support for Sparkfun Sensor Blocks (OLED & IMU)
  * Fully reworked API for at42qt1070, mpu9150 and lcd classes, while
- maintaining backwards compatibility for existing lcd displays.
+ maintaining backwards compatibility for existing lcd displays
  * Extended doxygen tags for better integration with automated documentation
  generators
  * New sensors: rgbringcoder, hp20x, pn532, sainsmartks, lsm9ds0, eboled

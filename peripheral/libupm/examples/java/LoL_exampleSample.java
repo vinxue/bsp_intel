@@ -25,15 +25,6 @@
 //NOT TESTED!!!
 public class LoL_exampleSample {
 
-	static {
-		try {
-			System.loadLibrary("javaupm_lol");
-		} catch (UnsatisfiedLinkError e) {
-			System.err.println("error in loading native library");
-			System.exit(-1);
-		}
-	}
-
 	public static void main(String[] args) throws InterruptedException {
 		// ! [Interesting]
 		upm_lol.LoL sensor = new upm_lol.LoL();
@@ -41,9 +32,7 @@ public class LoL_exampleSample {
 		int x = 0, y = 0;
 		while (true) {
 			// revert pixel
-			short pixel = sensor.getPixel(x, y);
-			pixel = (short) ((pixel == 0) ? 1 : 0);
-			sensor.setPixel(x, y, pixel);
+			sensor.setPixel(x, y, sensor.getPixel(x, y));
 
 			if (++x == 13) {
 				x = 0;

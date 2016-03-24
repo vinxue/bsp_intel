@@ -1,3 +1,14 @@
+macro (file_to_list readfile outlist)
+  FILE(READ "${readfile}" contents)
+  STRING(REGEX REPLACE ";" "\\\\;" contents "${contents}")
+  STRING(REGEX REPLACE "\n" ";" contents "${contents}")
+  set("${outlist}" "${contents}" )
+endmacro()
+
+file_to_list ("javaswig_blacklist" JAVASWIG_BLACKLIST)
+file_to_list ("pythonswig_blacklist" PYTHONSWIG_BLACKLIST)
+file_to_list ("nodeswig_blacklist" NODESWIG_BLACKLIST)
+
 macro(subdirlist result curdir)
   file(GLOB children RELATIVE ${curdir} ${curdir}/*)
   set(dirlist "")
@@ -18,6 +29,7 @@ endmacro (upm_CREATE_INSTALL_PKGCONFIG)
 macro(upm_SWIG_PYTHON)
   if (BUILDSWIGPYTHON AND BUILDSWIG)
     set_source_files_properties (pyupm_${libname}.i PROPERTIES CPLUSPLUS ON)
+    set_source_files_properties (pyupm_${libname}.i PROPERTIES SWIG_FLAGS "-I${CMAKE_CURRENT_BINARY_DIR}/..")
     swig_add_module (pyupm_${libname} python pyupm_${libname}.i ${module_src})
     swig_link_libraries (pyupm_${libname} ${PYTHON_LIBRARIES} ${MRAA_LIBRARIES})
     target_include_directories ( ${SWIG_MODULE_pyupm_${libname}_REAL_NAME}
@@ -47,6 +59,15 @@ macro(upm_SWIG_NODE)
       PREFIX ""
       SUFFIX ".node"
     )
+    if (${V8_VERSION_MAJOR} GREATER 3)
+      if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.7")
+          message(FATAL_ERROR " **ERROR** GCC 4.7 or above is required to compile jsupm_${libname} ")
+        endif()
+      endif()
+      set_property (TARGET jsupm_${libname} PROPERTY CXX_STANDARD 11)
+      set_property (TARGET jsupm_${libname} PROPERTY CXX_STANDARD_REQUIRED ON)
+    endif()
     createpackagejson(${libname})
     install (FILES ${CMAKE_CURRENT_BINARY_DIR}/jsupm_${libname}.node
          DESTINATION lib/node_modules/jsupm_${libname} COMPONENT ${libname})
@@ -57,6 +78,7 @@ macro(upm_SWIG_JAVA)
   if (BUILDSWIGJAVA AND BUILDSWIG)
 
     FIND_PACKAGE (JNI REQUIRED)
+    pkg_check_modules (MRAAJAVA REQUIRED mraajava>=0.8.0)
 
     include_directories (
       ${JAVA_INCLUDE_PATH}
@@ -67,7 +89,7 @@ macro(upm_SWIG_JAVA)
     set_source_files_properties (javaupm_${libname}.i PROPERTIES CPLUSPLUS ON)
     set_source_files_properties (javaupm_${libname}.i PROPERTIES SWIG_FLAGS ";-package;upm_${libname};-I${CMAKE_BINARY_DIR}/src")
     swig_add_module (javaupm_${libname} java javaupm_${libname}.i ${module_src})
-    swig_link_libraries (javaupm_${libname} ${MRAA_LIBRARIES} ${JAVA_LIBRARIES})
+    swig_link_libraries (javaupm_${libname} ${MRAAJAVA_LDFLAGS} ${JAVA_LDFLAGS})
     target_include_directories ( ${SWIG_MODULE_javaupm_${libname}_REAL_NAME}
       PUBLIC
       "${JAVA_INCLUDE_DIRS}"
@@ -78,19 +100,15 @@ macro(upm_SWIG_JAVA)
       PREFIX "lib"
       SUFFIX ".so"
     )
-    install (FILES ${CMAKE_CURRENT_BINARY_DIR}/libjavaupm_${libname}.so
-	DESTINATION lib/java
-    )
-    install (FILES ${CMAKE_CURRENT_BINARY_DIR}/upm_${libname}.jar
-	DESTINATION lib/java
-    )
+    install (TARGETS javaupm_${libname} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install (FILES ${CMAKE_CURRENT_BINARY_DIR}/upm_${libname}.jar DESTINATION ${CMAKE_INSTALL_LIBDIR}/../lib/java)
 
     if (NOT DEFINED $ENV{JAVA_HOME_NATIVE})
-	set (JAVAC $ENV{JAVA_HOME}/bin/javac)
-	set (JAR $ENV{JAVA_HOME}/bin/jar)
+        set (JAVAC $ENV{JAVA_HOME}/bin/javac)
+        set (JAR $ENV{JAVA_HOME}/bin/jar)
     else ()
-	set (JAVAC $ENV{JAVA_HOME_NATIVE}/bin/javac)
-	set (JAR $ENV{JAVA_HOME_NATIVE}/bin/jar)
+        set (JAVAC $ENV{JAVA_HOME_NATIVE}/bin/javac)
+        set (JAR $ENV{JAVA_HOME_NATIVE}/bin/jar)
     endif ()
 
     add_custom_command (TARGET javaupm_${libname}
@@ -111,16 +129,8 @@ macro(upm_doxygen)
       set (classname ${libname})
     endif()
     set (CMAKE_SWIG_FLAGS -DDOXYGEN=${DOXYGEN_FOUND})
-    add_custom_command (OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${libname}_doc.i
-      COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../doxy2swig.py -n
-        ${CMAKE_BINARY_DIR}/xml/${classname}_8h.xml
-        ${CMAKE_CURRENT_BINARY_DIR}/${libname}_doc.i
-        DEPENDS ${CMAKE_BINARY_DIR}/xml/${classname}_8h.xml
-    )
-    add_custom_target (${libname}doc_i DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${libname}_doc.i)
-    add_dependencies (${libname}doc_i doc)
     if (BUILDSWIG)
-      add_dependencies (_pyupm_${libname} ${libname}doc_i)
+      add_dependencies (_pyupm_${libname} pyupm_doxy2swig)
       add_dependencies (pydoc _pyupm_${libname})
     else ()
       add_dependencies (${libname} doc)
@@ -156,18 +166,16 @@ if (SWIG_FOUND)
     endmacro()
 
   endif(BUILDSWIGNODE)
-#  if(BUILDSWIGJAVA)
-#    add_subdirectory (java)
-#  endif(BUILDSWIGJAVA)
-    
+
 endif()
 
 macro(upm_module_init)
+  link_directories (${MRAA_LIBDIR})
   add_library (${libname} SHARED ${module_src})
   foreach (linkflag ${ARGN})
     target_link_libraries (${libname} ${linkflag})
   endforeach ()
-  include_directories (${MRAA_INCLUDE_DIR} .)
+  include_directories (${MRAA_INCLUDE_DIRS} .)
   target_link_libraries (${libname} ${MRAA_LIBRARIES})
   set_target_properties(
     ${libname}
@@ -175,11 +183,17 @@ macro(upm_module_init)
     SOVERSION ${upm_VERSION_MAJOR}
     VERSION ${upm_VERSION_STRING}
   )
-  upm_create_install_pkgconfig (upm-${libname}.pc lib${LIB_SUFFIX}/pkgconfig)
+  upm_create_install_pkgconfig (upm-${libname}.pc ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
   if (SWIG_FOUND)
-    upm_swig_python()
-    upm_swig_node()
-    upm_swig_java()
+    if (NOT ";${PYTHONSWIG_BLACKLIST};" MATCHES ";${libname};")
+      upm_swig_python()
+    endif()
+    if (NOT ";${NODESWIG_BLACKLIST};" MATCHES ";${libname};")
+      upm_swig_node()
+    endif()
+    if (NOT ";${JAVASWIG_BLACKLIST};" MATCHES ";${libname};")
+      upm_swig_java()
+    endif()
   endif()
   if (BUILDDOC)
     upm_doxygen()
@@ -193,7 +207,30 @@ macro(upm_module_init)
   endif()
 endmacro(upm_module_init)
 
-subdirlist(SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
+# Generate python module documentation from doxygen collateral
+if (BUILDDOC AND BUILDSWIGPYTHON AND SWIG_FOUND)
+  # doxy2swig the doxygen output
+  add_custom_command (OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/pyupm_doxy2swig.i
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/doxy2swig.py
+      ${CMAKE_BINARY_DIR}/xml/index.xml
+      ${CMAKE_CURRENT_BINARY_DIR}/pyupm_doxy2swig.i
+    DEPENDS ${CMAKE_BINARY_DIR}/xml/index.xml
+  )
+  add_custom_target (pyupm_doxy2swig DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/pyupm_doxy2swig.i)
+  add_dependencies (pyupm_doxy2swig doc)
+# BUILDDOC not set but still building python modules, generate an empty
+# pyupm_doxy2swig.i file (overwriting if necessary)
+elseif (BUILDSWIGPYTHON AND SWIG_FOUND)
+  message (INFO " Generating empty ${CMAKE_CURRENT_BINARY_DIR}/pyupm_doxy2swig.i")
+  file (WRITE ${CMAKE_CURRENT_BINARY_DIR}/pyupm_doxy2swig.i "// Empty doxy2swig stub")
+endif (BUILDDOC AND BUILDSWIGPYTHON AND SWIG_FOUND)
+
+if (MODULE_LIST)
+  set(SUBDIRS ${MODULE_LIST})
+  set(SUBDIRS ${SUBDIRS} upm)
+else()
+  subdirlist(SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
+endif()
 foreach(subdir ${SUBDIRS})
     if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${subdir}/CMakeLists.txt)
         add_subdirectory(${subdir})

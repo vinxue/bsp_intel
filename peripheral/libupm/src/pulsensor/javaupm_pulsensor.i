@@ -3,6 +3,7 @@
 %include "arrays_java.i"
 
 %feature("director") Callback;
+SWIG_DIRECTOR_OWNED(Callback)
 
 %ignore sample_thread;
 %ignore pin_ctx;
@@ -15,3 +16,14 @@
 %}
 
 %include "pulsensor.h"
+
+%pragma(java) jniclasscode=%{
+    static {
+        try {
+            System.loadLibrary("javaupm_pulsensor");
+        } catch (UnsatisfiedLinkError e) {
+            System.err.println("Native code library failed to load. \n" + e);
+            System.exit(1);
+        }
+    }
+%}

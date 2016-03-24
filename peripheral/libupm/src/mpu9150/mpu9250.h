@@ -46,6 +46,7 @@ namespace upm {
    *
    * This module defines the MPU9250 interface for libmpu9150
    *
+   * @image html mpu9250.jpg
    * @snippet mpu9250.cxx Interesting
    */
 
@@ -58,9 +59,11 @@ namespace upm {
      * @param bus I2C bus to use
      * @param address The address for this device
      * @param magAddress The address of the connected magnetometer
+     * @param enableAk8975 Enables i2c bypass mode for magnetometer, default
+     * is true
      */
     MPU9250 (int bus=MPU9250_I2C_BUS, int address=MPU9250_DEFAULT_I2C_ADDR,
-             int magAddress=AK8975_DEFAULT_I2C_ADDR);
+             int magAddress=AK8975_DEFAULT_I2C_ADDR, bool enableAk8975=true);
 
     /**
      * MPU9250 destructor

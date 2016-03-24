@@ -45,6 +45,14 @@
 
 namespace upm
 {
+  const uint8_t COLOR_WHITE     = 0x01;
+  const uint8_t COLOR_BLACK     = 0x00;
+  const uint8_t COLOR_XOR       = 0x02;
+  const uint8_t OLED_WIDTH      = 0x40; // 64 pixels
+  const uint8_t VERT_COLUMNS    = 0x20; // half width for hi/lo 16bit writes.
+  const uint8_t OLED_HEIGHT     = 0x30; // 48 pixels
+  const int     BUFFER_SIZE     = 192;
+
   /**
    * @library i2clcd
    * @sensor eboled
@@ -66,17 +74,13 @@ namespace upm
    * standard GPIO -- this driver only concerns itself with the
    * display.
    *
+   * @image html eboled.jpg
+   * <br><em>OLED Sensor image provided by SparkFun* under
+   * <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/>
+   * CC BY-NC-SA-3.0</a>.</em>
+   *
    * @snippet eboled.cxx Interesting
    */
-
-  const uint8_t COLOR_WHITE     = 0x01;
-  const uint8_t COLOR_BLACK     = 0x00;
-  const uint8_t COLOR_XOR       = 0x02;
-  const uint8_t OLED_WIDTH      = 0x40; // 64 pixels
-  const uint8_t VERT_COLUMNS    = 0x20; // half width for hi/lo 16bit writes.
-  const uint8_t OLED_HEIGHT     = 0x30; // 48 pixels
-  const int     BUFFER_SIZE     = 192;
-
   class EBOLED : public LCD
   {
     // SSD commands
@@ -128,11 +132,8 @@ namespace upm
     ~EBOLED();
 
     /**
-     * Draw the buffer to screen, see examples/python/make_oled_pic.py for an
-     * explanation on how the pixels are mapped to bytes.
+     * Draw the buffer to screen.
      *
-     * @param data the buffer to write
-     * @param bytes the number of bytes to write
      * @return result of operation
      */
     mraa::Result refresh();
