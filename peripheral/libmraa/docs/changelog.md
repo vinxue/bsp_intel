@@ -5,6 +5,32 @@ This changelog is meant as a quick & rough guide to what has changed between
 versions. The API is now fairly stable but when new calls/features are added
 they are listed here. Anything pre 0.2.x is ignored.
 
+**0.9.6**
+  * ftdi ft4222 now dynamically loaded
+  * FT4222 improved ISR code
+
+**0.9.5**
+  * Add support for the UP board (up-board.org)
+  * Support OpenJDK 7 as well as OpenJDK 8
+  * 96board better pin numbering
+  * node v4 improvements
+  * Support for PCA9555 i2c expander read/write on FT4222
+
+**0.9.4**
+  * Fix issue with edison ADC initilisation
+  * documentation update
+
+**0.9.3**
+  * Intel edison detection much improved
+  * ftdi ft4222 interupt improvement
+  * small fixes to java lib
+
+**0.9.2**
+  * Fix bug with mraa_init & USBPLAT
+  * Add mraa_gpio_read_dir call
+  * Enable cherryhill/braswell platform
+  * Improved 96 board support
+
 **0.9.1**
   * Minnowboard Turbot support
   * Change to java runables for ISR support

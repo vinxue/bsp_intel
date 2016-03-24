@@ -131,13 +131,13 @@ mraa_init()
             plat->platform_name = "Unknown platform";
         }
     }
-    // Now detect sub platform
+    // Now detect sub platform, note this is not an else since we could be in
+    // an error case and fall through to MRAA_ERROR_PLATFORM_NOT_INITIALISED
     if (plat != NULL) {
         mraa_platform_t usb_platform_type = mraa_usb_platform_extender(plat);
+        // if we have no known platform just replace usb platform with platform
         if (plat->platform_type == MRAA_UNKNOWN_PLATFORM && usb_platform_type != MRAA_UNKNOWN_PLATFORM) {
             plat->platform_type = usb_platform_type;
-        } else {
-            return MRAA_ERROR_PLATFORM_NOT_INITIALISED;
         }
     }
     if (plat == NULL) {
@@ -152,7 +152,8 @@ mraa_init()
     if (plat != NULL) {
         int length = strlen(plat->platform_name) + 1;
         if (mraa_has_sub_platform()) {
-            length += strlen(plat->sub_platform->platform_name);
+            // Account for ' + ' chars
+            length += strlen(plat->sub_platform->platform_name) + 3;
         }
         platform_name = calloc(length, sizeof(char));
         if (mraa_has_sub_platform()) {
@@ -802,18 +803,4 @@ int
 mraa_get_iio_device_count()
 {
     return plat_iio->iio_device_count;
-}
-
-int
-mraa_find_iio_device(const char* devicename)
-{
-    int i = 0;
-    for (i; i < plat_iio->iio_device_count; i++) {
-#if 0
-        // compare with devices array
-        if (!strcmp() {
-        }
-#endif
-    }
-    return 0;
 }
