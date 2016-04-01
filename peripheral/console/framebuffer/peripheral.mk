@@ -15,6 +15,8 @@
 
 TARGET_KERNEL_CONFIGS += $(realpath hardware/bsp/intel/peripheral/console/framebuffer/fb.kconf)
 
+PRODUCT_COPY_FILES += \
+  hardware/bsp/intel/peripheral/console/framebuffer/fbconsole.rc:$(TARGET_COPY_OUT_INITRCD)/fbconsole.rc
+
 # using frame buffer console
-BOARD_KERNEL_CMDLINE += console=tty0 androidboot.console=tty0
-BOARD_KERNEL_CMDLINE += vga=current i915.modeset=1 drm.vblankoffdelay=1 i915.fastboot=1
+BOARD_KERNEL_CMDLINE += androidboot.console=disabled console=tty0 vga=current i915.modeset=1 drm.vblankoffdelay=1 i915.fastboot=1
