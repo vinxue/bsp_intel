@@ -196,7 +196,7 @@ unsigned bootctrl_get_current_slot(boot_control_module_t *module __unused)
 
     ret = bootctrl_read_metadata(&metadata);
     if (ret < 0) {
-	/* anything larger than 2 will be considered as error. */
+    /* anything larger than 2 will be considered as error. */
         return (unsigned)ret;
     }
 
@@ -300,7 +300,7 @@ int bootctrl_set_slot_as_unbootable(boot_control_module_t *module __unused,
 }
 
 int bootctrl_is_slot_bootable(boot_control_module_t *module __unused,
-	unsigned slot)
+    unsigned slot)
 {
     int ret;
     boot_ctrl_t metadata;
@@ -326,6 +326,24 @@ const char *bootctrl_get_suffix(boot_control_module_t *module __unused,
     return suffix[slot];
 }
 
+int bootctrl_is_slot_marked_successful(boot_control_module_t *module __unused,
+    unsigned slot)
+{
+    int ret;
+    boot_ctrl_t metadata;
+
+    if (slot >= 2) {
+        fprintf(stderr, "Wrong Slot value %u\n", slot);
+        return -EINVAL;
+    }
+    ret = bootctrl_read_metadata(&metadata);
+    if (ret < 0) {
+        return ret;
+    }
+
+    return metadata.slot_info[slot].successful_boot;
+}
+
 static int bootctrl_open(const hw_module_t *module, const char *id __unused,
     hw_device_t **device __unused)
 {
@@ -348,13 +366,14 @@ boot_control_module_t HAL_MODULE_INFO_SYM = {
         .author              = "Intel Corporation",
         .methods             = &bootctrl_methods,
     },
-    .init                 = bootctrl_init,
-    .getNumberSlots       = bootctrl_get_number_slots,
-    .getCurrentSlot       = bootctrl_get_current_slot,
-    .markBootSuccessful   = bootctrl_mark_boot_successful,
-    .setActiveBootSlot    = bootctrl_set_active_boot_slot,
-    .setSlotAsUnbootable  = bootctrl_set_slot_as_unbootable,
-    .isSlotBootable       = bootctrl_is_slot_bootable,
-    .getSuffix            = bootctrl_get_suffix,
+    .init                   = bootctrl_init,
+    .getNumberSlots         = bootctrl_get_number_slots,
+    .getCurrentSlot         = bootctrl_get_current_slot,
+    .markBootSuccessful     = bootctrl_mark_boot_successful,
+    .setActiveBootSlot      = bootctrl_set_active_boot_slot,
+    .setSlotAsUnbootable    = bootctrl_set_slot_as_unbootable,
+    .isSlotBootable         = bootctrl_is_slot_bootable,
+    .getSuffix              = bootctrl_get_suffix,
+    .isSlotMarkedSuccessful = bootctrl_is_slot_marked_successful,
 };
 
