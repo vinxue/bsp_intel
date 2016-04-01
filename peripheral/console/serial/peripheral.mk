@@ -13,4 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-BOARD_KERNEL_CMDLINE += console=ttyS0,115200n8
+BOARD_SEPOLICY_DIRS += $(realpath hardware/bsp/intel/peripheral/console/serial/sepolicy)
+
+PRODUCT_COPY_FILES += \
+  hardware/bsp/intel/peripheral/console/serial/sconsole.rc:$(TARGET_COPY_OUT_INITRCD)/sconsole.rc
+
+# using serial console
+BOARD_KERNEL_CMDLINE += androidboot.console=disabled console=ttyS0,115200n8
