@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="US-ASCII" ?>
+<!--****************************************************************
+* (c) Copyright 2011-2012 Discretix Technologies Ltd.              *
+* This file is licensed under the terms provided in the file       *
+* libcc54/LICENSE in this directory or a parent directory          *
+*****************************************************************-->
+
+<!-- SepRpcTest API description: An API dedicated to test the RPC mechanism -->
+
+<api name="AppletMngLoad"> <!-- The AppletMngLoadRpc API Agent ID -->
+
+  <!-- Default return codes for generated wrapper code (may be overriden for specific functions -->
+  <retcodes ok="DX_SUCCESS"  generic_error="DX_APP_MNG_ILLEGAL_PARAM_ERROR" invalid_param="DX_APP_MNG_ILLEGAL_PARAM_ERROR" not_enough_resources="DX_APP_MNG_ILLEGAL_PARAM_ERROR" />
+
+  <!-- Header files to include for prototypes -->
+  <header>dx_applet_mng_load.h</header>
+  <header>applet_mgr_error.h</header>
+
+  <function name="DX_CC_LoadApplet" return="le32(DxUint32_t)">
+    <!--
+    DxUint32_t DX_CC_LoadApplet(DxUint32_t vrlAddr,
+                            DxUint32_t magicNum,
+                            DxUint32_t verKeyIndex,
+                            DxUint32_t flags,
+                            DxUint32_t appletImageAddr,
+                            DxUint32_t userParam);
+    -->
+    <param name="vrlAddr"  direction="i" ptype="val" dtype="le32(DxUint32_t)"  />
+    <param name="magicNum"    direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+    <param name="verKeyIndex"    direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+    <param name="flags"    direction="i" ptype="val" dtype="le32(DxUint32_t)" />
+    <param name="appletImageAddr"    direction="i" ptype="val" dtype="le32(DxUint32_t)" />
+    <param name="userParam"    direction="i" ptype="val" dtype="le32(DxUint32_t)" />
+
+  </function>
+
+  <function name="DX_CC_UnloadApplet" return="le32(DxUint32_t)">
+    <!--
+    DxUint32_t DX_CC_UnLoadApplet(DX_SepAppUuid_t uuid);
+    -->
+    <param name="uuid"  direction="i" ptype="array(sizeof(DX_SepAppUuid_t),sizeof(DX_SepAppUuid_t))" dtype="DxUint8_t"  />
+
+  </function>
+
+</api>
+
+

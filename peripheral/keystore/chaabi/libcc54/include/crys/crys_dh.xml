@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="US-ASCII" ?>
+<!--****************************************************************
+* (c) Copyright 2011-2012 Discretix Technologies Ltd.              *
+* This file is licensed under the terms provided in the file       *
+* libcc54/LICENSE in this directory or a parent directory          *
+*****************************************************************-->
+
+<!-- SepRpcTest API description: An API dedicated to test the RPC mechanism -->
+
+<api name="CrysDh"> <!-- The DH API Agent ID -->
+
+  <!-- Default return codes for generated wrapper code (may be overriden for specific functions -->
+  <retcodes ok="CRYS_OK" generic_error="CRYS_DH_HOST_MSG_GENERAL_RPC_A_ERROR" invalid_param="CRYS_DH_HOST_MSG_GENERAL_RPC_B_ERROR" not_enough_resources="CRYS_DH_HOST_MSG_GENERAL_RPC_C_ERROR" />
+  <!--  Header files to include for prototypes
+   -->
+
+  <header>crys_dh.h</header>
+  <header>crys_dh_error.h</header>
+  <header>crys_dh_kg.h</header>
+  <header>crys_rsa_prim.h</header>
+ <!--
+  <header> crys_rsa_types.h</header>
+  -->
+
+<!--**************************************************************** -->
+  <function name="_DX_DH_GeneratePubPrv" return="le32(CRYSError_t)">
+    <!--
+       CRYSError_t _DX_DH_GeneratePubPrv(
+           DxUint8_t *Generator_ptr,              /*generator*/
+           DxUint16_t GeneratorSize,
+           DxUint8_t *Prime_ptr,                  /*modulus*/
+           DxUint16_t PrimeSize,
+           DxUint16_t L,     /*Exact length of Private key in bits*/
+           DxUint8_t *Q_ptr,                      /*order*/
+           DxUint16_t QSize,
+           CRYS_DH_OpMode_t DH_mode,
+           CRYS_DHUserPubKey_t *tmpPubKey_ptr,    /*temp buff*/
+           CRYS_DHPrimeData_t  *tmpPrimeData_ptr, /*temp buff*/
+           DxUint8_t *ClientPrvKey_ptr,           /*out*/
+           DxUint16_t *ClientPrvKeySize_ptr,      /*in/out*/
+           DxUint8_t *ClientPub1_ptr,             /*out*/
+           DxUint16_t *ClientPubSize_ptr);        /*in/out*/
+     -->
+    <param name="Generator_ptr" direction="i" ptype="array(GeneratorSize,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+    <param name="GeneratorSize" direction="i" ptype="val" dtype="le16(DxUint16_t)"/>
+    -->
+    <param name="Prime_ptr" direction="i" ptype="array(PrimeSize,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+    <param name="PrimeSize" direction="i" ptype="val" dtype="le16(DxUint16_t)"/>
+    -->
+    <param name="L" direction="i" ptype="val" dtype="le16(DxUint16_t)"  />
+ -->
+    <param name="Q_ptr" direction="i" ptype="array(QSize,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+    <param name="QSize" direction="i" ptype="val" dtype="le16(DxUint16_t)"/>
+ -->
+    <param name="DH_mode" direction="i" ptype="val" dtype="le32(CRYS_DH_OpMode_t)"  />
+ -->
+    <param name="tmpPubKey_ptr" direction="i" ptype="ref" dtype="CRYS_DHUserPubKey_t" />
+ -->
+    <param name="tmpPrimeData_ptr" direction="i" ptype="wsbuf(sizeof(CRYS_DHPrimeData_t))" dtype="CRYS_DHPrimeData_t" />
+
+    <param name="ClientPrvKey_ptr" direction="o" ptype="array(*ClientPrvKeySize_ptr,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+    <param name="ClientPrvKeySize_ptr" direction="io" ptype="ref" dtype="le16(DxUint16_t)"/>
+ -->
+    <param name="ClientPub1_ptr" direction="o" ptype="array(*ClientPubSize_ptr,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+    <param name="ClientPubSize_ptr" direction="io" ptype="ref" dtype="le16(DxUint16_t)"/>
+ -->
+  </function>
+
+
+
+<!--**************************************************************** -->
+  <function name="CRYS_DH_GetSecretKey" return="le32(CRYSError_t)">
+    <!--
+       CRYSError_t CRYS_DH_GetSecretKey(
+           DxUint8_t *ClientPrvKey_ptr,
+           DxUint16_t ClientPrvKeySize,
+           DxUint8_t *ServerPubKey_ptr,
+           DxUint16_t ServerPubKeySize,
+           DxUint8_t *Prime_ptr,
+           DxUint16_t PrimeSize,
+           CRYS_DHUserPubKey_t *tmpPubKey_ptr,
+           CRYS_DHPrimeData_t  *tmpPrimeData_ptr,
+           DxUint8_t *SecretKey_ptr,
+           DxUint16_t *SecretKeySize_ptr)
+     -->
+    <param name="ClientPrvKey_ptr" direction="i" ptype="array(ClientPrvKeySize,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+    <param name="ClientPrvKeySize" direction="i" ptype="val" dtype="le16(DxUint16_t)"/>
+    -->
+    <param name="ServerPubKey_ptr" direction="i" ptype="array(ServerPubKeySize,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+    <param name="ServerPubKeySize" direction="i" ptype="val" dtype="le16(DxUint16_t)"/>
+    -->
+    <param name="Prime_ptr" direction="i" ptype="array(PrimeSize,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+    <param name="PrimeSize" direction="i" ptype="val" dtype="le16(DxUint16_t)"/>
+ -->
+    <param name="tmpPubKey_ptr" direction="i" ptype="ref" dtype="CRYS_DHUserPubKey_t" />
+ -->
+    <param name="tmpPrimeData_ptr" direction="i" ptype="wsbuf(sizeof(CRYS_DHPrimeData_t))" dtype="CRYS_DHPrimeData_t" />
+
+ -->
+    <param name="SecretKey_ptr" direction="o" ptype="array(*SecretKeySize_ptr,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+    <param name="SecretKeySize_ptr" direction="io" ptype="ref" dtype="le16(DxUint16_t)"/>
+ -->
+  </function>
+
+
+
+<!--**************************************************************** -->
+  <function name="CRYS_DH_CheckPubKey" return="le32(CRYSError_t)">
+    <!--
+      CRYSError_t CRYS_DH_CheckPubKey(
+                           DxUint8_t              *modP_ptr,             /*in */
+                           DxUint32_t              modPsizeBytes,        /*in */
+                           DxUint8_t              *orderQ_ptr,           /*in */
+                           DxUint32_t              orderQsizeBytes,      /*in */
+                           DxUint8_t              *pubKey_ptr,           /*in */
+                           DxUint32_t              pubKeySizeBytes,      /*in */
+                           CRYS_DH_Temp_t      *tempBuff_ptr          /*in */)
+     -->
+    <param name="modP_ptr" direction="i" ptype="array(modPsizeBytes,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+    <param name="modPsizeBytes" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+    -->
+    <param name="orderQ_ptr" direction="i" ptype="array(orderQsizeBytes,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+    <param name="orderQsizeBytes" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+    -->
+    <param name="pubKey_ptr" direction="i" ptype="array(pubKeySizeBytes,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+    <param name="pubKeySizeBytes" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+ -->
+    <param name="tempBuff_ptr" direction="i" ptype="wsbuf(sizeof(CRYS_DH_ExpTemp_t))" dtype="CRYS_DH_Temp_t" />
+ -->
+  </function>
+
+
+
+<!--**************************************************************** -->
+  <function name="CRYS_DH_X942_GetSecretData" return="le32(CRYSError_t)">
+    <!--
+	   CRYS_DH_X942_GetSecretData(
+		DxUint8_t                  *ClientPrvKey_ptr,
+		DxUint16_t                  ClientPrvKeySize,
+		DxUint8_t                  *ServerPubKey_ptr,
+		DxUint16_t                  ServerPubKeySize,
+		DxUint8_t                  *Prime_ptr,
+		DxUint16_t                  PrimeSize,
+		CRYS_DH_OtherInfo_t        *otherInfo_ptr,
+		CRYS_DH_HASH_OpMode_t  hashMode,
+		CRYS_DH_DerivationFunc_Mode DerivFunc_mode,
+		CRYS_DH_Temp_t             *tmpBuff_ptr,
+		DxUint8_t                  *SecretKeyingData_ptr,
+		DxUint16_t                  SecretKeyingDataSize )
+     -->
+
+    <param name="ClientPrvKey_ptr" direction="i" ptype="array(ClientPrvKeySize,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+    <param name="ClientPrvKeySize" direction="i" ptype="val" dtype="le16(DxUint16_t)"/>
+ -->
+    <param name="ServerPubKey_ptr" direction="i" ptype="array(ServerPubKeySize,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+    <param name="ServerPubKeySize" direction="i" ptype="val" dtype="le16(DxUint16_t)"/>
+ -->
+    <param name="Prime_ptr" direction="i" ptype="array(PrimeSize,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+    <param name="PrimeSize" direction="i" ptype="val" dtype="le16(DxUint16_t)"/>
+ -->
+    <param name="otherInfo_ptr" direction="i" ptype="ref" dtype="CRYS_DH_OtherInfo_t"  >
+ -->
+      <field name="AlgorithmID" direction="i" ptype="array(otherInfo_ptr->SizeOfAlgorithmID,CRYS_DH_MAX_SIZE_OF_OTHER_INFO_ENTRY)" dtype="DxUint8_t"  />
+ -->
+      <field name="SizeOfAlgorithmID" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+ -->
+      <field name="PartyUInfo" direction="i" ptype="array(otherInfo_ptr->SizeOfPartyUInfo,CRYS_DH_MAX_SIZE_OF_OTHER_INFO_ENTRY)" dtype="DxUint8_t"  />
+ -->
+      <field name="SizeOfPartyUInfo" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+ -->
+      <field name="PartyVInfo" direction="i" ptype="array(otherInfo_ptr->SizeOfPartyVInfo,CRYS_DH_MAX_SIZE_OF_OTHER_INFO_ENTRY)" dtype="DxUint8_t"  />
+ -->
+      <field name="SizeOfPartyVInfo" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+ -->
+      <field name="SuppPrivInfo" direction="i" ptype="array(otherInfo_ptr->SizeOfSuppPrivInfo,CRYS_DH_MAX_SIZE_OF_OTHER_INFO_ENTRY)" dtype="DxUint8_t"  />
+ -->
+      <field name="SizeOfSuppPrivInfo" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+ -->
+      <field name="SuppPubInfo" direction="i" ptype="array(otherInfo_ptr->SizeOfSuppPubInfo,CRYS_DH_MAX_SIZE_OF_OTHER_INFO_ENTRY)" dtype="DxUint8_t"  />
+ -->
+      <field name="SizeOfSuppPubInfo" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+
+    </param>
+ -->
+    <param name="hashMode" direction="i" ptype="val" dtype="le32(CRYS_DH_HASH_OpMode_t)"  />
+ -->
+    <param name="DerivFunc_mode" direction="i" ptype="val" dtype="le32(CRYS_DH_DerivationFunc_Mode)"  />
+ -->
+    <param name="tmpBuff_ptr" direction="i" ptype="wsbuf(sizeof(CRYS_DHPrimeData_t))" dtype="CRYS_DH_Temp_t" />
+ -->
+    <param name="SecretKeyingData_ptr" direction="o" ptype="array(SecretKeyingDataSize,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+    <param name="SecretKeyingDataSize" direction="i" ptype="val" dtype="le16(DxUint16_t)"/>
+ -->
+  </function>
+
+
+
+<!--**************************************************************** -->
+<function name="CRYS_DH_X942_HybridGetSecretData" return="le32(CRYSError_t)">
+  <!--
+	CRYSError_t CRYS_DH_X942_HybridGetSecretData(
+				DxUint8_t            *ClientPrvKey_ptr1,
+				DxUint16_t            ClientPrvKeySize1,
+				DxUint8_t            *ClientPrvKey_ptr2,
+				DxUint16_t            ClientPrvKeySize2,
+				DxUint8_t            *ServerPubKey_ptr1,
+				DxUint16_t            ServerPubKeySize1,
+				DxUint8_t            *ServerPubKey_ptr2,
+				DxUint16_t            ServerPubKeySize2,
+				DxUint8_t            *Prime_ptr,
+				DxUint16_t            PrimeSize,
+				CRYS_DH_OtherInfo_t  *otherInfo_ptr,
+				CRYS_DH_HASH_OpMode_t hashMode,
+				CRYS_DH_DerivationFunc_Mode DerivFunc_mode,
+				CRYS_DH_HybrTemp_t   *tmpDhHybr_ptr,
+				DxUint8_t            *SecretKeyingData_ptr,
+				DxUint16_t            SecretKeyingDataSize)
+   -->
+  <param name="ClientPrvKey_ptr1" direction="i" ptype="array(ClientPrvKeySize1,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+  <param name="ClientPrvKeySize1" direction="i" ptype="val" dtype="le16(DxUint16_t)"/>
+ -->
+  <param name="ClientPrvKey_ptr2" direction="i" ptype="array(ClientPrvKeySize2,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+  <param name="ClientPrvKeySize2" direction="i" ptype="val" dtype="le16(DxUint16_t)"/>
+ -->
+  <param name="ServerPubKey_ptr1" direction="i" ptype="array(ServerPubKeySize1,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+  <param name="ServerPubKeySize1" direction="i" ptype="val" dtype="le16(DxUint16_t)"/>
+ -->
+  <param name="ServerPubKey_ptr2" direction="i" ptype="array(ServerPubKeySize2,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+  <param name="ServerPubKeySize2" direction="i" ptype="val" dtype="le16(DxUint16_t)"/>
+ -->
+  <param name="Prime_ptr" direction="i" ptype="array(PrimeSize,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+  <param name="PrimeSize" direction="i" ptype="val" dtype="le16(DxUint16_t)"/>
+ -->
+   <param name="otherInfo_ptr" direction="i" ptype="ref" dtype="CRYS_DH_OtherInfo_t"  >
+ -->
+    <field name="AlgorithmID" direction="i" ptype="array(otherInfo_ptr->SizeOfAlgorithmID,CRYS_DH_MAX_SIZE_OF_OTHER_INFO_ENTRY)" dtype="DxUint8_t"  />
+ -->
+    <field name="SizeOfAlgorithmID" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+ -->
+    <field name="PartyUInfo" direction="i" ptype="array(otherInfo_ptr->SizeOfPartyUInfo,CRYS_DH_MAX_SIZE_OF_OTHER_INFO_ENTRY)" dtype="DxUint8_t"  />
+ -->
+    <field name="SizeOfPartyUInfo" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+ -->
+    <field name="PartyVInfo" direction="i" ptype="array(otherInfo_ptr->SizeOfPartyVInfo,CRYS_DH_MAX_SIZE_OF_OTHER_INFO_ENTRY)" dtype="DxUint8_t"  />
+ -->
+    <field name="SizeOfPartyVInfo" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+ -->
+    <field name="SuppPrivInfo" direction="i" ptype="array(otherInfo_ptr->SizeOfSuppPrivInfo,CRYS_DH_MAX_SIZE_OF_OTHER_INFO_ENTRY)" dtype="DxUint8_t"  />
+ -->
+    <field name="SizeOfSuppPrivInfo" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+ -->
+    <field name="SuppPubInfo" direction="i" ptype="array(otherInfo_ptr->SizeOfSuppPubInfo,CRYS_DH_MAX_SIZE_OF_OTHER_INFO_ENTRY)" dtype="DxUint8_t"  />
+ -->
+    <field name="SizeOfSuppPubInfo" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+
+  </param>
+ -->
+    <param name="hashMode" direction="i" ptype="val" dtype="le32(CRYS_DH_HASH_OpMode_t)"  />
+ -->
+    <param name="DerivFunc_mode" direction="i" ptype="val" dtype="le32(CRYS_DH_DerivationFunc_Mode)"  />
+ -->
+    <param name="tmpDhHybr_ptr" direction="i" ptype="wsbuf(sizeof(CRYS_DHPrimeData_t))" dtype="CRYS_DH_HybrTemp_t" />
+ -->
+  <param name="SecretKeyingData_ptr" direction="o" ptype="array(SecretKeyingDataSize,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+  <param name="SecretKeyingDataSize" direction="i" ptype="val" dtype="le16(DxUint16_t)"/>
+ -->
+</function>
+
+
+<!--**************************************************************** -->
+  <function name="CRYS_DH_CreateDomainParams" return="le32(CRYSError_t)">
+    <!--
+ CRYSError_t CRYS_DH_CreateDomainParams(
+				DxUint32_t          modPsizeBits,             /*in */
+				DxUint32_t          orderQsizeBits,           /*in */
+				DxUint32_t          seedSizeBits,             /*in */
+				DxUint8_t          *modP_ptr,                 /*out*/
+				DxUint8_t          *orderQ_ptr,               /*out*/
+				DxUint8_t          *generatorG_ptr,           /*out*/
+				DxUint32_t         *generGsizeBytes_ptr,      /*in/out*/
+				DxUint8_t          *factorJ_ptr,              /*out*/
+				DxUint32_t         *JsizeBytes_ptr,           /*in/out*/
+				DxUint8_t          *seedS_ptr,                /*in/out*/
+				DxInt8_t            generateSeed,             /*in*/
+				DxUint32_t         *pgenCounter_ptr,          /*out*/
+				CRYS_DHKGData_t    *DHKGbuff_ptr              /*in */ )
+    -->
+
+    <param name="modPsizeBits" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+ -->
+    <param name="orderQsizeBits" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+ -->
+    <param name="seedSizeBits" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+ -->
+    <param name="modP_ptr" direction="o" ptype="array((modPsizeBits+7)/8,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"/>
+ -->
+    <param name="orderQ_ptr" direction="o" ptype="array((orderQsizeBits+7)/8,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"/>
+ -->
+    <param name="generatorG_ptr" direction="o" ptype="array(*generGsizeBytes_ptr,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"/>
+ -->
+    <param name="generGsizeBytes_ptr" direction="io" ptype="ref" dtype="le32(DxUint32_t)"/>
+ -->
+    <param name="factorJ_ptr" direction="o" ptype="array(*JsizeBytes_ptr,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"  />
+ -->
+    <param name="JsizeBytes_ptr" direction="io" ptype="ref" dtype="le32(DxUint32_t)"/>
+ -->
+    <param name="seedS_ptr" direction="io" ptype="array((seedSizeBits+7)/8,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"/>
+  -->
+    <param name="generateSeed" direction="i" ptype="val" dtype="DxInt8_t"/>
+  -->
+    <param name="pgenCounter_ptr" direction="o" ptype="ref" dtype="le32(DxUint32_t)"/>
+ -->
+    <param name="DHKGbuff_ptr" direction="i" ptype="wsbuf(sizeof(CRYS_DHKGData_t))" dtype="CRYS_DHKGData_t" />
+ -->
+  </function>
+
+
+
+<!--**************************************************************** -->
+  <function name="CRYS_DH_CheckDomainParams" return="le32(CRYSError_t)">
+    <!--
+ CRYSError_t CRYS_DH_CheckDomainParams(
+                          DxUint8_t               *modP_ptr,           /*in */
+                          DxUint32_t               modPsizeBytes,      /*in */
+                          DxUint8_t               *orderQ_ptr,         /*in */
+                          DxUint32_t               orderQsizeBytes,    /*in */
+                          DxUint8_t               *generatorG_ptr,     /*in */
+                          DxUint32_t               generatorSizeBytes, /*in */
+                          DxUint8_t               *seedS_ptr,          /*in */
+                          DxUint32_t               seedSizeBits,      /*in */
+                          DxUint32_t               pgenCounter,        /*in */
+                          CRYS_DHKG_CheckTemp_t   *checkTempBuff_ptr  /*in */ )
+-->
+
+    <param name="modP_ptr" direction="i" ptype="array(modPsizeBytes,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"/>
+ -->
+    <param name="modPsizeBytes" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+  -->
+    <param name="orderQ_ptr" direction="i" ptype="array(orderQsizeBytes,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"/>
+  -->
+    <param name="orderQsizeBytes" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+ -->
+    <param name="generatorG_ptr" direction="i" ptype="array(generatorSizeBytes,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"/>
+  -->
+    <param name="generatorSizeBytes" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+  -->
+    <param name="seedS_ptr" direction="i" ptype="array((seedSizeBits+7)/8,CRYS_DH_MAX_MOD_SIZE_IN_BYTES)" dtype="DxUint8_t"/>
+ -->
+    <param name="seedSizeBits" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+ -->
+    <param name="pgenCounter" direction="i" ptype="val" dtype="le32(DxUint32_t)"/>
+  -->
+    <param name="checkTempBuff_ptr" direction="i" ptype="wsbuf(sizeof(CRYS_DHKG_CheckTemp_t))" dtype="CRYS_DHKG_CheckTemp_t" />
+
+  </function>
+
+<!--**************************************************************** -->
+
+</api>
