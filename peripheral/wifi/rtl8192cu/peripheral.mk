@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+TARGET_KERNEL_CONFIGS += $(realpath hardware/bsp/intel/peripheral/wifi/rtl8192cu/rtl8192cu.kconf)
+
 # RTL8192CU WIFI Firmware
 RTL8192CU_WIFI_FW_SRC := vendor/bsp/intel/peripheral/wifi/rtlwifi_firmware
 RTL8192CU_WIFI_FW_DST := system/vendor/firmware/rtlwifi
