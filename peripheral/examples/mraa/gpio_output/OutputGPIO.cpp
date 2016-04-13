@@ -45,7 +45,7 @@ struct pgm_options {
 // so that Usage() is correct.
 static struct option longopts[] = {
   {"help",  no_argument,        NULL,   '?'},
-  {"pin",   no_argument,        NULL,   'p'},
+  {"pin",   required_argument,  NULL,   'p'},
   {"set",   no_argument,        NULL,   's'},
   {"clear", no_argument,        NULL,   'c'},
   {NULL,    0,                  NULL,    0 }
