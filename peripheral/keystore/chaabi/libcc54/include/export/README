@@ -1,2 +1,0 @@
-This directory contains *clean* headers that can be exported for use by 3rd party projects, without the need of including all of the pal abstractions.
-
