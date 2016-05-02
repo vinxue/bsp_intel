@@ -1,0 +1,10 @@
+Date: 25/01/2012 10:18AM EET (+2:00)
+Component: CClib
+    Initial code release for CC-Lib for CHAABI support
+
+    BZ:21025
+
+    This CC-Lib code is based on the alpha release from Discretix.
+    The flag "BUILD_WITH_CHAABI_SUPPORT" in the BoardConifig.mk file is set to "false"
+    to enable the compilation as the Chaabi hardware support is not yet available.
+

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="US-ASCII" ?>
+<!--****************************************************************
+* (c) Copyright 2011-2012 Discretix Technologies Ltd.              *
+* This file is licensed under the terms provided in the file       *
+* libcc54/LICENSE in this directory or a parent directory          *
+*****************************************************************-->
+
+<!-- SepRpcTest API description: An API dedicated to test the RPC mechanism -->
+
+<api name="CrysAes"> <!-- The AesWrapRpc API Agent ID -->
+
+  <!-- Default return codes for generated wrapper code (may be overriden for specific functions -->
+  <retcodes ok="CRYS_OK"  generic_error="CRYS_AES_UNWRAP_FUNCTION_FAILED_ERROR" invalid_param="CRYS_AES_WRAP_DATA_LENGTH_ERROR" not_enough_resources="CRYS_AES_WRAP_ILLEGAL_DATA_PTR_ERROR" />
+
+  <!-- Header files to include for prototypes -->
+  <header>crys_aes.h</header>
+  <header>crys_aes_error.h</header>
+
+  <function name="CRYS_AES_Wrap" return="le32(CRYSError_t)">
+    <!--
+    CRYSError_t CRYS_AES_Wrap (
+				     DxUint8_t            *DataIn_ptr,	    /*in*/
+				     DxUint32_t            DataInLen,	    /*in*/
+				     CRYS_AES_Key_t        KeyData,	    /*in*/
+				     CRYS_AES_KeySize_t    KeySize,	    /*in*/
+				     DxInt8_t              Reserved,	    /*in*/
+				     DxUint8_t            *WrapDataOut_ptr, /*out*/
+				     DxUint32_t           *WrapDataLen_ptr  /*in/out*/ );
+    -->
+    <param name="DataIn_ptr" direction="i" ptype="array(DataInLen,CRYS_AES_WRAP_DATA_MAX_SIZE_IN_BYTES)" dtype="DxUint8_t" />             <!--DxUint8_t *DataIn_ptr -->
+    <param name="DataInLen"  direction="i" ptype="val" dtype="le32(DxUint32_t)"  /> <!--DxUint32_t DataInLen -->
+    <param name="KeyData"    direction="i" ptype="array(32,32)" dtype="DxUint8_t"/>  <!--CRYS_AES_Key_t KeyData-->
+    <param name="KeySize"    direction="i" ptype="val" dtype="le32(CRYS_AES_KeySize_t)"  /> <!--CRYS_AES_KeySize_t KeySize -->
+    <param name="Reserved"    direction="i" ptype="val" dtype="DxInt8_t"  /> <!--DxInt8_t isSecretKey -->
+    <param name="WrapDataOut_ptr" direction="o" ptype="array((*WrapDataLen_ptr),(CRYS_AES_WRAP_DATA_MAX_SIZE_IN_BYTES+CRYS_AES_WRAP_BLOCK_SIZE_IN_BYTES))" dtype="DxUint8_t" />             <!--DxUint8_t *WrapDataOut_ptr-->
+    <param name="WrapDataLen_ptr"  direction="io" ptype="ref" dtype="le32(DxUint32_t)" /> <!--DxUint32_t *WrapDataLen_ptr -->
+
+  </function>
+
+  <function name="CRYS_AES_Unwrap" return="le32(CRYSError_t)">
+    <!--
+    CRYSError_t CRYS_AES_Unwrap( DxUint8_t			*WrapDataIn_ptr,  /*in*/
+								 DxUint32_t   		 WrapDataInLen,   /*in*/
+								 CRYS_AES_Key_t   	 KeyData,   	  /*in*/
+								 CRYS_AES_KeySize_t  KeySize,   	  /*in*/
+								 DxInt8_t 			 Reserved,     /*in*/
+								 DxUint8_t			*DataOut_ptr,     /*out*/
+								 DxUint32_t   		*DataOutLen_ptr   /*in/out*/ )
+    -->
+    <param name="WrapDataIn_ptr" direction="i" ptype="array(WrapDataInLen, (CRYS_AES_WRAP_DATA_MAX_SIZE_IN_BYTES + CRYS_AES_WRAP_BLOCK_SIZE_IN_BYTES))" dtype="DxUint8_t" />             <!--DxUint8_t *DataIn_ptr -->
+    <param name="WrapDataInLen"  direction="i" ptype="val" dtype="le32(DxUint32_t)" /> <!--DxUint32_t DataInLen -->
+    <param name="KeyData"    direction="i" ptype="array(32,32)" dtype="DxUint8_t"/>  <!--CRYS_AES_Key_t KeyData-->
+    <param name="KeySize"    direction="i" ptype="val" dtype="le32(CRYS_AES_KeySize_t)"  /> <!--CRYS_AES_KeySize_t KeySize -->
+    <param name="Reserved"    direction="i" ptype="val" dtype="DxInt8_t"  /> <!--DxInt8_t isSecretKey -->
+    <param name="DataOut_ptr" direction="o" ptype="array((*DataOutLen_ptr),CRYS_AES_WRAP_DATA_MAX_SIZE_IN_BYTES)" dtype="DxUint8_t" />             <!--DxUint8_t *WrapDataOut_ptr-->
+    <param name="DataOutLen_ptr"  direction="io" ptype="ref" dtype="le32(DxUint32_t)" /> <!--DxUint32_t *WrapDataLen_ptr -->
+
+  </function>
+
+
+</api>
+
+
