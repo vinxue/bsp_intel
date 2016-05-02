@@ -7,3 +7,7 @@
 # Bluetooth ON/OFF functions
 /sys/devices/platform/bcm_bt_lpm.0/rfkill/rfkill0/state u:object_r:sysfs_bluetoothtbd_writable:s0
 /sys/devices/platform/bcm_bt_lpm.0/rfkill/rfkill0/type u:object_r:sysfs_bluetoothtbd_readable:s0
+
+# Hardware keystore
+/dev/dx_sep_q0  u:object_r:tee_device:s0
+/dev/dx_sep_q1  u:object_r:tee_device:s0
