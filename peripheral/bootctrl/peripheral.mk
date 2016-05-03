@@ -1,5 +1,6 @@
+
 # Copyright (C) 2015 Intel Corporation
-#
+
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,16 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ifeq ($(strip $(TARGET_BOOTCTRL_HAL)),intel)
-
-LOCAL_PATH := $(call my-dir)
-
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := bootctrl.$(TARGET_DEVICE)
-LOCAL_MODULE_RELATIVE_PATH := hw
-LOCAL_SRC_FILES := bootctrl.c
-LOCAL_MODULE_TAGS := optional
-
-include $(BUILD_SHARED_LIBRARY)
-endif
+# Boot control HAL package
+DEVICE_PACKAGES += \
+    bootctrl.$(TARGET_DEVICE)
