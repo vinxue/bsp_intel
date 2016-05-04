@@ -47,11 +47,5 @@ TARGET_KERNEL_SRC ?= hardware/bsp/kernel/common/v4.4
 TARGET_KERNEL_DEFCONFIG ?= x86_64_defconfig
 TARGET_KERNEL_CONFIGS := $(TARGET_KERNEL_CONFIGS) $(realpath $(LOCAL_PATH)/soc.kconf)
 
-TARGET_BOOTCTRL_HAL := intel
-
 DEVICE_PACKAGES += \
     keystore.default
-
-# Boot control HAL package
-DEVICE_PACKAGES += \
-    bootctrl.$(TARGET_DEVICE)
