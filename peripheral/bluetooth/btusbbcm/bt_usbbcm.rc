@@ -1,0 +1,24 @@
+##############################################################
+#  BLUETOOTH CONFIGURATION - Broadcom USB BT SPECIFIC
+##############################################################
+
+on post-fs-data
+    # Bluetooth
+    write /sys/class/rfkill/rfkill1/state 1
+    chmod 0660 /sys/class/rfkill/rfkill1/state
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill1/state
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill1/type
+
+########################################################
+
+service dhcpcd_bt-pan /system/bin/dhcpcd -ABKL
+    class main
+    group bluetooth wifi system dhcp
+    disabled
+    oneshot
+
+service iprenew_bt-pan /system/bin/dhcpcd -n
+    group bluetooth system dhcp
+    disabled
+    oneshot
+
