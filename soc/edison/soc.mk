@@ -47,11 +47,3 @@ BOARD_SEPOLICY_DIRS += \
 TARGET_KERNEL_SRC := hardware/bsp/kernel/intel/edison-3.10
 TARGET_KERNEL_DEFCONFIG := i386_brillo_edison_defconfig
 TARGET_KERNEL_CONFIGS := $(TARGET_KERNEL_CONFIGS) $(realpath $(LOCAL_PATH)/soc.kconf)
-
-# Audio utilities. You may not need these for a product.
-DEVICE_PACKAGES += \
-    tinyplay tinypcminfo tinymix tinycap
-
-# Chaabi Integration. Chaabi is the HW security engine on Edison.
-DEVICE_PACKAGES += \
-    libdx_cc7 libkeymaster intel_keymaster_test
