@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="US-ASCII" ?>
+<!--****************************************************************
+* (c) Copyright 2011-2012 Discretix Technologies Ltd.              *
+* This file is licensed under the terms provided in the file       *
+* libcc54/LICENSE in this directory or a parent directory          *
+*****************************************************************-->
+
+<!-- SepRpcTest API description: An API dedicated to test the RPC mechanism -->
+
+<api name="CrysRnd"> <!-- The RND API Agent ID -->
+
+<!-- Default return codes for generated wrapper code (may be overriden for specific functions -->
+    <retcodes ok="CRYS_OK" generic_error="CRYS_RND_GEN_A_ERROR" invalid_param="CRYS_RND_GEN_B_ERROR" not_enough_resources="CRYS_RND_GEN_C_ERROR" />
+ <!--  Header files to include for prototypes
+  -->
+
+  <header>crys_rnd_error.h</header>
+  <header>crys_rnd.h</header>
+
+
+
+
+  <function name="CRYS_RND_Instantiation" return="le32(CRYSError_t)">
+<!--
+
+CRYSError_t CRYS_RND_Instantiation( CRYS_RND_EntropyEstimatData_t  *entrEstimBuff_ptr/*in/out*/ );
+
+ -->
+
+<param name="entrEstimBuff_ptr" direction="io" ptype="ref" dtype="CRYS_RND_EntropyEstimatData_t" >
+     <field name="crysRndEntrIntBuff" direction="io" ptype="array(CRYS_PKA_RND_ENTR_ESTIM_BUFF_MAX_LENGTH_IN_WORDS,CRYS_PKA_RND_ENTR_ESTIM_BUFF_MAX_LENGTH_IN_WORDS)" dtype="le32(DxUint32_t)" />
+ </param>
+ -->
+ </function>
+
+ <function name="CRYS_RND_Reseeding" return="le32(CRYSError_t)">
+<!--
+
+CRYSError_t CRYS_RND_Reseeding( CRYS_RND_EntropyEstimatData_t  *entrEstimBuff_ptr/*in/out*/ );
+
+ -->
+
+<param name="entrEstimBuff_ptr" direction="io" ptype="ref" dtype="CRYS_RND_EntropyEstimatData_t" >
+     <field name="crysRndEntrIntBuff" direction="io" ptype="array(CRYS_PKA_RND_ENTR_ESTIM_BUFF_MAX_LENGTH_IN_WORDS,CRYS_PKA_RND_ENTR_ESTIM_BUFF_MAX_LENGTH_IN_WORDS)" dtype="le32(DxUint32_t)" />
+ </param>
+ -->
+ </function>
+
+ <function name="CRYS_RND_GenerateVector" return="le32(CRYSError_t)">
+<!--
+
+CRYSError_t CRYS_RND_GenerateVector(DxUint16_t RndSize, DxUint8_t *Output_ptr);
+
+ -->
+
+<param name="RndSize"    direction="i" ptype="val" dtype="le16(DxUint16_t)"  />
+<param name="Output_ptr"    direction="o" ptype="array(RndSize,CRYS_RND_MAX_SIZE_OF_OUTPUT_BYTES)" dtype="DxUint8_t"  />
+ -->
+ </function>
+
+
+ <function name="CRYS_RND_GenerateVectorInRange" return="le32(CRYSError_t)">
+<!--
+
+CRYSError_t CRYS_RND_GenerateVectorInRange(DxUint32_t  RndSizeInBits,
+											         DxUint8_t *MaxVect_ptr, DxUint8_t *RndVect_ptr );
+
+ -->
+
+<param name="RndSizeInBits"    direction="i" ptype="val" dtype="le32(DxUint32_t)"  />
+<param name="MaxVect_ptr"    direction="i" ptype="array(CRYS_RND_MAX_SIZE_OF_OUTPUT_BYTES,CRYS_RND_MAX_SIZE_OF_OUTPUT_BYTES)" dtype="DxUint8_t"  />
+<param name="RndVect_ptr"    direction="o" ptype="array((RndSizeInBits+7)/8,CRYS_RND_MAX_SIZE_OF_OUTPUT_BYTES)" dtype="DxUint8_t"  />
+ -->
+ </function>
+
+
+
+ <function name="CRYS_RND_AddAdditionalInput" return="le32(CRYSError_t)">
+<!--
+
+CRYSError_t CRYS_RND_AddAdditionalInput( DxUint8_t *AdditonalInput_ptr,
+												   DxUint16_t AdditonalInputSize);
+
+ -->
+
+<param name="AdditonalInput_ptr"    direction="i" ptype="array(AdditonalInputSize,32)" dtype="DxUint8_t"  />
+<param name="AdditonalInputSize"    direction="i" ptype="val" dtype="le16(DxUint16_t)"  />
+ -->
+ </function>
+
+ <function name="CRYS_RND_UnInstantiation" return="le32(CRYSError_t)">
+<!--
+
+CRYSError_t CRYS_RND_UnInstantiation(void);
+
+ -->
+ -->
+ </function>
+
+
+  </api>
