@@ -50,9 +50,6 @@ TARGET_KERNEL_CONFIGS := $(TARGET_KERNEL_CONFIGS) $(realpath $(LOCAL_PATH)/soc.k
 
 TARGET_BOOTCTRL_HAL := intel
 
-DEVICE_PACKAGES += \
-    keystore.default
-
 # Boot control HAL package.
 DEVICE_PACKAGES += \
     bootctrl.$(TARGET_DEVICE)
@@ -60,3 +57,7 @@ DEVICE_PACKAGES += \
 # Audio utilities. You may not need these for a product.
 DEVICE_PACKAGES += \
     tinyplay tinypcminfo tinymix tinycap
+
+# Chaabi Integration. Chaabi is the HW security engine on Edison.
+DEVICE_PACKAGES += \
+    libdx_cc7 libkeymaster intel_keymaster_test
