@@ -41,7 +41,7 @@ PRODUCT_COPY_FILES += \
   system/core/rootdir/ueventd.rc:root/ueventd.rc \
   $(LOCAL_PATH)/ueventd.edison.rc:root/ueventd.edison.rc \
 
-BOARD_SEPOLICY_DIRS += \
+BOARD_SEPOLICY_DIRS := $(BOARD_SEPOLICY_DIRS) \
 	$(LOCAL_PATH)/sepolicy \
 
 TARGET_KERNEL_SRC := hardware/bsp/kernel/intel/edison-3.10
