@@ -21,9 +21,11 @@
 
 #include <stdint.h>
 
+#include <bootloader.h>
+
 /* struct boot_ctrl occupies the slot_suffix field of
- * struct bootloader_message */
-#define OFFSETOF_SLOT_SUFFIX 864
+ * struct bootloader_message_ab */
+#define OFFSETOF_SLOT_SUFFIX offsetof(struct bootloader_message_ab, slot_suffix)
 
 #define BOOTCTRL_MAGIC 0x42424100
 #define BOOTCTRL_SUFFIX_A           "_a"
@@ -31,11 +33,11 @@
 
 #define BOOT_CONTROL_VERSION    1
 
-typedef struct slot_metadata {
+typedef struct slot_metadata_intel {
     uint8_t priority : 4;
     uint8_t tries_remaining : 3;
     uint8_t successful_boot : 1;
-} slot_metadata_t;
+} slot_metadata_intel_t;
 
 typedef struct boot_ctrl {
     /* Magic for identification - '\0ABB' (Boot Contrl Magic) */
@@ -45,7 +47,7 @@ typedef struct boot_ctrl {
     uint8_t version;
 
     /* Information about each slot. */
-    slot_metadata_t slot_info[2];
+    slot_metadata_intel_t slot_info[2];
 
     uint8_t recovery_tries_remaining;
 } boot_ctrl_t;

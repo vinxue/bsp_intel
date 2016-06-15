@@ -207,7 +207,7 @@ int bootctrl_mark_boot_successful(boot_control_module_t *module __unused)
 {
     int ret, slot;
     boot_ctrl_t metadata;
-    slot_metadata_t *slotp;
+    slot_metadata_intel_t *slotp;
 
     ret = bootctrl_read_metadata(&metadata);
     if (ret < 0) {
@@ -233,7 +233,7 @@ int bootctrl_set_active_boot_slot(boot_control_module_t *module __unused,
 {
     int ret, slot2;
     boot_ctrl_t metadata;
-    slot_metadata_t *slotp;
+    slot_metadata_intel_t *slotp;
 
     if (slot >= 2) {
         fprintf(stderr, "Wrong Slot value %u\n", slot);
@@ -273,7 +273,7 @@ int bootctrl_set_slot_as_unbootable(boot_control_module_t *module __unused,
 {
     int ret;
     boot_ctrl_t metadata;
-    slot_metadata_t *slotp;
+    slot_metadata_intel_t *slotp;
 
     if (slot >= 2) {
         fprintf(stderr, "Wrong Slot value %u\n", slot);
