@@ -19,6 +19,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := bootctrl.$(TARGET_DEVICE)
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_SRC_FILES := bootctrl.c
+LOCAL_C_INCLUDES += bootable/recovery/
 LOCAL_MODULE_TAGS := optional
 
 include $(BUILD_SHARED_LIBRARY)
