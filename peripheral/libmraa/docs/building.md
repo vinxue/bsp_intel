@@ -1,10 +1,10 @@
 Building libmraa                         {#building}
 ===============
-
 libmraa uses cmake in order to make compilation relatively painless. CMake runs
 build out of tree so the recommended way is to clone from git and make a `build/`
 directory inside the clone directory.
 
+For building imraa check [building imraa](./imraa.md)
 ## Build dependencies
 Not all these are required but if you're unsure of what you're doing this is
 what you'll need:
@@ -92,10 +92,6 @@ Building doc, this will require [SPHINX](http://sphinx-doc.org) &
 [Doxygen](http://doxygen.org):
  `-DBUILDDOC=ON`
 
-Building with Python 3 (careful you need to clear CMake cache between Python
-version switches!)
- `-DBUILDPYTHON3=ON`
-
 Override build architecture (this is useful because on x86 ARM code is not
 compiled so use this flag to force the target arch)
  `-DBUILDARCH=arm`
@@ -172,7 +168,7 @@ You can get `cpack` to generate an IPK or RPM package fairly easily if you have
 the correct packaging tools
 
 ~~~~~~~~~~~~~{.sh}
-cmake -DIPK=ON -DCMAKE_INSTAL_PREFIX=/usr ..
+cmake -DIPK=ON -DCMAKE_INSTALL_PREFIX=/usr ..
 make package
 ~~~~~~~~~~~~~
 
@@ -180,5 +176,5 @@ To use RPM simply enable the RPM option. You'll need `rpmbuild` installed on you
 build machine.
 
 ~~~~~~~~~~~~~{.sh}
-cmake -DRPM=ON -DCMAKE_INSTAL_PREFIX=/usr ..
+cmake -DRPM=ON -DCMAKE_INSTALL_PREFIX=/usr ..
 ~~~~~~~~~~~~~

@@ -65,13 +65,26 @@ class Spi;
 %include ../mraa.i
 
 %wrapper %{
-    JavaVM *globVM;
+    #include "java/mraajni.h"
+    #include "mraa_lang_func.h"
+    extern mraa_lang_func_t* lang_func;
 
     jint JNI_OnLoad(JavaVM *vm, void *reserved) {
-        /* initialize mraa */
-        globVM = vm;
-        mraa_init();
-        return JNI_VERSION_1_6;
+        /* initialize mraa and set jni functions */
+        mraa_result_t res = mraa_init();
+        if (res == MRAA_SUCCESS) {
+            mraa_java_set_jvm(vm);
+            lang_func->java_isr_callback = &mraa_java_isr_callback;
+            lang_func->java_attach_thread  = &mraa_java_attach_thread;
+            lang_func->java_detach_thread = &mraa_java_detach_thread;
+            lang_func->java_create_global_ref = &mraa_java_create_global_ref;
+            lang_func->java_delete_global_ref = &mraa_java_delete_global_ref;
+        } else {
+            JNIEnv* jenv;
+            vm->GetEnv((void**)&jenv, JNI_REQUIRED_VERSION);
+            SWIG_JavaException(jenv, SWIG_RuntimeError, "mraa_init() failed");
+        }
+        return JNI_REQUIRED_VERSION;
     }
 %}
 
@@ -82,6 +95,35 @@ class Spi;
         } catch (UnsatisfiedLinkError e) {
             System.err.println("Native code library failed to load. \n" + e);
             System.exit(1);
+        }
+
+        String javaAPIVersion = mraa.class.getPackage().getSpecificationVersion();
+        String nativeAPIVersion = mraa.getVersion().substring(1);
+
+        String javaMajor = javaAPIVersion.substring(0, javaAPIVersion.indexOf('.'));
+        String nativeMajor = nativeAPIVersion.substring(0, nativeAPIVersion.indexOf('.'));
+
+        if(Integer.parseInt(javaMajor) < Integer.parseInt(nativeMajor)){
+            System.err.println("Java library is out of date. Please update the Java library.");
+            System.err.println("Native library version is " + nativeAPIVersion + ". Java library version is " + javaAPIVersion + ".");
+            System.exit(1);
+        }
+        if(Integer.parseInt(javaMajor) > Integer.parseInt(nativeMajor)){
+            System.err.println("Native library is out of date. Please update the Native library.");
+            System.err.println("Native library version is " + nativeAPIVersion + ". Java library version is " + javaAPIVersion + ".");
+            System.exit(1);
+        }
+
+        String javaMinor = javaAPIVersion.substring(javaMajor.length() + 1, javaAPIVersion.indexOf('.', javaMajor.length() + 1));
+        String nativeMinor = nativeAPIVersion.substring(nativeMajor.length() + 1, nativeAPIVersion.indexOf('.', nativeMajor.length() + 1));
+
+        if(Integer.parseInt(javaMinor) < Integer.parseInt(nativeMinor)){
+            System.err.println("Java library is out of date. Please consider updating the Java library.");
+            System.err.println("Native library version is " + nativeAPIVersion + ". Java library version is " + javaAPIVersion + ".");
+        }
+        if(Integer.parseInt(javaMinor) > Integer.parseInt(nativeMinor)){
+            System.err.println("Native library is out of date. Please consider updating the Native library.");
+            System.err.println("Native library version is " + nativeAPIVersion + ". Java library version is " + javaAPIVersion + ".");
         }
     }
 %}

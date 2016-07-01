@@ -33,7 +33,6 @@
 #define MAX_SIZE 128
 #define IIO_DEVICE "iio:device"
 #define IIO_SCAN_ELEM "scan_elements"
-#define IIO_MOUNTING_MATRIX "mounting_matrix"
 #define IIO_SLASH_DEV "/dev/" IIO_DEVICE
 #define IIO_SYSFS_DEVICE "/sys/bus/iio/devices/" IIO_DEVICE
 #define IIO_EVENTS "events"
@@ -83,6 +82,7 @@ mraa_iio_get_channel_data(mraa_iio_context dev)
     int padint = 0;
     int curr_bytes = 0;
     char shortbuf, signchar;
+    int i = 0;
 
     dev->datasize = 0;
 
@@ -129,12 +129,6 @@ mraa_iio_get_channel_data(mraa_iio_context dev)
                     ret = sscanf(readbuf, "%ce:%c%u/%u>>%u", &shortbuf, &signchar, &chan->bits_used,
                                  &padint, &chan->shift);
                     chan->bytes = padint / 8;
-                    if (curr_bytes % chan->bytes == 0) {
-                        chan->location = curr_bytes;
-                    } else {
-                        chan->location = curr_bytes - curr_bytes % chan->bytes + chan->bytes;
-                    }
-                    curr_bytes = chan->location + chan->bytes;
                     // probably should be 5?
                     if (ret < 0) {
                         // cleanup
@@ -174,6 +168,18 @@ mraa_iio_get_channel_data(mraa_iio_context dev)
         }
     }
     closedir(dir);
+
+    // channel location has to be done in channel index order so do it afetr we
+    // have grabbed all the correct info
+    for (i = 0; i < dev->chan_num; i++) {
+	chan = &dev->channels[i];
+        if (curr_bytes % chan->bytes == 0) {
+            chan->location = curr_bytes;
+        } else {
+            chan->location = curr_bytes - curr_bytes % chan->bytes + chan->bytes;
+        }
+        curr_bytes = chan->location + chan->bytes;
+    }
 
     return MRAA_SUCCESS;
 }
@@ -277,7 +283,7 @@ mraa_iio_write_string(mraa_iio_context dev, const char* attr_name, const char* d
     snprintf(buf, MAX_SIZE, IIO_SYSFS_DEVICE "%d/%s", dev->num, attr_name);
     int fd = open(buf, O_WRONLY);
     if (fd != -1) {
-        size_t len = strlen(data);
+        int len = strlen(data);
         ssize_t status = write(fd, data, len);
         if (status == len)
              result = MRAA_SUCCESS;
@@ -539,18 +545,18 @@ mraa_iio_event_extract_event(struct iio_event_data* event,
 }
 
 mraa_result_t
-mraa_iio_get_mounting_matrix(mraa_iio_context dev, float mm[9])
+mraa_iio_get_mount_matrix(mraa_iio_context dev, const char *sysfs_name, float mm[9])
 {
     char buf[MAX_SIZE];
     FILE* fp;
     int ret;
 
     memset(buf, 0, MAX_SIZE);
-    snprintf(buf, MAX_SIZE, IIO_SYSFS_DEVICE "%d/" IIO_MOUNTING_MATRIX, dev->num);
+    snprintf(buf, MAX_SIZE, IIO_SYSFS_DEVICE "%d/%s", dev->num, sysfs_name);
     fp = fopen(buf, "r");
     if (fp != NULL) {
-        ret = fscanf(fp, "%f %f %f\n%f %f %f\n%f %f %f\n", &mm[0], &mm[1], &mm[2], &mm[3], &mm[4], &mm[5],
-               &mm[6], &mm[7], &mm[8]);
+        ret = fscanf(fp, "%f, %f, %f; %f, %f, %f; %f, %f, %f\n", &mm[0], &mm[1], &mm[2], &mm[3],
+                     &mm[4], &mm[5],&mm[6], &mm[7], &mm[8]);
         fclose(fp);
         if (ret != 9) {
             return MRAA_ERROR_UNSPECIFIED;
