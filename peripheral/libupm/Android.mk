@@ -40,9 +40,30 @@ LIBUPM_CXX_FILE_LIST := $(filter-out %ssd1351.cxx, $(LIBUPM_CXX_FILE_LIST))
 LIBUPM_CXX_FILE_LIST := $(filter-out %st7735.cxx, $(LIBUPM_CXX_FILE_LIST))
 LIBUPM_CXX_FILE_LIST := $(filter-out %ili9341.cxx, $(LIBUPM_CXX_FILE_LIST))
 LIBUPM_CXX_FILE_LIST := $(filter-out %gfx.cxx, $(LIBUPM_CXX_FILE_LIST))
+
+# drivers dependent on the BACnet stack
+LIBUPM_CXX_FILE_LIST := $(filter-out %bacnetmstp.cxx, $(LIBUPM_CXX_FILE_LIST))
+LIBUPM_CXX_FILE_LIST := $(filter-out %e50hx.cxx, $(LIBUPM_CXX_FILE_LIST))
+LIBUPM_CXX_FILE_LIST := $(filter-out %bacnetutil.cxx, $(LIBUPM_CXX_FILE_LIST))
+LIBUPM_CXX_FILE_LIST := $(filter-out %tb7300.cxx, $(LIBUPM_CXX_FILE_LIST))
+LIBUPM_CXX_FILE_LIST := $(filter-out %t8100.cxx, $(LIBUPM_CXX_FILE_LIST))
+
+# drivers dependent on the modbus library
+LIBUPM_CXX_FILE_LIST := $(filter-out %h803x.cxx, $(LIBUPM_CXX_FILE_LIST))
+
+# drivers dependent on the jpeg library
+LIBUPM_CXX_FILE_LIST := $(filter-out %vcap.cxx, $(LIBUPM_CXX_FILE_LIST))
+
+# keep a single implementation of MraaUtils class
+LIBUPM_CXX_FILE_LIST := $(filter-out %ds1808lc/mraa-utils.cxx, $(LIBUPM_CXX_FILE_LIST))
+LIBUPM_CXX_FILE_LIST := $(filter-out %si7005/mraa-utils.cxx, $(LIBUPM_CXX_FILE_LIST))
+LIBUPM_CXX_FILE_LIST := $(filter-out %hlg150h/mraa-utils.cxx, $(LIBUPM_CXX_FILE_LIST))
+
 LOCAL_SRC_FILES := $(LIBUPM_CXX_FILE_LIST)
+LOCAL_SRC_FILES += src/bmi160/bosch_bmi160.c
 
 LOCAL_C_INCLUDES := $(sort $(dir $(wildcard $(LOCAL_PATH)/src/*/)))
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/src/
 
 LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_C_INCLUDES)
 

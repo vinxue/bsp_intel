@@ -10,22 +10,22 @@ find_package (PkgConfig REQUIRED)
 
 # Force a libmraa search and minimum required version every time a config is generated
 unset(MRAA_FOUND CACHE)
-pkg_check_modules (MRAA REQUIRED mraa>=0.9.1)
+pkg_check_modules (MRAA REQUIRED mraa>=1.1.1)
 message (INFO " found mraa version: ${MRAA_VERSION}")
 
 # Appends the cmake/modules path to MAKE_MODULE_PATH variable.
 set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
-set (LIB_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}" CACHE PATH "Installation path for libraries")
 
-# Set CMAKE_LIB_INSTALL_DIR if not defined
+# Set CMAKE_INSTALL_LIBDIR if not defined
 include(GNUInstallDirs)
+set (LIB_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}" CACHE PATH "Installation path for libraries")
 
 # Make a version file containing the current version from git.
 include (GetGitRevisionDescription)
 git_describe (VERSION "--tags")
 if ("x_${VERSION}" STREQUAL "x_GIT-NOTFOUND" OR "x_${VERSION}" STREQUAL "x_-128-NOTFOUND")
   message (WARNING " - Install git to compile a production UPM!")
-  set (VERSION "v0.5.1-dirty")
+  set (VERSION "v0.7.2-dirty")
 endif ()
 
 message (INFO " - UPM Version ${VERSION}")
@@ -51,13 +51,15 @@ set (CMAKE_SWIG_FLAGS "")
 option (BUILDDOC "Build all doc." OFF)
 option (BUILDSWIG "Build swig modules." ON)
 option (BUILDSWIGPYTHON "Build swig python modules." ON)
+option (BUILDPYTHON3 "Use python3 for building/installing/testing" OFF)
 option (BUILDSWIGNODE "Build swig node modules." ON)
 option (BUILDEXAMPLES "Build C++ example binaries" OFF)
 option (BUILDJAVAEXAMPLES "Build java example jars" OFF)
 option (BUILDSWIGJAVA "Build swig java modules" OFF)
 option (IPK "Generate IPK using CPack" OFF)
 option (RPM "Generate RPM using CPack" OFF)
-option (BUILDTESTS "Generate check-ups for upm" OFF)
+option (BUILDTESTS "Generate check-ups for upm" ON)
+option (ENABLECXX11 "Enable C++11 standards support" ON)
 
 # Find swig
 if (BUILDSWIG)
@@ -75,6 +77,32 @@ endif ()
 include (TargetArch)
 target_architecture (DETECTED_ARCH)
 message( INFO " - Target arch is ${DETECTED_ARCH}")
+
+#-march=native for ARM when not defined/forced
+if (DETECTED_ARCH MATCHES "arm.*" AND NOT CMAKE_CXX_FLAGS MATCHES "-march")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+endif()
+
+# enable c++11 standards support
+if (ENABLECXX11)
+  include(CheckCXXCompilerFlag)
+  if (CMAKE_VERSION VERSION_LESS "3.1")
+    CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+    CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+    if (COMPILER_SUPPORTS_CXX11)
+      set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    elseif (COMPILER_SUPPORTS_CXX0X)
+      set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+    else()
+      message(WARNING "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please update your C++ compiler.")
+    endif()
+  else()
+    # 3.1+ uses this generic method to enable c++11
+    set (CMAKE_CXX_STANDARD 11)
+  endif()
+else()
+  message(WARNING "Some modules require C++11 support, and may not build without it.")
+endif()
 
 if (BUILDDOC)
   # Add a target to generate API documentation with Doxygen
@@ -99,11 +127,10 @@ if (BUILDDOC)
   find_package (Sphinx)
   if(SPHINX_FOUND AND BUILDSWIG AND BUILDSWIGPYTHON)
     # Python required for Sphinx build
-    find_package (PythonLibs)
+    find_package (PythonLibs ${PYTHONBUILD_VERSION} REQUIRED)
     string (REPLACE "." ";" PYTHON_VERSION_LIST ${PYTHONLIBS_VERSION_STRING})
     list (GET PYTHON_VERSION_LIST 0 PYTHON_VERSION_MAJOR)
     list (GET PYTHON_VERSION_LIST 1 PYTHON_VERSION_MINOR)
-    set (SITE_PACKAGES ${CMAKE_INSTALL_PREFIX}/${LIB_INSTALL_DIR}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages)
     configure_file (${CMAKE_CURRENT_SOURCE_DIR}/doxy/conf.py.in ${CMAKE_CURRENT_BINARY_DIR}/pydoc/conf.py @ONLY)
     configure_file (${CMAKE_CURRENT_SOURCE_DIR}/doxy/index.rst ${CMAKE_CURRENT_BINARY_DIR}/pydoc/index.rst COPYONLY)
     add_custom_target (pydoc ALL
@@ -130,9 +157,9 @@ if (BUILDDOC)
       configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doxy/node/${JSDOC_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${JSDOC_FILE} COPYONLY)
     endforeach()
     add_custom_target(jsdoc ALL
-      COMMAND ${NODE_EXECUTABLE} docgen -m upm -i xml -t ${CMAKE_CURRENT_SOURCE_DIR}/src -g ../../
+      COMMAND ${NODEJS_EXECUTABLE} docgen -m upm -i xml -t ${CMAKE_CURRENT_SOURCE_DIR}/src -g ../../
       COMMAND ${YUIDOC_EXECUTABLE} -C --no-sort --helpers generators/yuidoc/helper.js --themedir generators/yuidoc/tmpl -o html/node jsdoc/yuidoc/upm
-      COMMAND ${NODE_EXECUTABLE} tolower -i html/node
+      COMMAND ${NODEJS_EXECUTABLE} tolower -i html/node
       DEPENDS doc
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       COMMENT "Generating API documentation with Yuidoc" VERBATIM
@@ -156,7 +183,7 @@ if (IPK)
   endif ()
   message (INFO " - Package arch is ${TARGET_ARCH}")
 
-  set(CPACK_GENERATOR "DEB" "TGZ")
+  set(CPACK_GENERATOR "DEB")
   set(OPKG_ARCH ${TARGET_ARCH})
   set(CPACK_BINARY_DIR ${CMAKE_BINARY_DIR})
   set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Intel IoT-Devkit") #required
@@ -182,25 +209,27 @@ if (RPM)
   message (INFO " - RPM packaging enabled for ${DETECTED_ARCH}")
   set(CPACK_PACKAGE_VERSION ${VERSION})
   set(CPACK_GENERATOR "RPM")
-  set(CPACK_PACKAGE_NAME "libupm${upm_VERSION_MAJOR}")
-  set(CPACK_PACKAGE_RELEASE 1)
+  set(CPACK_PACKAGE_NAME "upm")
+  set(upm_PACKAGE_ON_TAG ".")
+  if ("${VERSION_COMMIT}" STREQUAL "")
+    set(upm_PACKAGE_ON_TAG "")
+  endif()
   set(CPACK_PACKAGE_VERSION
-      "${upm_VERSION_MAJOR}.${upm_VERSION_MINOR}.${upm_VERSION_PATCH}-${upm_PACKAGE_ON_TAG}${VERSION_COMMIT}")
+      "${upm_VERSION_MAJOR}.${upm_VERSION_MINOR}.${upm_VERSION_PATCH}${upm_PACKAGE_ON_TAG}${VERSION_COMMIT}")
   set(CPACK_PACKAGE_CONTACT "Intel IoT-Devkit")
   set(CPACK_PACKAGE_VENDOR "Intel IoT-Devkit")
   set(CPACK_RPM_PACKAGE_REQUIRES "mraa >= ${MRAA_VERSION}")
   set(CPACK_RPM_PACKAGE_PROVIDES "${CPACK_PACKAGE_NAME}-devel")
+  set(CPACK_RPM_PACKAGE_LICENSE "MIT")
   EXECUTE_PROCESS(COMMAND rpm --showrc
     COMMAND grep -E "dist[[:space:]]*\\."
     COMMAND sed -e "s/^.*dist\\s*\\.//"
     COMMAND tr \\n \\t
     COMMAND sed  -e s/\\t//
     OUTPUT_VARIABLE DIST_TAG)
-  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_PACKAGE_RELEASE}.${DIST_TAG}.${DETECTED_ARCH}")
+  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}.${DIST_TAG}.${DETECTED_ARCH}")
   include(CPack)
 endif()
-
-add_subdirectory (src)
 
 if(BUILDEXAMPLES)
   add_subdirectory (examples/c++)
@@ -210,10 +239,18 @@ if(BUILDJAVAEXAMPLES)
   add_subdirectory (examples/java)
 endif()
 
-if(BUILDTESTS)
-    find_package (PythonInterp REQUIRED)
-    if (${PYTHONINTERP_FOUND})
-        enable_testing ()
-        add_subdirectory (tests)
-    endif ()
+if (BUILDSWIGPYTHON OR BUILDTESTS)
+  if (BUILDPYTHON3)
+    set (PYTHONBUILD_VERSION 3)
+  else ()
+    set (PYTHONBUILD_VERSION 2.7)
+  endif ()
+endif ()
+
+add_subdirectory (src)
+
+if (BUILDTESTS)
+  find_package (PythonInterp ${PYTHONBUILD_VERSION} REQUIRED)
+  enable_testing ()
+  add_subdirectory (tests)
 endif()

@@ -25,18 +25,6 @@ import upm_ad8232.AD8232;
 
 public class Ad8232Example {
 
-	static {
-		try {
-			System.loadLibrary("javaupm_ad8232");
-			System.loadLibrary("mraajava");
-		} catch (UnsatisfiedLinkError e) {
-			System.err.println(
-					"Native code library failed to load. See the chapter on Dynamic Linking Problems in the SWIG Java documentation for help.\n" +
-							e);
-			System.exit(1);
-		}
-	}
-
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		//! [Interesting]
@@ -54,7 +42,7 @@ public class Ad8232Example {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
-				System.out.println("The following error has occured: "+e.getMessage());
+				System.out.println("The following error has occurred: "+e.getMessage());
 			}
 		}
 	}

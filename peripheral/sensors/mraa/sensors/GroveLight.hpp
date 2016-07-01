@@ -19,7 +19,7 @@
 
 #include <hardware/sensors.h>
 #include "Sensor.hpp"
-#include "grove.h"
+#include "grove.hpp"
 
 struct sensors_event_t;
 
