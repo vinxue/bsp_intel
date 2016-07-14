@@ -29,7 +29,7 @@
 #include <stdexcept>
 #include <errno.h>
 
-#include "grovescam.h"
+#include "grovescam.hpp"
 
 using namespace upm;
 using namespace std;
@@ -66,7 +66,7 @@ GROVESCAM::GROVESCAM(int uart, uint8_t camAddr)
   if ( (m_ttyFd = open(devPath, O_RDWR)) == -1)
     {
       throw std::runtime_error(std::string(__FUNCTION__) +
-                               ": open of " + 
+                               ": open of " +
                                string(devPath) + " failed:" +
                                string(strerror(errno)));
       return;
@@ -86,25 +86,25 @@ bool GROVESCAM::dataAvailable(unsigned int millis)
 
   struct timeval timeout;
 
-  if (millis == 0) 
+  if (millis == 0)
     {
       // no waiting
       timeout.tv_sec = 0;
       timeout.tv_usec = 0;
     }
-  else 
+  else
     {
       timeout.tv_sec = millis / 1000;
       timeout.tv_usec = (millis % 1000) * 1000;
     }
 
-  int nfds;  
+  int nfds;
   fd_set readfds;
 
   FD_ZERO(&readfds);
 
   FD_SET(m_ttyFd, &readfds);
-  
+
   if (select(m_ttyFd + 1, &readfds, NULL, NULL, &timeout) > 0)
     return true;                // data is ready
   else
@@ -157,7 +157,7 @@ bool GROVESCAM::setupTty(speed_t baud)
 {
   if (m_ttyFd == -1)
     return(false);
-  
+
   struct termios termio;
 
   // get current modes
@@ -216,22 +216,22 @@ bool GROVESCAM::init()
       if (readData(resp, pktLen) != pktLen)
         continue;
 
-      if (resp[0] == 0xaa 
-          && resp[1] == (0x0e | m_camAddr) 
-          && resp[2] == 0x0d 
-          && resp[4] == 0 
+      if (resp[0] == 0xaa
+          && resp[1] == (0x0e | m_camAddr)
+          && resp[2] == 0x0d
+          && resp[4] == 0
           && resp[5] == 0)
         {
           if (readData(resp, pktLen) != pktLen)
             continue;
           else
             {
-              if (resp[0] == 0xaa 
-                  && resp[1] == (0x0d | m_camAddr) 
-                  && resp[2] == 0 
-                  && resp[3] == 0 
-                  && resp[4] == 0 
-                  && resp[5] == 0) 
+              if (resp[0] == 0xaa
+                  && resp[1] == (0x0d | m_camAddr)
+                  && resp[2] == 0
+                  && resp[3] == 0
+                  && resp[4] == 0
+                  && resp[5] == 0)
                 break;
             }
         }
@@ -271,10 +271,10 @@ bool GROVESCAM::preCapture(PIC_FORMATS_T fmt)
       if (readData(resp, pktLen) != pktLen)
         continue;
 
-      if (resp[0] == 0xaa 
-          && resp[1] == (0x0e | m_camAddr) 
-          && resp[2] == 0x01 
-          && resp[4] == 0 
+      if (resp[0] == 0xaa
+          && resp[1] == (0x0e | m_camAddr)
+          && resp[2] == 0x01
+          && resp[4] == 0
           && resp[5] == 0) break;
     }
 
@@ -285,10 +285,11 @@ bool GROVESCAM::doCapture()
 {
   const unsigned int pktLen = 6;
   uint8_t cmd[pktLen] = { 0xaa, static_cast<uint8_t>(0x06 | m_camAddr), 0x08,
-                          MAX_PKT_LEN & 0xff, (MAX_PKT_LEN >> 8) & 0xff, 0};
+                          static_cast<uint8_t>(MAX_PKT_LEN & 0xff),
+                          static_cast<uint8_t>((MAX_PKT_LEN >> 8)) & 0xff, 0};
   uint8_t resp[pktLen];
   int retries = 0;
-  
+
   m_picTotalLen = 0;
 
   while (true)
@@ -310,10 +311,10 @@ bool GROVESCAM::doCapture()
       if (readData(resp, pktLen) != pktLen)
         continue;
 
-      if (resp[0] == 0xaa 
-          && resp[1] == (0x0e | m_camAddr) 
-          && resp[2] == 0x06 
-          && resp[4] == 0 
+      if (resp[0] == 0xaa
+          && resp[1] == (0x0e | m_camAddr)
+          && resp[2] == 0x06
+          && resp[4] == 0
           && resp[5] == 0)
         break;
     }
@@ -339,10 +340,10 @@ bool GROVESCAM::doCapture()
       if (readData(resp, pktLen) != pktLen)
         continue;
 
-      if (resp[0] == 0xaa 
-          && resp[1] == (0x0e | m_camAddr) 
-          && resp[2] == 0x05 
-          && resp[4] == 0 
+      if (resp[0] == 0xaa
+          && resp[1] == (0x0e | m_camAddr)
+          && resp[2] == 0x05
+          && resp[4] == 0
           && resp[5] == 0)
         break;
     }
@@ -366,10 +367,10 @@ bool GROVESCAM::doCapture()
       if (readData(resp, pktLen) != pktLen)
         continue;
 
-      if (resp[0] == 0xaa 
-          && resp[1] == (0x0e | m_camAddr) 
-          && resp[2] == 0x04 
-          && resp[4] == 0 
+      if (resp[0] == 0xaa
+          && resp[1] == (0x0e | m_camAddr)
+          && resp[2] == 0x04
+          && resp[4] == 0
           && resp[5] == 0)
         {
           if (!dataAvailable(1000))
@@ -417,23 +418,23 @@ bool GROVESCAM::storeImage(const char *fname)
                                string(strerror(errno)));
       return false;
     }
-  
+
   /// let the games begin...
   const unsigned int pktLen = 6;
   unsigned int pktCnt = (m_picTotalLen) / (MAX_PKT_LEN - 6);
-  if ((m_picTotalLen % (MAX_PKT_LEN-6)) != 0) 
+  if ((m_picTotalLen % (MAX_PKT_LEN-6)) != 0)
     pktCnt += 1;
-  
+
   uint8_t cmd[pktLen] = { 0xaa, static_cast<uint8_t>(0x0e | m_camAddr), 0x00,
                           0x00, 0x00, 0x00 };
   uint8_t pkt[MAX_PKT_LEN];
   int retries = 0;
-  
+
   for (unsigned int i = 0; i < pktCnt; i++)
     {
       cmd[4] = i & 0xff;
       cmd[5] = (i >> 8) & 0xff;
-      
+
       retries = 0;
 
     retry:
@@ -455,7 +456,7 @@ bool GROVESCAM::storeImage(const char *fname)
         }
 
       uint16_t cnt = readData(pkt, MAX_PKT_LEN);
-      
+
       unsigned char sum = 0;
       for (int y = 0; y < cnt - 2; y++)
         {

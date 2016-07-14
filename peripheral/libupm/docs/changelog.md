@@ -4,6 +4,61 @@ Changelog                         {#changelog}
 Here's a list summarizing some of the key undergoing changes to our library
 from earlier versions:
 
+### v0.7.2
+
+ * Mraa 1.1.1 required changes to UPM drivers and examples for IIO core
+ kernel support
+ * Rev'ed libmraa requirement to 1.1.1
+
+### v0.7.1
+
+ * Fix for building python2 vs python3 bindings
+ * Fixes for jhd1313m1 row/font size and reset
+ * Added bacnet utility class
+ * New sensors: bmx055, bmi055, bmc160, bma250e, bmg150, bmm150, t8100, tb7300
+
+### v0.7.0
+
+ * C++ header files have been renamed from *.h to *.hpp along with all Intel
+ provided examples and code samples to allow for native C drivers
+ * Updated driver compatibility to new MRAA 1.0 API
+ * First sensor implementations for our newly added Dallas One Wire support
+ * Several fixes based on issues reported on Github
+ * Changed SWIG linking strategy, more robust Travis CI build checks
+ * New sensors: ds2413, ds18b20, bmp280, bno055, l3gd20
+
+### v0.6.2
+
+ * Added a generic driver for taking snapshots from an USB camera device
+ * New API changes section in documentation to let users know when the UPM API
+ gets modified
+ * Fixed some spelling errors and improved JavaScript documentation builds with
+ newer versions of YUI and Node
+ * Enhanced Cmake scripts and the build process
+ * New sensors: vcap, e50hx
+
+### v0.6.1
+
+ * Fixed library build process for different configurations across multiple
+ environments reported by users.
+ * Fixed multiple GFX library header clash and improved SSD1351 compatibility
+ by changing SPI mode
+ * Added Node and Python array typemaps for nrf24l01
+ * Added 2 new JAVA examples
+
+### v0.6.0
+
+ * Introduced C++ Interfaces for several sensor categories that will help
+ consolidate the sensor APIs with uniform function names upon implementation
+ * Greatly improved Node.js detection and handling during build and install,
+ and should be now compatible with all major versions
+ * Added a driver for the Curie IMU (accelerometer + gyroscope) that works with
+ the new Firmata support implemented by MRAA
+ * Continued to provide several JAVA fixes and examples
+ * Many new industrial and maker sensors: cwlsxxa, teams, tex00, h803x, apa102,
+ smartdrive, bmi160, bme280, ds1808lc, hlg150, lp8860, max44009, si1132, t6713,
+ si7005, ssd1351
+
 ### v0.5.1
 
  * Updated the API and added new functionality for the MY9221 class and derived

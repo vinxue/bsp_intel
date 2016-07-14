@@ -19,7 +19,7 @@
 
 #include <hardware/sensors.h>
 #include "Sensor.hpp"
-#include "lsm9ds0.h"
+#include "lsm9ds0.hpp"
 
 struct sensors_event_t;
 
