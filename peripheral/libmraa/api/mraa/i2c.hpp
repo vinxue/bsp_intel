@@ -62,18 +62,6 @@ class I2c
             throw std::invalid_argument("Invalid i2c bus");
         }
     }
-    /**
-     * I2C constructor, takes a pointer to a I2C context and initialises the I2C class
-     *
-     * @param void * to an I2C context
-     */
-    I2c(void* i2c_context)
-    {
-        m_i2c = (mraa_i2c_context) i2c_context;
-        if (m_i2c == NULL) {
-            throw std::invalid_argument("Invalid I2C context");
-        }
-    }
 
     /**
      * Closes the I2c Bus used. This does not guarrantee the bus will not
@@ -115,17 +103,12 @@ class I2c
     /**
      * Read exactly one byte from the bus
      *
-     * @throws std::invalid_argument in case of error
      * @return char read from the bus
      */
     uint8_t
     readByte()
     {
-        int x = mraa_i2c_read_byte(m_i2c);
-        if (x == -1) {
-            throw std::invalid_argument("Unknown error in I2c::readByte()");
-        }
-        return (uint8_t) x;
+        return (uint8_t) mraa_i2c_read_byte(m_i2c);
     }
 
     /**
@@ -145,36 +128,24 @@ class I2c
      * Read byte from an i2c register
      *
      * @param reg Register to read from
-     *
-     * @throws std::invalid_argument in case of error
      * @return char read from register
      */
     uint8_t
     readReg(uint8_t reg)
     {
-        int x = mraa_i2c_read_byte_data(m_i2c, reg);
-        if (x == -1) {
-            throw std::invalid_argument("Unknown error in I2c::readReg()");
-        }
-        return (uint8_t) x;
+        return mraa_i2c_read_byte_data(m_i2c, reg);
     }
 
     /**
      * Read word from an i2c register
      *
      * @param reg Register to read from
-     *
-     * @throws std::invalid_argument in case of error
      * @return char read from register
      */
     uint16_t
     readWordReg(uint8_t reg)
     {
-        int x = mraa_i2c_read_word_data(m_i2c, reg);
-	if (x == -1) {
-            throw std::invalid_argument("Unknown error in I2c::readReg()");
-        }
-        return (uint16_t) x;
+        return mraa_i2c_read_word_data(m_i2c, reg);
     }
 
     /**

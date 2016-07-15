@@ -37,7 +37,6 @@ typedef struct {
     mraa_result_t (*gpio_init_post) (mraa_gpio_context dev);
 
     mraa_result_t (*gpio_close_pre) (mraa_gpio_context dev);
-    mraa_result_t (*gpio_close_replace) (mraa_gpio_context dev);
 
     mraa_result_t (*gpio_mode_replace) (mraa_gpio_context dev, mraa_gpio_mode_t mode);
     mraa_result_t (*gpio_mode_pre) (mraa_gpio_context dev, mraa_gpio_mode_t mode);
@@ -64,9 +63,9 @@ typedef struct {
     mraa_result_t (*i2c_set_frequency_replace) (mraa_i2c_context dev, mraa_i2c_mode_t mode);
     mraa_result_t (*i2c_address_replace) (mraa_i2c_context dev, uint8_t addr);
     int (*i2c_read_replace) (mraa_i2c_context dev, uint8_t* data, int length);
-    int (*i2c_read_byte_replace) (mraa_i2c_context dev);
-    int (*i2c_read_byte_data_replace) (mraa_i2c_context dev, const uint8_t command);
-    int (*i2c_read_word_data_replace) (mraa_i2c_context dev, const uint8_t command);
+    uint8_t (*i2c_read_byte_replace) (mraa_i2c_context dev);
+    uint8_t (*i2c_read_byte_data_replace) (mraa_i2c_context dev, const uint8_t command);
+    uint16_t (*i2c_read_word_data_replace) (mraa_i2c_context dev, const uint8_t command);
     int (*i2c_read_bytes_data_replace) (mraa_i2c_context dev, uint8_t command, uint8_t* data, int length);
     mraa_result_t (*i2c_write_replace) (mraa_i2c_context dev, const uint8_t* data, int length);
     mraa_result_t (*i2c_write_byte_replace) (mraa_i2c_context dev, uint8_t data);
@@ -74,22 +73,14 @@ typedef struct {
     mraa_result_t (*i2c_write_word_data_replace) (mraa_i2c_context dev, const uint16_t data, const uint8_t command);
     mraa_result_t (*i2c_stop_replace) (mraa_i2c_context dev);
 
-    mraa_result_t (*aio_init_internal_replace) (mraa_aio_context dev, int pin);
-    int (*aio_read_replace) (mraa_aio_context dev);
     mraa_result_t (*aio_get_valid_fp) (mraa_aio_context dev);
     mraa_result_t (*aio_init_pre) (unsigned int aio);
     mraa_result_t (*aio_init_post) (mraa_aio_context dev);
 
     mraa_pwm_context (*pwm_init_replace) (int pin);
-    mraa_pwm_context (*pwm_init_internal_replace) (void* func_table, int pin);
     mraa_result_t (*pwm_init_pre) (int pin);
     mraa_result_t (*pwm_init_post) (mraa_pwm_context pwm);
     mraa_result_t (*pwm_period_replace) (mraa_pwm_context dev, int period);
-    float (*pwm_read_replace) (mraa_pwm_context dev);
-    mraa_result_t (*pwm_write_replace) (mraa_pwm_context dev, float duty);
-    mraa_result_t (*pwm_write_pre) (mraa_pwm_context dev, float percentage);
-    mraa_result_t (*pwm_enable_replace) (mraa_pwm_context dev, int enable);
-    mraa_result_t (*pwm_enable_pre) (mraa_pwm_context dev, int enable);
 
     mraa_result_t (*spi_init_pre) (int bus);
     mraa_result_t (*spi_init_post) (mraa_spi_context spi);
