@@ -76,20 +76,6 @@ class Uart
     }
 
     /**
-     * Uart Constructor, takes a pointer to the UART context and initialises
-     * the UART class
-     *
-     * @param void * to a UART context
-     */
-    Uart(void* uart_context)
-    {
-        m_uart = (mraa_uart_context) uart_context;
-
-        if (m_uart == NULL) {
-            throw std::invalid_argument("Invalid UART context");
-        }
-    }
-    /**
      * Uart destructor
      */
     ~Uart()
@@ -140,17 +126,12 @@ class Uart
      * Read bytes from the device into a String object
      *
      * @param length to read
-     * @throws std::bad_alloc If there is no space left for read.
      * @return string of data
      */
     std::string
     readStr(int length)
     {
         char* data = (char*) malloc(sizeof(char) * length);
-        if (data == NULL) {
-            throw std::bad_alloc();
-        }
-
         int v = mraa_uart_read(m_uart, data, (size_t) length);
         std::string ret(data, v);
         free(data);
@@ -253,19 +234,6 @@ class Uart
     setTimeout(int read, int write, int interchar)
     {
         return (Result) mraa_uart_set_timeout(m_uart, read, write, interchar);
-    }
-
-    /**
-     * Set the blocking state for write operations
-     *
-     * @param dev The UART context
-     * @param nonblock new nonblocking state
-     * @return Result of operation
-     */
-    Result
-    SetNonBlocking(bool nonblock)
-    {
-        return (Result) mraa_uart_set_non_blocking(m_uart, nonblock);
     }
 
   private:

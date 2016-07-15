@@ -31,10 +31,8 @@ const rl = readline.createInterface({
 });
 
 function printUsage() {
-    console.log("version         Print version");
-    console.log("get pin         Get pin level");
-    console.log("set pin level   Set pin level");
-    console.log("monitor pin     Monitor pin level changes");
+    console.log("version     Print version");
+    console.log("get pin     Get pin value");
 }
 
 function getVersion() {
@@ -57,22 +55,17 @@ function getPin() {
 }
 
 function onPinLevelChange() {
-    console.log('gpio level change');
+    console.log('gpio change');
 }
 
 function monitorPin() {
     var pinNumber = arguments[0];
-    try {
-        var pin = new mraa.Gpio(pinNumber);
-        pin.dir(mraa.DIR_IN);
-        pin.isr(mraa.EDGE_BOTH, onPinLevelChange);
-        rl.question('Press ENTER to stop', function(answer) {
-            rl.close();
-            pin.isrExit();
-        });
-    } catch (err) {
-     console.log(err.message);
-    }
+    var pin = new mraa.Gpio(pinNumber);
+    pin.dir(mraa.DIR_IN);
+    pin.isr(mraa.EDGE_BOTH, onPinLevelChange);
+    rl.question('Press ENTER to stop', function(answer) {
+        rl.close();
+    });
 }
 
 const args = process.argv;

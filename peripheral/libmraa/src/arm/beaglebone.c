@@ -64,6 +64,7 @@ static unsigned int mmap_count = 0;
 mraa_result_t
 mraa_beaglebone_mmap_write(mraa_gpio_context dev, int value)
 {
+    volatile uint32_t* addr;
     if (value) {
         *(volatile uint32_t*) (mmap_gpio[dev->pin / 32] + AM335X_SET) = (uint32_t)(1 << (dev->pin % 32));
     } else {
@@ -184,6 +185,7 @@ mraa_beaglebone_uart_init_pre(int index)
 {
     mraa_result_t ret = MRAA_ERROR_NO_RESOURCES;
     char devpath[MAX_SIZE];
+    char overlay[MAX_SIZE];
     char* capepath = NULL;
     sprintf(devpath, "/dev/ttyO%u", index + 1);
     if (!mraa_file_exist(devpath)) {
@@ -216,6 +218,7 @@ mraa_beaglebone_spi_init_pre(int index)
 {
     mraa_result_t ret = MRAA_ERROR_NO_RESOURCES;
     char devpath[MAX_SIZE];
+    char overlay[MAX_SIZE];
     char* capepath = NULL;
     int deviceindex = 0;
 
@@ -270,10 +273,10 @@ mraa_beaglebone_i2c_init_pre(unsigned int bus)
 {
     mraa_result_t ret = MRAA_ERROR_NO_RESOURCES;
     char devpath[MAX_SIZE];
+    char overlay[MAX_SIZE];
     char* capepath = NULL;
     sprintf(devpath, "/dev/i2c-%u", plat->i2c_bus[bus].bus_id);
     if (!mraa_file_exist(devpath)) {
-        syslog(LOG_INFO, "i2c: %s doesn't exist ", devpath);
         capepath = mraa_file_unglob(SYSFS_DEVICES_CAPEMGR_SLOTS);
         if (capepath == NULL) {
             syslog(LOG_ERR, "i2c: Could not find CapeManager");
@@ -307,6 +310,7 @@ mraa_pwm_context
 mraa_beaglebone_pwm_init_replace(int pin)
 {
     char devpath[MAX_SIZE];
+    char overlay[MAX_SIZE];
     char* capepath = NULL;
     if (plat == NULL) {
         syslog(LOG_ERR, "pwm: Platform Not Initialised");
@@ -414,7 +418,7 @@ mraa_beaglebone()
     else
         i2c0_enabled = 0;
 
-    if (mraa_file_exist("/sys/class/i2c-dev/i2c-2"))
+    if (mraa_file_exist("/sys/class/i2c-dev/i2c-1"))
         i2c1_enabled = 1;
     else
         i2c1_enabled = 0;
@@ -1123,7 +1127,7 @@ mraa_beaglebone()
     b->pins[64].i2c.mux_total = 0;
     b->pins[64].spi.mux_total = 0;
 
-    if (i2c1_enabled == 1) {
+    if (i2c0_enabled == 1) {
         strncpy(b->pins[65].name, "I2C2SCL", MRAA_PIN_NAME_SIZE);
         b->pins[65].capabilites = (mraa_pincapabilities_t){ 1, 0, 0, 0, 0, 1, 0, 0 };
         b->pins[65].i2c.mux_total = 0;
@@ -1136,7 +1140,7 @@ mraa_beaglebone()
     b->pins[65].gpio.mux_total = 0;
     b->pins[65].i2c.mux_total = 0;
 
-    if (i2c1_enabled == 1) {
+    if (i2c0_enabled == 1) {
         strncpy(b->pins[66].name, "I2C2SDA", MRAA_PIN_NAME_SIZE);
         b->pins[66].capabilites = (mraa_pincapabilities_t){ 1, 0, 0, 0, 0, 1, 0, 0 };
         b->pins[66].i2c.mux_total = 0;
@@ -1376,7 +1380,7 @@ mraa_beaglebone()
     b->i2c_bus[0].sda = 46 + 18;
     b->i2c_bus[0].scl = 46 + 17;
 
-    b->i2c_bus[1].bus_id = 2;
+    b->i2c_bus[1].bus_id = 1;
     b->i2c_bus[1].sda = 46 + 20;
     b->i2c_bus[1].scl = 46 + 19;
 
