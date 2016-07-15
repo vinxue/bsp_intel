@@ -29,7 +29,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "adxl335.hpp"
+#include "adxl335.h"
 
 using namespace std;
 using namespace upm;

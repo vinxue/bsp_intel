@@ -26,7 +26,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "groveloudness.hpp"
+#include "groveloudness.h"
 
 using namespace upm;
 

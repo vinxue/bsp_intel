@@ -24,7 +24,7 @@
  */
 
 #include <unistd.h>
-#include "hmc5883l.hpp"
+#include "hmc5883l.h"
 
 int
 main(int argc, char **argv)

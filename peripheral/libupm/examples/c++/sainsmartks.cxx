@@ -26,7 +26,7 @@
 #include <signal.h>
 #include <iostream>
 
-#include "sainsmartks.hpp"
+#include "sainsmartks.h"
 
 using namespace std;
 

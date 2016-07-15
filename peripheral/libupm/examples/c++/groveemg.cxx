@@ -24,7 +24,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "groveemg.hpp"
+#include "groveemg.h"
 
 using namespace std;
 

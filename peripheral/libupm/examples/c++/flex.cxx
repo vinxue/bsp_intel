@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "flex.hpp"
+#include "flex.h"
 
 using namespace std;
 

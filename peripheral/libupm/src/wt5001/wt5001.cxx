@@ -27,7 +27,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "wt5001.hpp"
+#include "wt5001.h"
 
 using namespace upm;
 using namespace std;

@@ -24,7 +24,7 @@
 
 #include <unistd.h>
 #include <iostream>
-#include "max44000.hpp"
+#include "max44000.h"
 
 int
 main(int argc, char **argv)

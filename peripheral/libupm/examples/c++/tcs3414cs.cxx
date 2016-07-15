@@ -24,7 +24,7 @@
 
 #include <unistd.h>
 #include <iostream>
-#include "tcs3414cs.hpp"
+#include "tcs3414cs.h"
 #include <signal.h>
 
 int doWork = 0;

@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "loudness.hpp"
+#include "loudness.h"
 
 using namespace std;
 

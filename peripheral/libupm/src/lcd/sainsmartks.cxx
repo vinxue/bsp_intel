@@ -25,7 +25,7 @@
 #include <iostream>
 #include <unistd.h>
 
-#include "sainsmartks.hpp"
+#include "sainsmartks.h"
 
 using namespace upm;
 

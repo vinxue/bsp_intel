@@ -2,10 +2,10 @@
 %include "../upm.i"
 
 %{
-    #include "ta12200.hpp"
+    #include "ta12200.h"
 %}
 
-%include "ta12200.hpp"
+%include "ta12200.h"
 
 %pragma(java) jniclasscode=%{
     static {

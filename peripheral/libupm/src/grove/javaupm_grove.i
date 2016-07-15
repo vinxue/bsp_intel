@@ -5,10 +5,10 @@
 %apply int {mraa::Edge}
 
 %{
-    #include "grove.hpp"
+    #include "grove.h"
 %}
 
-%include "grove.hpp"
+%include "grove.h"
 
 %pragma(java) jniclasscode=%{
     static {

@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "bma220.hpp"
+#include "bma220.h"
 
 using namespace std;
 

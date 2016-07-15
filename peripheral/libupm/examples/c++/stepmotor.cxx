@@ -26,7 +26,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "stepmotor.hpp"
+#include "stepmotor.h"
 
 using namespace std;
 

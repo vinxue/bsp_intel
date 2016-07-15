@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #include <stdexcept>
 
-#include "maxds3231m.hpp"
+#include "maxds3231m.h"
 
 using namespace upm;
 

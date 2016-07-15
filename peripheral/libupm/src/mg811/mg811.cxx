@@ -28,7 +28,7 @@
 
 #include <iostream>
 #include <math.h>
-#include "mg811.hpp"
+#include "mg811.h"
 
 using namespace std;
 using namespace upm;

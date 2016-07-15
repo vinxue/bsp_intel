@@ -25,7 +25,7 @@
 
 #include <unistd.h>
 #include <iostream>
-#include "grove.hpp"
+#include "grove.h"
 
 int
 main(int argc, char **argv)

@@ -2,7 +2,7 @@
 %include "../upm.i"
 
 %{
-    #include "grovescam.hpp"
+    #include "grovescam.h"
 %}
 
-%include "grovescam.hpp"
+%include "grovescam.h"

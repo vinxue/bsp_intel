@@ -2,10 +2,10 @@
 %include "../upm.i"
 
 %{
-    #include "grovespeaker.hpp"
+    #include "grovespeaker.h"
 %}
 
-%include "grovespeaker.hpp"
+%include "grovespeaker.h"
 
 %pragma(java) jniclasscode=%{
     static {

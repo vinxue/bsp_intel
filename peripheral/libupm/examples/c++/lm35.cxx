@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "lm35.hpp"
+#include "lm35.h"
 
 using namespace std;
 

@@ -26,7 +26,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "mq303a.hpp"
+#include "mq303a.h"
 
 using namespace upm;
 

@@ -2,7 +2,7 @@
 %include "../upm.i"
 
 %{
-    #include "flex.hpp"
+    #include "flex.h"
 %}
 
-%include "flex.hpp"
+%include "flex.h"

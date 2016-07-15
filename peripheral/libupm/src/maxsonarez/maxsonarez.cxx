@@ -26,7 +26,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "maxsonarez.hpp"
+#include "maxsonarez.h"
 
 using namespace std;
 using namespace upm;
@@ -55,9 +55,6 @@ MAXSONAREZ::~MAXSONAREZ()
 int MAXSONAREZ::inches()
 {
   int val = mraa_aio_read(m_aio);
-  if (val == -1) {
-    return -1;
-  }
   float volts = float(val) * (m_aref / m_aRes);
 
   return int(volts / m_vI);

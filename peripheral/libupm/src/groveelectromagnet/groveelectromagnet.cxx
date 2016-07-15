@@ -25,7 +25,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "groveelectromagnet.hpp"
+#include "groveelectromagnet.h"
 
 using namespace upm;
 

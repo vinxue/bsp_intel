@@ -26,7 +26,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "biss0001.hpp"
+#include "biss0001.h"
 
 using namespace upm;
 

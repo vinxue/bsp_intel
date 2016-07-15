@@ -2,10 +2,10 @@
 %include "../upm.i"
 
 %{
-    #include "groveeldriver.hpp"
+    #include "groveeldriver.h"
 %}
 
-%include "groveeldriver.hpp"
+%include "groveeldriver.h"
 
 %pragma(java) jniclasscode=%{
     static {

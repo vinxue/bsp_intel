@@ -3,10 +3,10 @@
 %include "typemaps.i"
 
 %{
-    #include "hwxpxx.hpp"
+    #include "hwxpxx.h"
 %}
 
-%include "hwxpxx.hpp"
+%include "hwxpxx.h"
 
 %pragma(java) jniclasscode=%{
     static {

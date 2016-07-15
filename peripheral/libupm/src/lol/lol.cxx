@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <functional>
 #include <string.h>
-#include "lol.hpp"
+#include "lol.h"
 
 using namespace upm;
 

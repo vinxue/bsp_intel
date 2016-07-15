@@ -31,7 +31,7 @@
 #include <stdlib.h>
 #include <stdexcept>
 
-#include "tcs3414cs.hpp"
+#include "tcs3414cs.h"
 
 using namespace upm;
 

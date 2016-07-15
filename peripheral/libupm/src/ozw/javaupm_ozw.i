@@ -6,10 +6,10 @@
 %include "../java_buffer.i"
 
 %{
-    #include "ozw.hpp"
+    #include "ozw.h"
 %}
 
-%include "ozw.hpp"
+%include "ozw.h"
 
 %pragma(java) jniclasscode=%{
     static {

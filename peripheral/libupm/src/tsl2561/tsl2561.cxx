@@ -30,7 +30,7 @@
 #include <string>
 #include <stdexcept>
 #include <unistd.h>
-#include "tsl2561.hpp"
+#include "tsl2561.h"
 
 using namespace upm;
 

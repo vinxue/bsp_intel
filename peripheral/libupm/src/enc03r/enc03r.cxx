@@ -26,7 +26,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "enc03r.hpp"
+#include "enc03r.h"
 
 using namespace upm;
 using namespace std;
@@ -51,10 +51,7 @@ ENC03R::~ENC03R()
 
 unsigned int ENC03R::value()
 {
-  int x = mraa_aio_read(m_aio);
-  if (x == -1) throw std::out_of_range(std::string(__FUNCTION__) +
-                                       ": Failed to do an aio read.");
-  return (unsigned int) x;
+  return mraa_aio_read(m_aio);
 }
 
 void ENC03R::calibrate(unsigned int samples)
@@ -65,8 +62,6 @@ void ENC03R::calibrate(unsigned int samples)
   for (int i=0; i<samples; i++)
     {
       val = mraa_aio_read(m_aio);
-      if (val == -1) throw std::out_of_range(std::string(__FUNCTION__) +
-                                             ": Failed to do an aio read.");
       total += (float)val;
       usleep(2000);
     }

@@ -26,7 +26,7 @@
 
 
 #include <unistd.h>
-#include "tsl2561.hpp"
+#include "tsl2561.h"
 
 int main (int argc, char **argv)
 {

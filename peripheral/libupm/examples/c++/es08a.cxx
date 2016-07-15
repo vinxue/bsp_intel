@@ -24,7 +24,7 @@
 
 #include <unistd.h>
 #include <iostream>
-#include "es08a.hpp"
+#include "es08a.h"
 #include <signal.h>
 #include <stdlib.h>
 

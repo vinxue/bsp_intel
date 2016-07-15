@@ -2,10 +2,10 @@
 %include "../upm.i"
 
 %{
-    #include "grovevdiv.hpp"
+    #include "grovevdiv.h"
 %}
 
-%include "grovevdiv.hpp"
+%include "grovevdiv.h"
 
 %pragma(java) jniclasscode=%{
     static {

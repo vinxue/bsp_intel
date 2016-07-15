@@ -8,7 +8,7 @@
 %feature("autodoc", "3");
 
 %{
-    #include "xbee.hpp"
+    #include "xbee.h"
 %}
-%include "xbee.hpp"
+%include "xbee.h"
 %array_class(char, charArray);

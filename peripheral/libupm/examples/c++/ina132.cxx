@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "ina132.hpp"
+#include "ina132.h"
 
 using namespace std;
 

@@ -24,7 +24,7 @@
 
 #include <unistd.h>
 #include <iostream>
-#include "pn532.hpp"
+#include "pn532.h"
 
 using namespace std;
 

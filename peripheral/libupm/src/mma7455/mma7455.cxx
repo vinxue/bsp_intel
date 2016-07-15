@@ -31,7 +31,7 @@
 #include <pthread.h>
 #include <math.h>
 
-#include "mma7455.hpp"
+#include "mma7455.h"
 
 using namespace upm;
 

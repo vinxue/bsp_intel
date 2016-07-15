@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "wheelencoder.hpp"
+#include "wheelencoder.h"
 
 using namespace std;
 

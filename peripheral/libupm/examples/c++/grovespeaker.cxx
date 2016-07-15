@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "grovespeaker.hpp"
+#include "grovespeaker.h"
 
 using namespace std;
 

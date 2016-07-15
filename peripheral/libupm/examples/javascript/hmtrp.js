@@ -128,7 +128,7 @@ function runRadio()
 			console.log("Received: " + resultStr);
 		}
 
-		if (rv < 0) // some sort of read error occurred
+		if (rv < 0) // some sort of read error occured
 		{
 			console.log("Port read error.");
 			return;

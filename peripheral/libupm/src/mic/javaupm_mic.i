@@ -4,7 +4,7 @@
 %include "arrays_java.i"
 
 %{
-    #include "mic.hpp"
+    #include "mic.h"
 %}
 
 %typemap(jni) (uint16_t *buffer, int len) "jshortArray";
@@ -37,7 +37,7 @@
         JCALL3(ReleaseShortArrayElements, jenv, $input, (jshort *)$2, 0);
 }
 
-%include "mic.hpp"
+%include "mic.h"
 
 %pragma(java) jniclasscode=%{
     static {

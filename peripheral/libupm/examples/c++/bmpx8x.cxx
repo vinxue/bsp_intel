@@ -24,7 +24,7 @@
 
 #include <unistd.h>
 #include <iostream>
-#include "bmpx8x.hpp"
+#include "bmpx8x.h"
 #include <signal.h>
 
 int doWork = 0;

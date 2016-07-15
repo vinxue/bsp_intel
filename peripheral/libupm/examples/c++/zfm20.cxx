@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "zfm20.hpp"
+#include "zfm20.h"
 
 using namespace std;
 using namespace upm;

@@ -2,7 +2,7 @@
 %include "../upm.i"
 
 %{
-    #include "lol.hpp"
+    #include "lol.h"
 %}
 
-%include "lol.hpp"
+%include "lol.h"

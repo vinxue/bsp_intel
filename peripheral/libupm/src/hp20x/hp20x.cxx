@@ -28,7 +28,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "hp20x.hpp"
+#include "hp20x.h"
 
 using namespace upm;
 using namespace std;

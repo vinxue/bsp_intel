@@ -26,7 +26,7 @@
 
 #include <unistd.h>
 #include <iostream>
-#include "groveultrasonic.hpp"
+#include "groveultrasonic.h"
 #include <signal.h>
 #include <stdlib.h>
 #include <sys/time.h>

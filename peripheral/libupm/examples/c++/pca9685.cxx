@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <iostream>
-#include "pca9685.hpp"
+#include "pca9685.h"
 
 using namespace std;
 

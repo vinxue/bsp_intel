@@ -24,7 +24,7 @@
 
 #include <iostream>
 
-#include "grovegprs.hpp"
+#include "grovegprs.h"
 
 using namespace upm;
 using namespace std;

@@ -27,7 +27,7 @@
 #include <unistd.h>
 #include <iostream>
 
-#include "eboled.hpp"
+#include "eboled.h"
 
 using namespace upm;
 using namespace std;
@@ -556,7 +556,7 @@ mraa::Result EBOLED::command(uint8_t cmd)
 
 mraa::Result EBOLED::data(uint16_t data)
 {
-  m_spi.writeWord(data);
+  m_spi.write_word(data);
   return mraa::SUCCESS;
 }
 

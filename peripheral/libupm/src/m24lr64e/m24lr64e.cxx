@@ -27,7 +27,7 @@
 #include <iostream>
 #include <string>
 
-#include "m24lr64e.hpp"
+#include "m24lr64e.h"
 
 using namespace upm;
 using namespace std;

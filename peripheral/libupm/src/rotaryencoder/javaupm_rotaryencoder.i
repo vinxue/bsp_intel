@@ -4,10 +4,10 @@
 %ignore signalAISR;
 
 %{
-    #include "rotaryencoder.hpp"
+    #include "rotaryencoder.h"
 %}
 
-%include "rotaryencoder.hpp"
+%include "rotaryencoder.h"
 
 %pragma(java) jniclasscode=%{
     static {

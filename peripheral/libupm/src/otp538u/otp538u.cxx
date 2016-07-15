@@ -26,10 +26,10 @@
 #include <string>
 #include <stdexcept>
 
-#include "otp538u.hpp"
+#include "otp538u.h"
 
-#include "thermopile_vt_table.hpp"
-#include "thermister_rt_table.hpp"
+#include "thermopile_vt_table.h"
+#include "thermister_rt_table.h"
 
 using namespace upm;
 using namespace std;
@@ -92,10 +92,6 @@ float OTP538U::ambientTemperature()
   for (int i=0; i<samples; i++)
     {
       val = mraa_aio_read(m_aioA);
-      if (val == -1) {
-          throw std::runtime_error(std::string(__FUNCTION__) +
-                                   ": failed to do aio read");
-      }
       temp += val;
       usleep(10000);
     }
@@ -157,11 +153,6 @@ float OTP538U::objectTemperature()
   for (int i=0; i<samples; i++)
     {
       val = mraa_aio_read(m_aioO);
-      if (val == -1) {
-          throw std::runtime_error(std::string(__FUNCTION__) +
-                                               ": failed to do aio read.");
-          return 0;
-      }
       temp += val;
       usleep(10000);
     }

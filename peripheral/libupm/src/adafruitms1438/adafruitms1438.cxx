@@ -27,7 +27,7 @@
 #include <iostream>
 #include <string>
 
-#include "adafruitms1438.hpp"
+#include "adafruitms1438.h"
 
 using namespace upm;
 using namespace std;

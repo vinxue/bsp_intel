@@ -1,5 +1,5 @@
 set (libname "ppd42ns")
 set (libdescription "upm ppd42ns dust sensor module")
 set (module_src ${libname}.cxx)
-set (module_hpp ${libname}.hpp)
+set (module_h ${libname}.h)
 upm_module_init("-lrt")

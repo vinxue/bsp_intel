@@ -42,11 +42,6 @@
  */
 
 /**
- * @brief Sensors grouped by C++ interface
- * @defgroup byif C++ Interface
- */
-
-/**
  * @brief Sensors grouped by connection type
  * @defgroup bycon Connection Type
  */
@@ -222,57 +217,10 @@
  */
 
 /**
- * @brief Provide video or video camera access
- * @defgroup video Video
- * @ingroup bycat
- */
-
-/**
  * @brief Provide WiFi, Bluetooth, RF communication
  * @defgroup wifi Wireless Communication
  * @ingroup bycat
  */
-
-////////////////////////////////////////////////////////////////// @cond IF
-/// Groups for the various Sensor C++ Interfaces.
-////////////////////////////////////////////////////////////////// @endcond IF
-
-/**
- * @brief Implements ILightSensor
- * @defgroup ilightsensor ILightSensor
- * @ingroup byif
- */
-
- /**
- * @brief Implements ILightController
- * @defgroup ilightcontroller ILightController
- * @ingroup byif
- */
-
-/**
- * @brief Implements IPressureSensor
- * @defgroup ipressuresensor IPressureSensor
- * @ingroup byif
- */
-
- /**
- * @brief Implements ITemperatureSensor
- * @defgroup itemperaturesensor ITemperatureSensor
- * @ingroup byif
- */
-
-/**
- * @brief Implements IADC
- * @defgroup iadc IADC
- * @ingroup byif
- */
-
- /**
- * @brief Implements ICOSensor
- * @defgroup ic02sensor ICOSensor
- * @ingroup byif
- */
-
 
 ////////////////////////////////////////////////////////////////// @cond CON
 /// Groups for the various Connection Types.
@@ -379,12 +327,6 @@
  */
 
 /**
- * @brief Mouser
- * @defgroup mouser Mouser
- * @ingroup byman
- */
-
-/**
  * @brief Omega
  * @defgroup omega Omega
  * @ingroup byman
@@ -413,30 +355,6 @@
  * @defgroup veris Veris Industries
  * @ingroup byman
  */
-
- /**
- * @brief Silicon Labs
- * @defgroup silabs Silicon Labs
- * @ingroup byman
- */
-
-/**
- * @brief Bosch
- * @defgroup bosch Bosch
- * @ingroup byman
- */
-
-/**
- * @brief Amphenol
- * @defgroup amphenol Amphenol
- * @ingroup byman
- */
- 
-/**
- * @brief Open Electrons
- * @defgroup openelectrons Open Electrons
- * @ingroup byman
- */ 
 
 ////////////////////////////////////////////////////////////////// @cond KIT
 /// Groups for the various Starter Kits.

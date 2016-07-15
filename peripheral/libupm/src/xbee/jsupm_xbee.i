@@ -4,8 +4,8 @@
 %include "std_string.i"
 
 %{
-    #include "xbee.hpp"
+    #include "xbee.h"
 %}
 
-%include "xbee.hpp"
+%include "xbee.h"
 %array_class(char, charArray);

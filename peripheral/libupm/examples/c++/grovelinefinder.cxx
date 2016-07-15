@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "grovelinefinder.hpp"
+#include "grovelinefinder.h"
 
 using namespace std;
 

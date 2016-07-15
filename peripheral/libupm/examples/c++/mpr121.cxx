@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <iostream>
-#include "mpr121.hpp"
+#include "mpr121.h"
 
 using namespace std;
 

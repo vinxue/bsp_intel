@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "apds9002.hpp"
+#include "apds9002.h"
 
 using namespace std;
 

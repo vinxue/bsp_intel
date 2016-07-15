@@ -25,7 +25,7 @@
 #include <iostream>
 #include <unistd.h>
 
-#include "es9257.hpp"
+#include "es9257.h"
 
 using namespace upm;
 

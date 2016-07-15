@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "a110x.hpp"
+#include "a110x.h"
 
 using namespace std;
 

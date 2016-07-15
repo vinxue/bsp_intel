@@ -26,7 +26,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "mpr121.hpp"
+#include "mpr121.h"
 
 using namespace upm;
 using namespace std;

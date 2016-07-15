@@ -19,7 +19,7 @@
 
 #include <hardware/sensors.h>
 #include "Sensor.hpp"
-#include "mpu9150.hpp"
+#include "mpu9150.h"
 
 struct sensors_event_t;
 

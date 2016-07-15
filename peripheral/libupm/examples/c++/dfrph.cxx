@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "dfrph.hpp"
+#include "dfrph.h"
 
 using namespace std;
 

@@ -5,7 +5,7 @@
 
 %feature("autodoc", "3");
 
-%include "groveeldriver.hpp"
+%include "groveeldriver.h"
 %{
-    #include "groveeldriver.hpp"
+    #include "groveeldriver.h"
 %}

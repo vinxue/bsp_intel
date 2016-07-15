@@ -24,7 +24,7 @@
 
 #include <unistd.h>
 #include <iostream>
-#include "mma7455.hpp"
+#include "mma7455.h"
 #include <signal.h>
 #include <pthread.h>
 

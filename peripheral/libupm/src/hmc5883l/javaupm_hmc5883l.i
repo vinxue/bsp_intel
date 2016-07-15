@@ -2,7 +2,7 @@
 %include "../upm.i"
 
 %{
-    #include "hmc5883l.hpp"
+    #include "hmc5883l.h"
 %}
 
 %typemap(jni) int16_t* "jshortArray"
@@ -18,7 +18,7 @@
     JCALL4(SetShortArrayRegion, jenv, $result, 0, 3, (jshort*)$1);
 }
 
-%include "hmc5883l.hpp"
+%include "hmc5883l.h"
 
 %pragma(java) jniclasscode=%{
     static {

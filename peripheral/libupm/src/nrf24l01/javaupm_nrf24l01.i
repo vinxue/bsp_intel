@@ -7,12 +7,12 @@ SWIG_DIRECTOR_OWNED(Callback)
 %include "arrays_java.i";
 %apply signed char[] {uint8_t *};
 
-%include "Callback.hpp"
+%include "Callback.h"
 %{
-    #include "nrf24l01.hpp"
+    #include "nrf24l01.h"
 %}
 
-%include "nrf24l01.hpp"
+%include "nrf24l01.h"
 
 %pragma(java) jniclasscode=%{
     static {

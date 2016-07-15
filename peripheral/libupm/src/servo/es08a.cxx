@@ -25,7 +25,7 @@
 #include <iostream>
 #include <unistd.h>
 
-#include "es08a.hpp"
+#include "es08a.h"
 
 using namespace upm;
 

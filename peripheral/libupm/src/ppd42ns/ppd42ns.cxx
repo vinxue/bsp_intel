@@ -30,7 +30,7 @@
 #include <time.h>
 #include <math.h>
 #include <sys/sysinfo.h>
-#include "ppd42ns.hpp"
+#include "ppd42ns.h"
 
 using namespace upm;
 

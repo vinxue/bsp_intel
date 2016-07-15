@@ -28,7 +28,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "rhusb.hpp"
+#include "rhusb.h"
 
 using namespace upm;
 using namespace std;

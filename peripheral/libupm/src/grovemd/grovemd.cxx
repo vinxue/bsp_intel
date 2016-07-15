@@ -27,7 +27,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "grovemd.hpp"
+#include "grovemd.h"
 
 using namespace upm;
 using namespace std;

@@ -26,7 +26,7 @@
 #include <iostream>
 #include <signal.h>
 
-#include "nunchuck.hpp"
+#include "nunchuck.h"
 
 using namespace std;
 
