@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "biss0001.hpp"
+#include "biss0001.h"
 
 using namespace std;
 

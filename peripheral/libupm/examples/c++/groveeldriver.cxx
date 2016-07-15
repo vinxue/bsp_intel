@@ -24,7 +24,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <signal.h>
-#include "groveeldriver.hpp"
+#include "groveeldriver.h"
 
 using namespace std;
 

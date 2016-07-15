@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "grove.hpp"
+#include "grove.h"
 
 using namespace std;
 

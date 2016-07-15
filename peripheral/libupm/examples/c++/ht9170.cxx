@@ -26,7 +26,7 @@
 #include <iostream>
 #include <signal.h>
 
-#include "ht9170.hpp"
+#include "ht9170.h"
 
 using namespace std;
 

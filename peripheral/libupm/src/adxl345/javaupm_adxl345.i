@@ -2,7 +2,7 @@
 %include "../upm.i"
 
 %{
-    #include "adxl345.hpp"
+    #include "adxl345.h"
 %}
 
 %typemap(jni) float* "jfloatArray"
@@ -33,7 +33,7 @@
     delete [] $1;
 }
 
-%include "adxl345.hpp"
+%include "adxl345.h"
 
 %pragma(java) jniclasscode=%{
     static {

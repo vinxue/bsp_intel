@@ -29,7 +29,7 @@
 #include <stdexcept>
 #include <stdlib.h>
 
-#include "nrf24l01.hpp"
+#include "nrf24l01.h"
 
 using namespace upm;
 

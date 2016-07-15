@@ -5,10 +5,10 @@
 %include "../carrays_uint32_t.i"
 
 %{
-    #include "hmtrp.hpp"
+    #include "hmtrp.h"
     speed_t int_B9600 = B9600;
 %}
 
-%include "hmtrp.hpp"
+%include "hmtrp.h"
 speed_t int_B9600 = B9600;
 %array_class(char, charArray);

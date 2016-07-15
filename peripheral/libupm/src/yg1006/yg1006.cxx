@@ -26,7 +26,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "yg1006.hpp"
+#include "yg1006.h"
 
 using namespace upm;
 using namespace std;

@@ -26,7 +26,7 @@
 #include <iostream>
 #include <signal.h>
 
-#include "t3311.hpp"
+#include "t3311.h"
 
 using namespace std;
 

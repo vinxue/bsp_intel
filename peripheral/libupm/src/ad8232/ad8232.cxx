@@ -24,7 +24,7 @@
 
 #include <iostream>
 
-#include "ad8232.hpp"
+#include "ad8232.h"
 
 using namespace upm;
 using namespace std;

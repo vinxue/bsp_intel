@@ -3,10 +3,10 @@
 %include "../java_buffer.i"
 
 %{
-    #include "grovescam.hpp"
+    #include "grovescam.h"
 %}
 
-%include "grovescam.hpp"
+%include "grovescam.h"
 
 %pragma(java) jniclasscode=%{
     static {

@@ -13,8 +13,8 @@
 %feature("autodoc", "3");
 
 %{
-    #include "wt5001.hpp"
+    #include "wt5001.h"
     speed_t int_B9600 = B9600;
 %}
-%include "wt5001.hpp"
+%include "wt5001.h"
 speed_t int_B9600 = B9600;

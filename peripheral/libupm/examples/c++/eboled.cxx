@@ -23,7 +23,7 @@
  */
 
 #include <iostream>
-#include "eboled.hpp"
+#include "eboled.h"
 
 using namespace std;
 

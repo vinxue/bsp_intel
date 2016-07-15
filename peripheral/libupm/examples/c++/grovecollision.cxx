@@ -24,7 +24,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <signal.h>
-#include "grovecollision.hpp"
+#include "grovecollision.h"
 
 using namespace std;
 

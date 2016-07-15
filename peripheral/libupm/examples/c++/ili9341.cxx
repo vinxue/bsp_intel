@@ -24,7 +24,7 @@
 
 #include <unistd.h>
 
-#include "ili9341.hpp"
+#include "ili9341.h"
 
 int main(int argc, char **argv) {
 //! [Interesting]

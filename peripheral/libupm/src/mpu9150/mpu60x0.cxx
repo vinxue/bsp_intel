@@ -26,7 +26,7 @@
 #include <iostream>
 #include <string.h>
 
-#include "mpu60x0.hpp"
+#include "mpu60x0.h"
 
 using namespace upm;
 using namespace std;

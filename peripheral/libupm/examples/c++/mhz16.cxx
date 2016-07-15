@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "mhz16.hpp"
+#include "mhz16.h"
 
 using namespace std;
 

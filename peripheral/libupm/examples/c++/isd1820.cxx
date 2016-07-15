@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "isd1820.hpp"
+#include "isd1820.h"
 
 using namespace std;
 

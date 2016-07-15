@@ -26,7 +26,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "grovewfs.hpp"
+#include "grovewfs.h"
 
 using namespace upm;
 using namespace std;

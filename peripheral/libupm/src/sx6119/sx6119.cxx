@@ -27,7 +27,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "sx6119.hpp"
+#include "sx6119.h"
 
 using namespace upm;
 using namespace std;

@@ -31,7 +31,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#include "lsm303.hpp"
+#include "lsm303.h"
 
 using namespace upm;
 

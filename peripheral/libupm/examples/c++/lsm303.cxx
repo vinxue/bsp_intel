@@ -25,7 +25,7 @@
 #include <iostream>
 
 //! [Interesting]
-#include "lsm303.hpp"
+#include "lsm303.h"
 
 int
 main(int argc, char **argv)

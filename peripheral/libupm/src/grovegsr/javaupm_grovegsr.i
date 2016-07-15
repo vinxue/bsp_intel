@@ -2,10 +2,10 @@
 %include "../upm.i"
 
 %{
-    #include "grovegsr.hpp"
+    #include "grovegsr.h"
 %}
 
-%include "grovegsr.hpp"
+%include "grovegsr.h"
 
 %pragma(java) jniclasscode=%{
     static {

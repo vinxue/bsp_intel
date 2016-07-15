@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "gp2y0a.hpp"
+#include "gp2y0a.h"
 
 using namespace std;
 

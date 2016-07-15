@@ -30,7 +30,7 @@
 #include <stdlib.h>
 #include <stdexcept>
 
-#include "th02.hpp"
+#include "th02.h"
 
 using namespace std;
 using namespace upm;

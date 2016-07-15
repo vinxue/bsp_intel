@@ -1,9 +1,9 @@
 %module javaupm_adafruitss
 %include "../upm.i"
 
-%include "adafruitss.hpp"
+%include "adafruitss.h"
 %{
-    #include "adafruitss.hpp"
+    #include "adafruitss.h"
 %}
 
 %pragma(java) jniclasscode=%{

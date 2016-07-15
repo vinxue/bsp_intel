@@ -26,7 +26,7 @@
 #include <string.h>
 #include <iostream>
 #include <signal.h>
-#include "hmtrp.hpp"
+#include "hmtrp.h"
 
 using namespace std;
 
@@ -135,7 +135,7 @@ int main (int argc, char **argv)
               if (rv > 0)
                 cout << "Received: " << radioBuffer << endl;
               
-              if (rv < 0) // some sort of read error occurred
+              if (rv < 0) // some sort of read error occured
                 {
                   cerr << "Port read error." << endl;
                   break;

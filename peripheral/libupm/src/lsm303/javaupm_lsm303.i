@@ -2,7 +2,7 @@
 %include "../upm.i"
 
 %{
-    #include "lsm303.hpp"
+    #include "lsm303.h"
 %}
 
 %typemap(jni) int16_t* "jshortArray"
@@ -18,7 +18,7 @@
     JCALL4(SetShortArrayRegion, jenv, $result, 0, 3, (jshort*)$1);
 }
 
-%include "lsm303.hpp"
+%include "lsm303.h"
 
 %pragma(java) jniclasscode=%{
     static {

@@ -27,7 +27,7 @@
 #include <stdexcept>
 #include <unistd.h>
 #include "math.h"
-#include "adxl345.hpp"
+#include "adxl345.h"
 
 #define READ_BUFFER_LENGTH 6
 

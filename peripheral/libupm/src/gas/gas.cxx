@@ -28,7 +28,7 @@
 #include <functional>
 #include <string.h>
 #include <stdexcept>
-#include "gas.hpp"
+#include "gas.h"
 
 using namespace upm;
 

@@ -27,7 +27,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "hwxpxx.hpp"
+#include "hwxpxx.h"
 
 using namespace upm;
 using namespace std;

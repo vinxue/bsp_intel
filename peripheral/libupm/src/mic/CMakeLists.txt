@@ -1,5 +1,5 @@
 set (libname "mic")
 set (libdescription "Microphone simple API")
 set (module_src ${libname}.cxx)
-set (module_hpp ${libname}.hpp)
+set (module_h ${libname}.h)
 upm_module_init()

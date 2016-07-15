@@ -24,7 +24,7 @@
 
 
 
-#include "mcp9808.hpp"
+#include "mcp9808.h"
 #include <cmath>
 
 

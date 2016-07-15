@@ -3,10 +3,10 @@
 %include "std_string.i"
 
 %{
-    #include "hdxxvxta.hpp"
+    #include "hdxxvxta.h"
 %}
 
-%include "hdxxvxta.hpp"
+%include "hdxxvxta.h"
 
 
 %pragma(java) jniclasscode=%{

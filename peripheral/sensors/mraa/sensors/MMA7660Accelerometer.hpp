@@ -19,7 +19,7 @@
 
 #include <hardware/sensors.h>
 #include "Sensor.hpp"
-#include "mma7660.hpp"
+#include "mma7660.h"
 
 struct sensors_event_t;
 

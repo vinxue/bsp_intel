@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "rpr220.hpp"
+#include "rpr220.h"
 
 using namespace std;
 

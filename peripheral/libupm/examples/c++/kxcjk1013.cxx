@@ -1,6 +1,6 @@
 /*
  * Author: Lay, Kuan Loon <kuan.loon.lay@intel.com>
- * Copyright (c) 2016 Intel Corporation.
+ * Copyright (c) 2015 Intel Corporation.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,11 +22,10 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <iostream>
-#include <iomanip>
 #include <unistd.h>
+#include <iostream>
 #include <signal.h>
-#include "kxcjk1013.hpp"
+#include "kxcjk1013.h"
 
 using namespace std;
 
@@ -45,8 +44,8 @@ data_callback(char* data)
 {
     float x, y, z;
     accelerometer->extract3Axis(data, &x, &y, &z);
-    cout << fixed << setprecision(1);
-    cout << x << '\t' << y << '\t' << z << "[m/s^2]" << endl;
+    printf("%.1f               %.1f               %.1f\n", x, y, z);
+    // usleep(100);
 }
 
 int
@@ -56,10 +55,7 @@ main()
     //! [Interesting]
     // Instantiate a KXCJK1013 Accelerometer Sensor on iio device 0
     accelerometer = new upm::KXCJK1013(0);
-    // Available scales are 0.009582(2g), 0.019163(4g), and 0.038326(8g)
     accelerometer->setScale(0.019163);
-    // Available sampling frequency are 0.781000, 1.563000, 3.125000, 6.250000, 12.500000, 25, 50,
-    // 100, 200, 400, 800, and 1600
     accelerometer->setSamplingFrequency(25.0);
     accelerometer->enable3AxisChannel();
     accelerometer->installISR(data_callback, NULL);

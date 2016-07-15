@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "grovewfs.hpp"
+#include "grovewfs.h"
 
 using namespace std;
 

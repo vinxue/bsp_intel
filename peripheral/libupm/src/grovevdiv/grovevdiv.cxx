@@ -26,7 +26,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "grovevdiv.hpp"
+#include "grovevdiv.h"
 
 using namespace upm;
 using namespace std;
@@ -53,7 +53,6 @@ unsigned int GroveVDiv::value(unsigned int samples)
   for (int i=0; i<samples; i++)
     {
       sum += mraa_aio_read(m_aio);
-      if (sum == -1) return 0;
       usleep(2000);
     }
         

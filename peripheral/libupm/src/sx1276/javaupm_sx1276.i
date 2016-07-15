@@ -6,13 +6,13 @@
 %include "../java_buffer.i"
 
 %{
-    #include "sx1276.hpp"
+    #include "sx1276.h"
 %}
 
 %ignore send(uint8_t *buffer, uint8_t size, int txTimeout);
 %ignore getRxBuffer();
 
-%include "sx1276.hpp"
+%include "sx1276.h"
 
 %pragma(java) jniclasscode=%{
     static {

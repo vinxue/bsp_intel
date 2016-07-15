@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <signal.h>
-#include "sx1276.hpp"
+#include "sx1276.h"
 
 using namespace std;
 

@@ -26,7 +26,7 @@
 #include <iostream>
 #include <signal.h>
 #include <stdio.h>
-#include "xbee.hpp"
+#include "xbee.h"
 
 using namespace std;
 using namespace upm;

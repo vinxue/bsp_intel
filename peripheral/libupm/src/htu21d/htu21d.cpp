@@ -28,7 +28,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#include "htu21d.hpp"
+#include "htu21d.h"
 
 using namespace upm;
 

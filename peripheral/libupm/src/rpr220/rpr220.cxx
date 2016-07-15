@@ -26,7 +26,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "rpr220.hpp"
+#include "rpr220.h"
 
 using namespace upm;
 using namespace std;

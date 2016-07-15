@@ -26,7 +26,7 @@
 #include <iostream>
 #include <signal.h>
 #include <stdio.h>
-#include "grovescam.hpp"
+#include "grovescam.h"
 
 using namespace std;
 using namespace upm;

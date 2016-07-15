@@ -123,7 +123,7 @@ else:
 					resultStr += radioBuffer.__getitem__(x)
 				print "Received:", resultStr
 
-			if (rv < 0): # some sort of read error occurred
+			if (rv < 0): # some sort of read error occured
 				print "Port read error."
 				sys.exit(0)
 		myCounter += 1

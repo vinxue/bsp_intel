@@ -25,7 +25,7 @@
 #include <iostream>
 #include <time.h>
 
-#include "xbee.hpp"
+#include "xbee.h"
 
 using namespace upm;
 using namespace std;

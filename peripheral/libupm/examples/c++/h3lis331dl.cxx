@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <iostream>
-#include "h3lis331dl.hpp"
+#include "h3lis331dl.h"
 
 using namespace std;
 using namespace upm;

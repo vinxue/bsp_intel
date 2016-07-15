@@ -26,8 +26,8 @@
 
 #include <iostream>
 #include <unistd.h>
-#include "ads1015.hpp"
-#include "ads1115.hpp"
+#include "ads1015.h"
+#include "ads1115.h"
 
 
 
@@ -286,7 +286,7 @@ int main()
                 else ads->setCompMode();
                break;
           case 18:
-               cout << ads->getCompLatch() << endl;
+               cout << ads->getCompLatch() << cout;
                break;
           case 19:
                cout << "select one of the following:" << endl;
@@ -296,7 +296,7 @@ int main()
                 else ads->setCompLatch();
                break;
           case 20:
-               cout << ads->getContinuous() << endl;
+               cout << ads->getContinuous() << cout;
                break;
           case 21:
                cout << "select one of the following:" << endl;

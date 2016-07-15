@@ -26,10 +26,10 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "ssd1306.hpp"
+#include "ssd1306.h"
 
 #define DEVICE_ADDRESS    0x3C
-#define BUS_NUMBER        0x0
+#define BUS_NUMBER        0x6
 
 static uint8_t intel_logo[] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

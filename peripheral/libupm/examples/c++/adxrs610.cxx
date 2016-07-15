@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "adxrs610.hpp"
+#include "adxrs610.h"
 
 using namespace std;
 

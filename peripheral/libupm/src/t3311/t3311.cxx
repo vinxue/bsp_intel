@@ -29,7 +29,7 @@
 #include <sstream>
 #include <pthread.h>
 
-#include "t3311.hpp"
+#include "t3311.h"
 
 using namespace upm;
 using namespace std;

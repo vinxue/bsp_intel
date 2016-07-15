@@ -22,7 +22,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "mq5.hpp"
+#include "mq5.h"
 
 using namespace upm;
 

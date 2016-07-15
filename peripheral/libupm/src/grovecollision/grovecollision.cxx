@@ -25,7 +25,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "grovecollision.hpp"
+#include "grovecollision.h"
 
 using namespace upm;
 

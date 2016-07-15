@@ -24,7 +24,7 @@
 
 #include <unistd.h>
 #include <iostream>
-#include "ds1307.hpp"
+#include "ds1307.h"
 
 using namespace std;
 

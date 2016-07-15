@@ -28,7 +28,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "h3lis331dl.hpp"
+#include "h3lis331dl.h"
 
 using namespace upm;
 using namespace std;

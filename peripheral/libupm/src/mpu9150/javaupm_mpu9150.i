@@ -7,8 +7,8 @@
 %apply int {mraa::Edge};
 
 %{
-    #include "mpu60x0.hpp"
-    #include "mpu9150.hpp"
+    #include "mpu60x0.h"
+    #include "mpu9150.h"
 %}
 
 
@@ -30,8 +30,8 @@
 %ignore getGyroscope(float *, float *, float *);
 %ignore getMagnetometer(float *, float *, float *);
 
-%include "mpu60x0.hpp"
-%include "mpu9150.hpp"
+%include "mpu60x0.h"
+%include "mpu9150.h"
 
 %pragma(java) jniclasscode=%{
     static {

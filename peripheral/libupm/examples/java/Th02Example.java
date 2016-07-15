@@ -25,6 +25,18 @@ import upm_th02.TH02;
 
 public class Th02Example {
 
+	static {
+		try {
+			System.loadLibrary("javaupm_th02");
+			System.loadLibrary("mraajava");
+		} catch (UnsatisfiedLinkError e) {
+			System.err.println(
+					"Native code library failed to load. See the chapter on Dynamic Linking Problems in the SWIG Java documentation for help.\n" +
+							e);
+			System.exit(1);
+		}
+	}
+
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		float temperature = 0;
@@ -39,7 +51,7 @@ public class Th02Example {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
-				System.out.println("The following exception has occurred: "+e.getMessage());
+				System.out.println("The following exception has occured: "+e.getMessage());
 			}
 		}
 	}

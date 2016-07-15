@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
-#include "adxl335.hpp"
+#include "adxl335.h"
 
 using namespace std;
 

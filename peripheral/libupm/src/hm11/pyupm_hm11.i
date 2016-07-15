@@ -7,9 +7,9 @@
 %feature("autodoc", "3");
 
 %{
-    #include "hm11.hpp"
+    #include "hm11.h"
     speed_t int_B9600 = B9600;
 %}
-%include "hm11.hpp"
+%include "hm11.h"
 speed_t int_B9600 = B9600;
 %array_class(char, charArray);

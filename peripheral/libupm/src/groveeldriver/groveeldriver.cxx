@@ -25,7 +25,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "groveeldriver.hpp"
+#include "groveeldriver.h"
 
 using namespace upm;
 

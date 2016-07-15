@@ -3,10 +3,10 @@
 %include "cpointer.i"
 
 %{
-    #include "pca9685.hpp"
+    #include "pca9685.h"
 %}
 
-%include "pca9685.hpp"
+%include "pca9685.h"
 
 %pragma(java) jniclasscode=%{
     static {

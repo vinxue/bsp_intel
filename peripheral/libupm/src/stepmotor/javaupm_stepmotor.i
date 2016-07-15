@@ -2,10 +2,10 @@
 %include "../upm.i"
 
 %{
-    #include "stepmotor.hpp"
+    #include "stepmotor.h"
 %}
 
-%include "stepmotor.hpp"
+%include "stepmotor.h"
 
 %pragma(java) jniclasscode=%{
     static {

@@ -33,7 +33,7 @@
  */
 
 #include <iostream>
-#include "adafruitss.hpp"
+#include "adafruitss.h"
 #include <unistd.h>
 
 using namespace std;

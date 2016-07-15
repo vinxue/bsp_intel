@@ -44,7 +44,7 @@
 #include <functional>
 #include <string.h>
 
-#include "adis16448.hpp"
+#include "adis16448.h"
 
 using namespace upm;
 

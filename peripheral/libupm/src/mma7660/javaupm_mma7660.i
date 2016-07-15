@@ -7,7 +7,7 @@
 %apply float *OUTPUT { float *ax, float *ay, float *az  };
 
 %{
-    #include "mma7660.hpp"
+    #include "mma7660.h"
 %}
 
 %typemap(jni) float* "jfloatArray"
@@ -42,7 +42,7 @@
 %ignore getRawValues(int *, int *, int *);
 %ignore getAcceleration(float *, float *, float *);
 
-%include "mma7660.hpp"
+%include "mma7660.h"
 
 %pragma(java) jniclasscode=%{
     static {

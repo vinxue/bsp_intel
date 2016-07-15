@@ -2,10 +2,10 @@
 %include "../upm.i"
 
 %{
-    #include "grovelinefinder.hpp"
+    #include "grovelinefinder.h"
 %}
 
-%include "grovelinefinder.hpp"
+%include "grovelinefinder.h"
 
 %pragma(java) jniclasscode=%{
     static {

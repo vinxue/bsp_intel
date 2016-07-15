@@ -27,7 +27,7 @@
 #include <signal.h>
 
 //! [Interesting]
-#include "max31855.hpp"
+#include "max31855.h"
 
 int
 main(int argc, char **argv)

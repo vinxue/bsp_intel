@@ -26,7 +26,7 @@
 #include <iostream>
 #include <signal.h>
 #include <stdio.h>
-#include "nlgpio16.hpp"
+#include "nlgpio16.h"
 
 using namespace std;
 using namespace upm;

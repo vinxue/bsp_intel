@@ -27,7 +27,7 @@
 #ifdef JAVACALLBACK
 #undef JAVACALLBACK
 #endif
-#include "rgbringcoder.hpp"
+#include "rgbringcoder.h"
 
 using namespace std;
 using namespace upm;

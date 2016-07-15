@@ -2,10 +2,10 @@
 %include "../upm.i"
 
 %{
-    #include "waterlevel.hpp"
+    #include "waterlevel.h"
 %}
 
-%include "waterlevel.hpp"
+%include "waterlevel.h"
 
 %pragma(java) jniclasscode=%{
     static {

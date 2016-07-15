@@ -25,7 +25,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "ttp223.hpp"
+#include "ttp223.h"
 
 using namespace upm;
 

@@ -2,10 +2,10 @@
 %include "../upm.i"
 
 %{
-    #include "ht9170.hpp"
+    #include "ht9170.h"
 %}
 
-%include "ht9170.hpp"
+%include "ht9170.h"
 
 %pragma(java) jniclasscode=%{
     static {
