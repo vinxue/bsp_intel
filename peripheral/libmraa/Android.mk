@@ -27,7 +27,6 @@ LOCAL_SRC_FILES := \
     src/spi/spi.c \
     src/aio/aio.c \
     src/uart/uart.c \
-    src/uart_ow/uart_ow.c \
     src/x86/x86.c \
     src/iio/iio.c \
     src/x86/intel_galileo_rev_d.c \
@@ -38,8 +37,7 @@ LOCAL_SRC_FILES := \
     src/x86/intel_sofia_3gr.c \
     src/x86/intel_minnow_byt_compatible.c \
     src/x86/intel_cherryhills.c \
-    src/x86/up.c \
-    src/x86/intel_gt_tuchuck.c
+    src/x86/up.c
 
 # glob.c pulled in from NetBSD project (BSD 3-clause License)
 LOCAL_SRC_FILES += \

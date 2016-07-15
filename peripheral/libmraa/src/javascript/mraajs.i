@@ -135,10 +135,5 @@ class Spi;
 
 %init %{
     //Adding mraa_init() to the module initialisation process
-    if (mraa_init() != MRAA_SUCCESS) {
-      // FIXME: Figure out why SWIG_Error causes seg fault.
-      // Warn on stderr for time being
-      // SWIG_Error(SWIG_RuntimeError, "mraa_init() failed");
-      fprintf(stderr, "Javascript Runtime Error: mraa_init() failed.\n");
-    }
+    mraa_init();
 %}

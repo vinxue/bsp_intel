@@ -22,9 +22,6 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import mraa.Dir;
 import mraa.Edge;
 import mraa.Gpio;
@@ -40,7 +37,6 @@ public class Isr {
             System.exit(1);
         }
     }
-
     public static void main(String argv[]) throws InterruptedException {
         int pin = 6;
         if (argv.length == 1) {
@@ -49,37 +45,21 @@ public class Isr {
             } catch (Exception e) {
             }
         }
-        BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
-        Gpio gpio = null;
-        try {
-            gpio = new Gpio(pin);
-        }  catch (Exception e) {
-            System.out.println(e.getMessage());
-            return;
-        }
-        System.out.println("Starting ISR for pin " + Integer.toString(pin) + ". Press ENTER to stop");
-        Runnable callback = new JavaCallback(gpio);
+        System.out.println("Starting ISR for pin " + Integer.toString(pin));
+        Gpio gpio = new Gpio(pin);
+
+        Runnable callback = new JavaCallback();
+
         gpio.isr(Edge.EDGE_RISING, callback);
-        try {
-            String input = console.readLine();
-        } catch (IOException e) {
-        }
-        gpio.isrExit();
-    }
+        while (true)
+            Thread.sleep(999999);
+    };
 
 }
 
 class JavaCallback implements Runnable {
-    private Gpio gpio;
-
-    public JavaCallback(Gpio gpio) {
-        this.gpio = gpio;
-    }
-
     @Override
     public void run() {
-        String pin = Integer.toString(gpio.getPin(true));
-        String level = Integer.toString(gpio.read());
-        System.out.println("Pin " + pin + " = " + level);
+        System.out.println("Gpio level changed");
     }
 }

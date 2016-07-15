@@ -30,8 +30,6 @@
 #include <string.h>
 #include <termios.h>
 #include <sys/select.h>
-#include <errno.h>
-#include <string.h>
 
 #include "uart.h"
 #include "mraa_internal.h"
@@ -108,7 +106,9 @@ uint2speed(unsigned int speed)
             return B4000000;
         default:
             // if we are here, then an unsupported baudrate was selected.
-            return 0;
+            // Report it via syslog and return B9600, a common default.
+            syslog(LOG_ERR, "uart: unsupported baud rate, defaulting to 9600.");
+            return B9600;
     }
 }
 
@@ -131,29 +131,29 @@ mraa_uart_context
 mraa_uart_init(int index)
 {
     if (plat == NULL) {
-        syslog(LOG_ERR, "uart%i: init: platform not initialised", index);
+        syslog(LOG_ERR, "uart: platform not initialised");
         return NULL;
     }
 
     if (mraa_is_sub_platform_id(index)) {
-        syslog(LOG_NOTICE, "uart%i: init: Using sub platform is not supported", index);
+        syslog(LOG_NOTICE, "uart: Using sub platform is not supported");
         return NULL;
     }
 
     if (plat->adv_func->uart_init_pre != NULL) {
         if (plat->adv_func->uart_init_pre(index) != MRAA_SUCCESS) {
-            syslog(LOG_ERR, "uart%i: init: failure in pre-init platform hook", index);
+            syslog(LOG_ERR, "uart: failure in pre-init platform hook");
             return NULL;
         }
     }
 
     if (plat->uart_dev_count == 0) {
-        syslog(LOG_ERR, "uart%i: init: platform has no UARTs defined", index);
+        syslog(LOG_ERR, "uart: platform has no UARTs defined");
         return NULL;
     }
 
     if (plat->uart_dev_count <= index) {
-        syslog(LOG_ERR, "uart%i: init: platform has only %i uarts", index, plat->uart_dev_count);
+        syslog(LOG_ERR, "uart: platform has only %i", plat->uart_dev_count);
         return NULL;
     }
 
@@ -162,7 +162,7 @@ mraa_uart_init(int index)
         if (pos >= 0) {
             if (plat->pins[pos].uart.mux_total > 0) {
                 if (mraa_setup_mux_mapped(plat->pins[pos].uart) != MRAA_SUCCESS) {
-                    syslog(LOG_ERR, "uart%i: init: failed to setup muxes for RX pin", index);
+                    syslog(LOG_ERR, "uart: failed to setup muxes for RX pin");
                     return NULL;
                 }
             }
@@ -172,7 +172,7 @@ mraa_uart_init(int index)
         if (pos >= 0) {
             if (plat->pins[pos].uart.mux_total > 0) {
                 if (mraa_setup_mux_mapped(plat->pins[pos].uart) != MRAA_SUCCESS) {
-                    syslog(LOG_ERR, "uart%i: init: failed to setup muxes for TX pin", index);
+                    syslog(LOG_ERR, "uart: failed to setup muxes for TX pin");
                     return NULL;
                 }
             }
@@ -199,11 +199,6 @@ mraa_uart_init(int index)
 mraa_uart_context
 mraa_uart_init_raw(const char* path)
 {
-    if (!path) {
-        syslog(LOG_ERR, "uart: device path undefined");
-        return NULL;
-    }
-
     mraa_uart_context dev = mraa_uart_init_internal(plat == NULL ? NULL : plat->adv_func);
     if (dev == NULL) {
         syslog(LOG_ERR, "uart: Failed to allocate memory for context");
@@ -211,9 +206,15 @@ mraa_uart_init_raw(const char* path)
     }
     dev->path = path;
 
+    if (!dev->path) {
+        syslog(LOG_ERR, "uart: device path undefined, open failed");
+        free(dev);
+        return NULL;
+    }
+
     // now open the device
     if ((dev->fd = open(dev->path, O_RDWR)) == -1) {
-        syslog(LOG_ERR, "uart: open(%s) failed: %s", path, strerror(errno));
+        syslog(LOG_ERR, "uart: open() failed");
         free(dev);
         return NULL;
     }
@@ -223,7 +224,7 @@ mraa_uart_init_raw(const char* path)
 
     // get current modes
     if (tcgetattr(dev->fd, &termio)) {
-        syslog(LOG_ERR, "uart: tcgetattr(%s) failed: %s", path, strerror(errno));
+        syslog(LOG_ERR, "uart: tcgetattr() failed");
         close(dev->fd);
         free(dev);
         return NULL;
@@ -234,7 +235,7 @@ mraa_uart_init_raw(const char* path)
     // cfmakeraw is not POSIX!
     cfmakeraw(&termio);
     if (tcsetattr(dev->fd, TCSAFLUSH, &termio) < 0) {
-        syslog(LOG_ERR, "uart: tcsetattr(%s) failed after cfmakeraw(): %s", path, strerror(errno));
+        syslog(LOG_ERR, "uart: tcsetattr() failed after cfmakeraw()");
         close(dev->fd);
         free(dev);
         return NULL;
@@ -271,7 +272,7 @@ mraa_result_t
 mraa_uart_flush(mraa_uart_context dev)
 {
     if (!dev) {
-        syslog(LOG_ERR, "uart: flush: context is NULL");
+        syslog(LOG_ERR, "uart: stop: context is NULL");
         return MRAA_ERROR_INVALID_HANDLE;
     }
 
@@ -286,29 +287,24 @@ mraa_result_t
 mraa_uart_set_baudrate(mraa_uart_context dev, unsigned int baud)
 {
     if (!dev) {
-        syslog(LOG_ERR, "uart: set_baudrate: context is NULL");
+        syslog(LOG_ERR, "uart: stop: context is NULL");
         return MRAA_ERROR_INVALID_HANDLE;
     }
 
     struct termios termio;
     if (tcgetattr(dev->fd, &termio)) {
-        syslog(LOG_ERR, "uart%i: set_baudrate: tcgetattr() failed: %s", dev->index, strerror(errno));
-        return MRAA_ERROR_INVALID_RESOURCE;
+        syslog(LOG_ERR, "uart: tcgetattr() failed");
+        return MRAA_ERROR_INVALID_HANDLE;
     }
 
     // set our baud rates
     speed_t speed = uint2speed(baud);
-    if (speed == 0)
-    {
-        syslog(LOG_ERR, "uart%i: set_baudrate: invalid baudrate: %i", dev->index, baud);
-        return MRAA_ERROR_INVALID_PARAMETER;
-    }
     cfsetispeed(&termio, speed);
     cfsetospeed(&termio, speed);
 
     // make it so
     if (tcsetattr(dev->fd, TCSAFLUSH, &termio) < 0) {
-        syslog(LOG_ERR, "uart%i: set_baudrate: tcsetattr() failed: %s", dev->index, strerror(errno));
+        syslog(LOG_ERR, "uart: tcsetattr() failed");
         return MRAA_ERROR_FEATURE_NOT_SUPPORTED;
     }
     return MRAA_SUCCESS;
@@ -318,14 +314,14 @@ mraa_result_t
 mraa_uart_set_mode(mraa_uart_context dev, int bytesize, mraa_uart_parity_t parity, int stopbits)
 {
     if (!dev) {
-        syslog(LOG_ERR, "uart: set_mode: context is NULL");
+        syslog(LOG_ERR, "uart: stop: context is NULL");
         return MRAA_ERROR_INVALID_HANDLE;
     }
 
     struct termios termio;
     if (tcgetattr(dev->fd, &termio)) {
-        syslog(LOG_ERR, "uart%i: set_mode: tcgetattr() failed: %s", dev->index, strerror(errno));
-        return MRAA_ERROR_INVALID_RESOURCE;
+        syslog(LOG_ERR, "uart: tcgetattr() failed");
+        return MRAA_ERROR_INVALID_HANDLE;
     }
 
     termio.c_cflag &= ~CSIZE;
@@ -379,7 +375,7 @@ mraa_uart_set_mode(mraa_uart_context dev, int bytesize, mraa_uart_parity_t parit
     }
 
     if (tcsetattr(dev->fd, TCSAFLUSH, &termio) < 0) {
-        syslog(LOG_ERR, "uart%i: set_mode: tcsetattr() failed: %s", dev->index, strerror(errno));
+        syslog(LOG_ERR, "uart: tcsetattr() failed");
         return MRAA_ERROR_FEATURE_NOT_SUPPORTED;
     }
 
@@ -390,7 +386,7 @@ mraa_result_t
 mraa_uart_set_flowcontrol(mraa_uart_context dev, mraa_boolean_t xonxoff, mraa_boolean_t rtscts)
 {
     if (!dev) {
-        syslog(LOG_ERR, "uart: set_flowcontrol: context is NULL");
+        syslog(LOG_ERR, "uart: stop: context is NULL");
         return MRAA_ERROR_INVALID_HANDLE;
     }
 
@@ -408,8 +404,8 @@ mraa_uart_set_flowcontrol(mraa_uart_context dev, mraa_boolean_t xonxoff, mraa_bo
 
     // get current modes
     if (tcgetattr(dev->fd, &termio)) {
-        syslog(LOG_ERR, "uart%i: set_flowcontrol: tcgetattr() failed: %s", dev->index, strerror(errno));
-         return MRAA_ERROR_INVALID_RESOURCE;
+        syslog(LOG_ERR, "uart: tcgetattr() failed");
+        return MRAA_ERROR_INVALID_HANDLE;
     }
 
     if (rtscts) {
@@ -419,7 +415,7 @@ mraa_uart_set_flowcontrol(mraa_uart_context dev, mraa_boolean_t xonxoff, mraa_bo
     }
 
     if (tcsetattr(dev->fd, TCSAFLUSH, &termio) < 0) {
-        syslog(LOG_ERR, "uart%i: set_flowcontrol: tcsetattr() failed: %s", dev->index, strerror(errno));
+        syslog(LOG_ERR, "uart: tcsetattr() failed");
         return MRAA_ERROR_FEATURE_NOT_SUPPORTED;
     }
 
@@ -430,15 +426,15 @@ mraa_result_t
 mraa_uart_set_timeout(mraa_uart_context dev, int read, int write, int interchar)
 {
     if (!dev) {
-        syslog(LOG_ERR, "uart: set_timeout: context is NULL");
+        syslog(LOG_ERR, "uart: stop: context is NULL");
         return MRAA_ERROR_INVALID_HANDLE;
     }
 
     struct termios termio;
     // get current modes
     if (tcgetattr(dev->fd, &termio)) {
-        syslog(LOG_ERR, "uart%i: set_timeout: tcgetattr() failed: %s", dev->index, strerror(errno));
-        return MRAA_ERROR_INVALID_RESOURCE;
+        syslog(LOG_ERR, "uart: tcgetattr() failed");
+        return MRAA_ERROR_FEATURE_NOT_SUPPORTED;
     }
     if (read > 0) {
         read = read / 100;
@@ -448,35 +444,8 @@ mraa_uart_set_timeout(mraa_uart_context dev, int read, int write, int interchar)
     termio.c_lflag &= ~ICANON; /* Set non-canonical mode */
     termio.c_cc[VTIME] = read; /* Set timeout in tenth seconds */
     if (tcsetattr(dev->fd, TCSANOW, &termio) < 0) {
-        syslog(LOG_ERR, "uart%i: set_timeout: tcsetattr() failed: %s", dev->index, strerror(errno));
+        syslog(LOG_ERR, "uart: tcsetattr() failed");
         return MRAA_ERROR_FEATURE_NOT_SUPPORTED;
-    }
-
-    return MRAA_SUCCESS;
-}
-
-mraa_result_t
-mraa_uart_set_non_blocking(mraa_uart_context dev, mraa_boolean_t nonblock)
-{
-    if (!dev) {
-        syslog(LOG_ERR, "uart: non_blocking: context is NULL");
-        return MRAA_ERROR_INVALID_HANDLE;
-    }
-
-    // get current flags
-    int flags = fcntl(dev->fd, F_GETFL);
-
-    // update flags with new blocking state according to nonblock bool
-    if (nonblock) {
-        flags |= O_NONBLOCK;
-    } else {
-        flags &= ~O_NONBLOCK;
-    }
-
-    // set new flags
-    if (fcntl(dev->fd, F_SETFL, flags) < 0) {
-        syslog(LOG_ERR, "uart%i: non_blocking: failed changing fd blocking state: %s", dev->index, strerror(errno));
-        return MRAA_ERROR_UNSPECIFIED;
     }
 
     return MRAA_SUCCESS;
@@ -486,9 +455,11 @@ const char*
 mraa_uart_get_dev_path(mraa_uart_context dev)
 {
     if (!dev) {
+        syslog(LOG_ERR, "uart: get_device_path failed, context is NULL");
         return NULL;
     }
     if (dev->path == NULL) {
+        syslog(LOG_ERR, "uart: device path undefined");
         return NULL;
     }
 
@@ -504,7 +475,7 @@ mraa_uart_read(mraa_uart_context dev, char* buf, size_t len)
     }
 
     if (dev->fd < 0) {
-        syslog(LOG_ERR, "uart%i: read: port is not open", dev->index);
+        syslog(LOG_ERR, "uart: port is not open");
         return MRAA_ERROR_INVALID_RESOURCE;
     }
 
@@ -520,7 +491,7 @@ mraa_uart_write(mraa_uart_context dev, const char* buf, size_t len)
     }
 
     if (dev->fd < 0) {
-        syslog(LOG_ERR, "uart%i: write: port is not open", dev->index);
+        syslog(LOG_ERR, "uart: port is not open");
         return MRAA_ERROR_INVALID_RESOURCE;
     }
 
@@ -531,12 +502,12 @@ mraa_boolean_t
 mraa_uart_data_available(mraa_uart_context dev, unsigned int millis)
 {
     if (!dev) {
-        syslog(LOG_ERR, "uart: data_available: context is NULL");
+        syslog(LOG_ERR, "uart: data_available: write context is NULL");
         return 0;
     }
 
     if (dev->fd < 0) {
-        syslog(LOG_ERR, "uart%i: data_available: port is not open", dev->index);
+        syslog(LOG_ERR, "uart: port is not open");
         return 0;
     }
 
