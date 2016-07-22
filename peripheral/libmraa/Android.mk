@@ -40,6 +40,7 @@ LOCAL_SRC_FILES := \
     src/x86/up.c
 
 # glob.c pulled in from NetBSD project (BSD 3-clause License)
+LOCAL_CFLAGS += '-D__UNCONST(a)=((void *)(unsigned long)(const void *)(a))'
 LOCAL_SRC_FILES += \
     src/glob/glob.c
 
