@@ -1,5 +1,0 @@
-set (libname "groveultrasonic")
-set (libdescription "upm grove ultrasonic proximity sensor")
-set (module_src ${libname}.cxx)
-set (module_h ${libname}.h)
-upm_module_init()

@@ -1,5 +1,0 @@
-set (libname "my9221")
-set (libdescription "upm my9221")
-set (module_src ${libname}.cxx groveledbar.cxx grovecircularled.cxx)
-set (module_h ${libname}.h groveledbar.h grovecircularled.h)
-upm_module_init()
